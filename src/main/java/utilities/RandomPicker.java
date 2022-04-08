@@ -40,7 +40,7 @@ public class RandomPicker {
      * @param givenList a list of any types.
      * @return an index
      */
-    public int getRandomIndexFromList(List<?> givenList) {
+    private int getRandomIndexFromList(List<?> givenList) {
         Random rand = new Random();
         return rand.nextInt(givenList.size());
     }

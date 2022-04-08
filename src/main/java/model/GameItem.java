@@ -11,8 +11,6 @@ import static java.lang.Math.max;
  * @see Medicine
  */
 public class GameItem {
-    public static final AtomicInteger COUNT = new AtomicInteger(0);
-    private final int id;
     private String name;
     private int price;
     private int refundPrice;
@@ -27,20 +25,9 @@ public class GameItem {
         this.name = name;
         this.price = price;
         initRefundPrice(price);
-        // increment the counter and assign a unique id to each single item
-        this.id = COUNT.incrementAndGet();
     }
 
     /* getters go here */
-    /**
-     * Return the item's unique id.
-     *
-     * @return Unique item id
-     */
-    public int getId() {
-        return this.id;
-    }
-
     /**
      * Return the item's name.
      *
@@ -69,6 +56,23 @@ public class GameItem {
     }
 
     /* setters go here */
+    /**
+     * Set the new name to current monster.
+     *
+     * @param name a new name for this monster
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Set the new price to current monster.
+     *
+     * @param price a new price for this monster
+     */
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     /* private functions */
     /**

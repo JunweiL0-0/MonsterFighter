@@ -34,8 +34,7 @@ public class Monster extends GameItem {
      * @return a string contains current monster's information.
      */
     public String toString() {
-        String breakLine = "- - - - - - - - - - - - -\n";
-        String monsterId = String.format("Monster ID: %d\n", this.getId());
+        String breakLine = "\n- - - - - - - - - - - - -\n";
         String monsterName = String.format("Name: %s\n", this.getName());
         String monsterPrice = String.format("Price: %s\n", this.getPrice());
         String monsterRefundPrice = String.format("RefundPrice: %s\n", this.getRefundPrice());
@@ -44,8 +43,8 @@ public class Monster extends GameItem {
         String monsterCurrentHealth = String.format("CurrentHealth: %s\n", this.getCurrentHealth());
         String monsterDamage = String.format("Damage: %s\n", this.getDamage());
         String monsterLevel = String.format("Level: %s\n", this.getLevel());
-        return breakLine + monsterId + monsterName + monsterPrice + monsterRefundPrice + monsterRarity +
-                monsterMaxHealth + monsterCurrentHealth + monsterDamage + monsterLevel + breakLine;
+        return breakLine + monsterName + monsterPrice + monsterRefundPrice + monsterRarity +
+                monsterMaxHealth + monsterCurrentHealth + monsterDamage + monsterLevel;
     }
 
     /* getters go here */

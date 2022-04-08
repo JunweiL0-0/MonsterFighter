@@ -13,7 +13,7 @@ import java.util.*;
 public class ItemDataStorage {
     private final ListGenerator listGenerator;
     // {monsters: {monsterName: {price: [a list of integer], health: [a list of integer], ...}}
-    private final Map<DefaultMonsterName, Map<String, List<Integer>>> monsters;
+    private final Map<String, Map<MonsterListKey, List<Integer>>> monsters;
 
 
     /**
@@ -36,7 +36,7 @@ public class ItemDataStorage {
      *
      * @return A map which representing all monsters.
      */
-    public Map<DefaultMonsterName, Map<String, List<Integer>>> getMonsters() {
+    public Map<String, Map<MonsterListKey, List<Integer>>> getMonsters() {
         return this.monsters;
     }
 
@@ -46,11 +46,11 @@ public class ItemDataStorage {
      */
     private void initMonsters() {
         // Monster 1
-        this.monsters.put(DefaultMonsterName.MONSTER1, initMonsterProperties(1, 100, 400, 500,
+        this.monsters.put("Monster1", initMonsterProperties(1, 100, 400, 500,
                 50, 60, 1,4));
         // Monster 2
-        this.monsters.put(DefaultMonsterName.MONSTER2, initMonsterProperties(50, 200, 500, 600,
-                60, 70, 5,6));
+        this.monsters.put("Monster2", initMonsterProperties(50, 200, 500, 600,
+                60, 500, 5,6));
     }
 
     /**
@@ -66,14 +66,14 @@ public class ItemDataStorage {
      * @param maxLevel an integer value which indicate the upper bound of the monster's level (inclusive)
      * @return a HashMap<String, List<Integer>. e.g. {"price": [a list of integer], "health", [a list of integer]...}
      */
-    private HashMap<String, List<Integer>> initMonsterProperties(int minPrice, int maxPrice, int minHealth, int maxHealth,
+    private HashMap<MonsterListKey, List<Integer>> initMonsterProperties(int minPrice, int maxPrice, int minHealth, int maxHealth,
                                                                  int minDamage, int maxDamage, int minLevel, int maxLevel) {
-        HashMap<String, List<Integer>> result = new HashMap<>();
+        HashMap<MonsterListKey, List<Integer>> result = new HashMap<>();
 
-        result.put("price", listGenerator.createListFromRange(minPrice, maxPrice));
-        result.put("health", listGenerator.createListFromRange(minHealth, maxHealth));
-        result.put("damage", listGenerator.createListFromRange(minDamage, maxDamage));
-        result.put("level", listGenerator.createListFromRange(minLevel, maxLevel));
+        result.put(MonsterListKey.PRICE, listGenerator.createListFromRange(minPrice, maxPrice));
+        result.put(MonsterListKey.MAXHEALTH, listGenerator.createListFromRange(minHealth, maxHealth));
+        result.put(MonsterListKey.DAMAGE, listGenerator.createListFromRange(minDamage, maxDamage));
+        result.put(MonsterListKey.LEVEL, listGenerator.createListFromRange(minLevel, maxLevel));
         return result;
     }
 }
