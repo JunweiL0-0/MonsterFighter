@@ -29,6 +29,16 @@ public class Monster extends GameItem {
     }
 
     /**
+     * Return true if the monster's currentHealth is lower or equal to zero. False otherwise.
+     * The monster's health shouldn't be lower than zero, but we put here anyway...
+     *
+     * @return a boolean value
+     */
+    public boolean isFainted() {
+        return this.currentHealth <= 0;
+    }
+
+    /**
      * Override the toString() method. This function will return the description of the current monster.
      *
      * @return a string contains current monster's information.

@@ -15,6 +15,9 @@ public class GameController {
     private RandomPicker randomPicker;
 
 
+    /**
+     * Constructor for the GameController.
+     */
     public GameController() {
         this.randomPicker = new RandomPicker();
         this.itemDataStorage = new ItemDataStorage();
