@@ -3,6 +3,7 @@ package main.java.controller;
 import main.java.model.Generator;
 import main.java.model.ItemDataStorage;
 import main.java.model.Shop;
+import main.java.utilities.ListGenerator;
 import main.java.utilities.RandomPicker;
 
 /**
@@ -10,6 +11,7 @@ import main.java.utilities.RandomPicker;
  */
 public class GameController {
     private ItemDataStorage itemDataStorage;
+    private ListGenerator listGenerator;
     private Generator generator;
     private Shop shop;
     private RandomPicker randomPicker;
@@ -20,7 +22,8 @@ public class GameController {
      */
     public GameController() {
         this.randomPicker = new RandomPicker();
-        this.itemDataStorage = new ItemDataStorage();
+        this.listGenerator = new ListGenerator();
+        this.itemDataStorage = new ItemDataStorage(this.listGenerator);
         this.generator = new Generator(this.itemDataStorage, this.randomPicker);
         this.shop = new Shop(this.generator);
     }

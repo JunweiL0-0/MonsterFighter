@@ -19,8 +19,8 @@ public class ItemDataStorage {
     /**
      * The constructor for ItemDataStorage
      */
-    public ItemDataStorage() {
-        listGenerator = new ListGenerator();
+    public ItemDataStorage(ListGenerator listGenerator) {
+        this.listGenerator = listGenerator;
         monsters = new HashMap<>();
 
         initMonsters();
