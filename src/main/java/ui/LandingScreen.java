@@ -1,4 +1,4 @@
-package ui;
+package main.java.ui;
 
 import java.awt.EventQueue;
 
