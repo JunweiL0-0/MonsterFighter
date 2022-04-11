@@ -35,6 +35,9 @@ public class GameController {
 //        System.out.println(this.generator.generateMonster());
         System.out.println(this.shop.getItemForSell());
         System.out.println(this.shop.purchaseItem(1));
+        
+        
     }
+    
 
 }
