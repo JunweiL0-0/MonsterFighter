@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 
 import main.java.model.Generator;
 import main.java.model.ItemDataStorage;
+import main.java.model.Monster;
 import main.java.model.Shop;
 import main.java.ui.ChooseMonsterScreen;
 import main.java.ui.LandingScreen;
@@ -52,6 +53,12 @@ public class GameController {
     	System.out.println(this.shop.getItemForSell());
         System.out.println(this.shop.purchaseItem(1));
         
+<<<<<<< HEAD
+=======
+    }
+    public Monster generateMonster() {
+    	return generator.generateMonster();
+>>>>>>> 647707f7323d117b2f2de15e2fe3ba6b8805e07d
     }
     
 
