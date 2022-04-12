@@ -51,6 +51,12 @@ public class ItemDataStorage {
         // Monster 2
         this.monsters.put("Monster2", initMonsterProperties(50, 200, 500, 600,
                 60, 500, 5,6));
+        this.monsters.put("Monster3", initMonsterProperties(50, 200, 500, 600,
+                60, 500, 5,6));
+        this.monsters.put("Monster4", initMonsterProperties(50, 200, 500, 600,
+                60, 500, 5,6));
+        this.monsters.put("Monster5", initMonsterProperties(50, 200, 500, 600,
+                60, 500, 5,6));
     }
 
     /**
