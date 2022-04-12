@@ -21,25 +21,25 @@ public class ChooseMonsterScreen {
 	private Map<Integer, Monster> availableMonsters;
 	private ArrayList<Monster> selectedMonsters;
 	private GameController gc;
-	
+
 	//public Team teamMonsters;
-	
+
 	public ChooseMonsterScreen(GameController gameContoller) {
 		this.availableMonsters = new HashMap<>();
 		this.selectedMonsters = new ArrayList<>();
 		this.gc = gameContoller;
-		
+
 		this.availableMonsters.put(1, gc.generateMonster());
 		this.availableMonsters.put(2, gc.generateMonster());
 		this.availableMonsters.put(3, gc.generateMonster());
 		this.availableMonsters.put(4, gc.generateMonster());
 		this.availableMonsters.put(5, gc.generateMonster());
-		
+
 
 		initialize();
 		chooseFrame.setVisible(true);
 	}
-	
+
 	private void initialize() {
 	chooseFrame = new JFrame();
 	chooseFrame.setBounds(100, 100, 800, 500);
@@ -48,7 +48,7 @@ public class ChooseMonsterScreen {
 	chooseFrame.getContentPane().setBackground(Color.black);
 	chooseFrame.setLayout(null);
 	chooseFrame.setResizable(false);
-		
+
 	JLabel title = new JLabel("Choose your Monsters!",SwingConstants.CENTER);
 	title.setBounds(20,20,760,120);
 	title.setFont(new Font("Serif", Font.PLAIN, 60));
@@ -58,7 +58,7 @@ public class ChooseMonsterScreen {
 
 	buttons();
 	}
-	
+
 	private void buttons() {
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.black);
@@ -69,7 +69,7 @@ public class ChooseMonsterScreen {
 		defaultButtons(panel);
 		defaultDetails(panel);
 	}
-	
+
 	private void defaultButtons(JPanel panel) {
 		for (int i=1; i<=5; i++) {
 			JToggleButton button = new JToggleButton();
@@ -85,19 +85,19 @@ public class ChooseMonsterScreen {
 				}
 			});
 			button.setEnabled(!isMaxSelections());
-			
+
 			panel.add(button);
 		}
 
 	}
-	
+
 	private void defaultDetails(JPanel panel) {
 		JPanel panelDetails = new JPanel();
 		panelDetails.setBackground(Color.black);
 		panelDetails.setBounds(0,260,800,100);
 		panelDetails.setLayout(new FlowLayout(FlowLayout.CENTER,22,0));
 		chooseFrame.getContentPane().add(panelDetails);
-		
+
 		for (int i=1; i<=5; i++) {
 			Monster monster = this.availableMonsters.get(i);
 			JTextArea details = new JTextArea();
@@ -107,16 +107,16 @@ public class ChooseMonsterScreen {
 			details.setBackground(Color.black);
 			details.setBorder(null);
 			details.setText(monster.toString());
-			
+
 			panelDetails.add(details);
 		}
 		panel.add(panelDetails);
 	}
-	
+
 	private boolean isMaxSelections() {
 		return this.availableMonsters.size() == 3;
 	}
-	
+
 	private void addMonsterToList(int selectedMonsterId) {
 		this.selectedMonsters.add(this.availableMonsters.get(selectedMonsterId));
 	}

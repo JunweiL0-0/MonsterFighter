@@ -15,8 +15,8 @@ import main.java.utilities.RandomPicker;
  * A java.controller handling the game logic.
  */
 public class GameController {
-    private ItemDataStorage itemDataStorage;
-    private ListGenerator listGenerator;
+	private ItemDataStorage itemDataStorage;
+	private ListGenerator listGenerator;
     private Generator generator;
     private Shop shop;
     private RandomPicker randomPicker;
@@ -56,6 +56,7 @@ public class GameController {
     }
     public Monster generateMonster() {
     	return generator.generateMonster();
+
     }
     
 

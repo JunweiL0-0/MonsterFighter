@@ -1,5 +1,4 @@
 package main.java.ui;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
