@@ -43,13 +43,18 @@ public class LandingScreen {
 		// *                       ----------------                          *
 		// *******************************************************************
 		this.landingFrame = getLandingFrame();
+		// MONSTER FIGHTER
 		this.landingFrame.getContentPane().add(getTitleLabel());
+		// Enter Player Name
+		this.landingFrame.getContentPane().add(getUserNameTextField());
+		// Easy, Medium, Hard CheckBox
 		this.landingFrame.getContentPane().add(getEasyCheckBox());
 		this.landingFrame.getContentPane().add(getMediumCheckBox());
 		this.landingFrame.getContentPane().add(getHardCheckBox());
+		// Choose your difficulty
 		this.landingFrame.getContentPane().add(getDiffLabel());
+		// Confirm button
 		this.landingFrame.getContentPane().add(getConfirmButton());
-		this.landingFrame.getContentPane().add(getUserNameTextField());
 
 //		ButtonGroup buttonGroup = new ButtonGroup();
 //		buttonGroup.add(getEasyCheckBox());
