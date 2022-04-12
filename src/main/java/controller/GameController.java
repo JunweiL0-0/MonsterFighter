@@ -1,8 +1,12 @@
 package main.java.controller;
 
+import javax.swing.SwingUtilities;
+
 import main.java.model.Generator;
 import main.java.model.ItemDataStorage;
 import main.java.model.Shop;
+import main.java.ui.ChooseMonsterScreen;
+import main.java.ui.LandingScreen;
 import main.java.utilities.ListGenerator;
 import main.java.utilities.RandomPicker;
 
@@ -15,8 +19,7 @@ public class GameController {
     private Generator generator;
     private Shop shop;
     private RandomPicker randomPicker;
-
-
+    
     /**
      * Constructor for the GameController.
      */
@@ -32,13 +35,22 @@ public class GameController {
     /**
      * A function used to start the game.
      */
+    public void launchLandingScreen() {
+		new LandingScreen(this);
+	}
+    
+    public void launchChooseMonsterScreen() {
+    	new ChooseMonsterScreen(this);
+    }
+    
     public void startGame() {
 
 //        System.out.println(new MonsterGenerator().generateMonster());
 //        System.out.println(this.generator.generateMonster());
-        System.out.println(this.shop.getItemForSell());
+    	GameController gc = new GameController();
+    	gc.launchLandingScreen();
+    	System.out.println(this.shop.getItemForSell());
         System.out.println(this.shop.purchaseItem(1));
-        
         
     }
     
