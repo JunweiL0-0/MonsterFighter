@@ -1,18 +1,17 @@
 package main.java.ui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import javax.swing.*;
 import main.java.controller.GameController;
-
 
 
 public class LandingScreen {
 	private final GameController gc;
 	private JFrame landingFrame;
+	private JButton confirmButton;
+	private String playerName;
+	private String difficulty;
 
 
 	/**
@@ -22,9 +21,17 @@ public class LandingScreen {
 	 */
 	public LandingScreen (GameController gc) {
 		this.gc = gc;
-		initialize();
 
-		this.landingFrame.setVisible(true);
+		initialize();
+		this.setVisible(true);
+	}
+
+	/**
+	 * A function used to show and hide the landingScreen.
+	 * @param visible a boolean value.
+	 */
+	public void setVisible(Boolean visible) {
+		this.landingFrame.setVisible(visible);
 	}
 
 	/**
@@ -36,7 +43,7 @@ public class LandingScreen {
 		// *              ----------------------------------                 *
 		// *              |       Enter Player Name        |                 *
 		// *              ----------------------------------                 *
-		// *     Easy(CheckBox)    Medium(CheckBox)     Hard(CheckBox)       *
+		// *         Easy(Button)    Medium(Button)     Hard(Button)         *
 		// *                   Choose your difficulty!                       *
 		// *                       ----------------                          *
 		// *                       |    Confirm   |                          *
@@ -47,20 +54,41 @@ public class LandingScreen {
 		this.landingFrame.getContentPane().add(getTitleLabel());
 		// Enter Player Name
 		this.landingFrame.getContentPane().add(getUserNameTextField());
-		// Easy, Medium, Hard CheckBox
-		this.landingFrame.getContentPane().add(getEasyCheckBox());
-		this.landingFrame.getContentPane().add(getMediumCheckBox());
-		this.landingFrame.getContentPane().add(getHardCheckBox());
+		// Easy, Medium, Hard Button
+		JRadioButton easyButton = getEasyButton();
+		JRadioButton mediumButton = getMediumButton();
+		JRadioButton hardButton = getHardButton();
+		this.landingFrame.getContentPane().add(easyButton);
+		this.landingFrame.getContentPane().add(mediumButton);
+		this.landingFrame.getContentPane().add(hardButton);
+		// Add Buttons to a buttonGroup to make a single selection
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(easyButton);
+		buttonGroup.add(mediumButton);
+		buttonGroup.add(hardButton);
 		// Choose your difficulty
 		this.landingFrame.getContentPane().add(getDiffLabel());
-		// Confirm button
-		this.landingFrame.getContentPane().add(getConfirmButton());
+		// In order to enable/disable the confirmButton. We store the confirmButton into the variable.
+		this.confirmButton = getConfirmButton();
+		this.landingFrame.getContentPane().add(this.confirmButton);
 
-//		ButtonGroup buttonGroup = new ButtonGroup();
-//		buttonGroup.add(getEasyCheckBox());
-//		buttonGroup.add(getMediumCheckBox());
-//		buttonGroup.add(getHardCheckBox());
-//		addPlayerName();
+		// Default difficulty
+		easyButton.setSelected(true);
+		this.difficulty = easyButton.getText();
+	}
+
+	/**
+	 * Enable the confirmButton on the landingScreen.
+	 */
+	private void enableConfirmButton() {
+		this.confirmButton.setEnabled(true);
+	}
+
+	/**
+	 * Disable the confirmButton on the landingScreen.
+	 */
+	private void disableConfirmButton() {
+		this.confirmButton.setEnabled(false);
 	}
 
 	/*
@@ -70,7 +98,7 @@ public class LandingScreen {
 	 * Return a new landingFrame
 	 * @return a new landingFrame
 	 */
-	public JFrame getLandingFrame() {
+	private JFrame getLandingFrame() {
 		JFrame newLandingFrame = new JFrame();
 		newLandingFrame.setBounds(100, 100, 800, 500);
 		newLandingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -98,45 +126,50 @@ public class LandingScreen {
 	}
 
 	/**
-	 * Return a checkBox whose text is "Easy"
-	 * @return a checkBox whose text is "Easy"
+	 * Return a Button whose text is "Easy"
+	 * @return a Button whose text is "Easy"
 	 */
-	private JCheckBox getEasyCheckBox() {
-		// create checkBox
-		JCheckBox easyCheckBox = new JCheckBox("Easy");
-		easyCheckBox.setFont(new Font("Serif", Font.PLAIN, 20));
-		easyCheckBox.setForeground(Color.white);
-		easyCheckBox.setBounds(240, 200, 85, 40);
+	private JRadioButton getEasyButton() {
+		// create Button
+		JRadioButton easyButton = new JRadioButton("Easy");
+		easyButton.setFont(new Font("Serif", Font.PLAIN, 20));
+		easyButton.setForeground(Color.white);
+		easyButton.setBounds(240, 200, 85, 40);
+		// actionListener
+		addDiffButtonListener(easyButton);
 
-		return easyCheckBox;
+		return easyButton;
 	}
 
 	/**
-	 * Return a checkBox whose text is "Medium"
-	 * @return a checkBox whose text is "Medium"
+	 * Return a Button whose text is "Medium"
+	 * @return a Button whose text is "Medium"
 	 */
-	private JCheckBox getMediumCheckBox() {
-		// create checkBox
-		JCheckBox mediumCheckBox = new JCheckBox("Medium");
-		mediumCheckBox.setFont(new Font("Serif", Font.PLAIN, 20));
-		mediumCheckBox.setForeground(Color.white);
-		mediumCheckBox.setBounds(340, 200, 120, 40);
-
-		return mediumCheckBox;
+	private JRadioButton getMediumButton() {
+		// create Button
+		JRadioButton mediumButton = new JRadioButton("Medium");
+		mediumButton.setFont(new Font("Serif", Font.PLAIN, 20));
+		mediumButton.setForeground(Color.white);
+		mediumButton.setBounds(340, 200, 120, 40);
+		// actionListener
+		addDiffButtonListener(mediumButton);
+		return mediumButton;
 	}
 
 	/**
-	 * Return a checkBox whose text is "Hard"
-	 * @return a checkBox whose text is "Hard"
+	 * Return a Button whose text is "Hard"
+	 * @return a Button whose text is "Hard"
 	 */
-	private JCheckBox getHardCheckBox() {
-		// create checkBox
-		JCheckBox hardCheckBox = new JCheckBox("Hard");
-		hardCheckBox.setFont(new Font("Serif", Font.PLAIN, 20));
-		hardCheckBox.setForeground(Color.white);
-		hardCheckBox.setBounds(470, 200, 90, 40);
+	private JRadioButton getHardButton() {
+		// create Button
+		JRadioButton hardButton = new JRadioButton("Hard");
+		hardButton.setFont(new Font("Serif", Font.PLAIN, 20));
+		hardButton.setForeground(Color.white);
+		hardButton.setBounds(470, 200, 90, 40);
+		// actionListener
+		addDiffButtonListener(hardButton);
 
-		return hardCheckBox;
+		return hardButton;
 	}
 
 	/**
@@ -160,9 +193,14 @@ public class LandingScreen {
 	 */
 	private JButton getConfirmButton() {
 		// create button
-		JButton newConfirmButton = new JButton("Confirm");
-		addConfirmButtonListener(newConfirmButton);
+		JButton newConfirmButton = new JButton();
 		newConfirmButton.setBounds(350,265,100,25);
+		// setText via html so that we can see the text even the button is being disabled
+		newConfirmButton.setText("<html><font color = black>Confirm</font></html>");
+		// as the player haven't entered the player name. We disable the confirm button.
+		newConfirmButton.setEnabled(false);
+		// confirmButton listener
+		addConfirmButtonListener(newConfirmButton);
 
 		return newConfirmButton;
 	}
@@ -180,6 +218,7 @@ public class LandingScreen {
 		userNameTextField.setColumns(10);
 		// add listeners
 		addKeyListener(userNameTextField);
+		addFocusListener(userNameTextField);
 
 		return userNameTextField;
 	}
@@ -192,7 +231,7 @@ public class LandingScreen {
 	 * @param button confirm button on the landing screen
 	 */
 	private void addConfirmButtonListener(JButton button) {
-		button.addActionListener(actionEvent -> gc.launchChooseMonsterScreen());
+		button.addActionListener(actionEvent -> switchToChooseMonsterScreen());
 	}
 
 	/**
@@ -207,18 +246,63 @@ public class LandingScreen {
 				if(!(Character.isAlphabetic(c) || (c==KeyEvent.VK_BACK_SPACE) || c==KeyEvent.VK_DELETE )) {
 					e.consume();
 				}
-				if (textField.getText().length() >= 15 )
+				if (textField.getText().length() >= 15 ) {
 					e.consume();
+				}
+				if (3 <= textField.getText().length() && textField.getText().length() <= 15) {
+					enableConfirmButton();
+					playerName = textField.getText();
+				} else {
+					disableConfirmButton();
+				}
 			}
 		});
 	}
 
-//	private ButtonGroup getDifficultyButton() {
-//		ButtonGroup difficultyGroup = new ButtonGroup();
-//		difficultyGroup.add(getEasyCheckBox());
-//		difficultyGroup.add(getMediumCheckBox());
-//		difficultyGroup.add(getHardCheckBox());
-//
-//		return difficultyGroup;
-//	}
+	/**
+	 * FocusListener for the textField. PlaceHolder.
+	 * @param textField a textField for entering player name.
+	 */
+	private void addFocusListener(JTextField textField) {
+		textField.setForeground(Color.GRAY);
+		textField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (textField.getText().equals("Enter Player Name")) {
+					textField.setText("");
+					textField.setForeground(Color.BLACK);
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (textField.getText().isEmpty()) {
+					textField.setForeground(Color.GRAY);
+					textField.setText("Enter Player Name");
+				}
+			}
+		});
+	}
+
+	/**
+	 * ActionListener for RadioButton. This function will auto set the difficulty level if the button is being selected.
+	 * @param button A JRadioButton used for selecting different difficulty.
+	 */
+	private void addDiffButtonListener(JRadioButton button) {
+		button.addActionListener(actionEvent -> {
+			if (button.isSelected()) {
+				difficulty = button.getText();
+			}
+		});
+
+	}
+
+	/*
+	Functions used to interact with gameController
+	 */
+	/**
+	 *  Hide landingScreen and show chooseMonsterScreen.
+	 */
+	private void switchToChooseMonsterScreen() {
+		gc.launchChooseMonsterScreen(this);
+	}
 }

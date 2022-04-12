@@ -11,6 +11,8 @@ import main.java.ui.LandingScreen;
 import main.java.utilities.ListGenerator;
 import main.java.utilities.RandomPicker;
 
+import java.util.ArrayList;
+
 /**
  * A java.controller handling the game logic.
  */
@@ -32,32 +34,29 @@ public class GameController {
         this.shop = new Shop(this.generator);
     }
 
-
     /**
      * A function used to start the game.
      */
-    public void launchLandingScreen() {
-		new LandingScreen(this);
-	}
-    
-    public void launchChooseMonsterScreen() {
-    	new ChooseMonsterScreen(this);
-    }
-    
     public void startGame() {
 
 //        System.out.println(new MonsterGenerator().generateMonster());
 //        System.out.println(this.generator.generateMonster());
 //        System.out.println(this.shop.getItemForSell());
 //        System.out.println(this.shop.purchaseItem(1));
-
-        GameController gc = new GameController();
-    	gc.launchLandingScreen();
-
+    	launchLandingScreen();
     }
-    public Monster generateMonster() {
-    	return generator.generateMonster();
 
+    public void launchLandingScreen() {
+        new LandingScreen(this);
+    }
+
+    public void launchChooseMonsterScreen(LandingScreen landingScreen) {
+        new ChooseMonsterScreen(this);
+        landingScreen.setVisible(false);
+    }
+
+    public ArrayList<Monster> getInitMonsters() {
+    	return generator.getInitialMonsters();
     }
     
 

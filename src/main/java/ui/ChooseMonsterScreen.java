@@ -7,8 +7,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.*;
 
@@ -18,106 +16,127 @@ import main.java.model.Monster;
 
 public class ChooseMonsterScreen {
 	private JFrame chooseFrame;
-	private Map<Integer, Monster> availableMonsters;
+	private ArrayList<Monster> availableMonsters;
 	private ArrayList<Monster> selectedMonsters;
+	private ArrayList<JToggleButton> monsterButtons;
 	private GameController gc;
 
 	//public Team teamMonsters;
 
-	public ChooseMonsterScreen(GameController gameContoller) {
-		this.availableMonsters = new HashMap<>();
+	public ChooseMonsterScreen(GameController gc) {
+		this.gc = gc;
+		this.availableMonsters = new ArrayList<>();
 		this.selectedMonsters = new ArrayList<>();
-		this.gc = gameContoller;
-
-		this.availableMonsters.put(1, gc.generateMonster());
-		this.availableMonsters.put(2, gc.generateMonster());
-		this.availableMonsters.put(3, gc.generateMonster());
-		this.availableMonsters.put(4, gc.generateMonster());
-		this.availableMonsters.put(5, gc.generateMonster());
-
+		this.monsterButtons = new ArrayList<>();
 
 		initialize();
-		chooseFrame.setVisible(true);
+		this.setVisible(true);
 	}
 
 	private void initialize() {
-	chooseFrame = new JFrame();
-	chooseFrame.setBounds(100, 100, 800, 500);
-	chooseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
-	chooseFrame.setLocationRelativeTo(null);
-	chooseFrame.getContentPane().setBackground(Color.black);
-	chooseFrame.setLayout(null);
-	chooseFrame.setResizable(false);
-
-	JLabel title = new JLabel("Choose your Monsters!",SwingConstants.CENTER);
-	title.setBounds(20,20,760,120);
-	title.setFont(new Font("Serif", Font.PLAIN, 60));
-	title.setBackground(Color.black);
-	title.setForeground(Color.white);
-	chooseFrame.getContentPane().add(title);
-
-	buttons();
+		// get initMonsters
+		this.availableMonsters = getInitMonsters();
+		// add components to chooseFrame
+		this.chooseFrame = getChooseFrame();
+		this.chooseFrame.getContentPane().add(getTitle());
+		this.chooseFrame.getContentPane().add(getButtonPanel());
 	}
 
-	private void buttons() {
+//
+//	private boolean isMaxSelections() {
+//		return this.availableMonsters.size() == 3;
+//	}
+//
+//	private void addMonsterToList(int selectedMonsterId) {
+//		this.selectedMonsters.add(this.availableMonsters.get(selectedMonsterId));
+//	}
+
+	public void setVisible(Boolean visible) {
+		this.chooseFrame.setVisible(visible);
+	}
+
+	/*
+	Swing components
+	 */
+	/**
+	 *
+	 * @return
+	 */
+	private JFrame getChooseFrame() {
+		JFrame chooseFrame = new JFrame();
+		chooseFrame.setBounds(100, 100, 800, 500);
+		chooseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		chooseFrame.setLocationRelativeTo(null);
+		chooseFrame.getContentPane().setBackground(Color.black);
+		chooseFrame.setLayout(null);
+		chooseFrame.setResizable(false);
+
+		return chooseFrame;
+	}
+
+	private JLabel getTitle() {
+		JLabel title = new JLabel("Choose your Monsters!",SwingConstants.CENTER);
+		title.setBounds(20,20,760,120);
+		title.setFont(new Font("Serif", Font.PLAIN, 60));
+		title.setBackground(Color.black);
+		title.setForeground(Color.white);
+		return title;
+	}
+
+	private JPanel getButtonPanel() {
+		// create panel
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.black);
-		panel.setBounds(0,150,800,250);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER,25,0));
-		chooseFrame.getContentPane().add(panel);
-
-		defaultButtons(panel);
-		defaultDetails(panel);
-	}
-
-	private void defaultButtons(JPanel panel) {
-		for (int i=1; i<=5; i++) {
-			JToggleButton button = new JToggleButton();
-			button.setFont(new Font("Arial", Font.PLAIN, 10));
-			button.setPreferredSize(new Dimension(100,100));
-			button.setName(Integer.toString(i));
-			button.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent actionEvent) {
-					if (button.isSelected()) {
-						System.out.println(button.getName());
-					}
-				}
-			});
-			button.setEnabled(!isMaxSelections());
-
+		panel.setBounds(20,150,760,250);
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER,5,0));
+		// add buttons to the panel
+		for (int indexInList=0; indexInList<this.availableMonsters.size(); indexInList++) {
+			JToggleButton button = getMonsterButton(indexInList);
+			monsterButtons.add(button);
 			panel.add(button);
 		}
-
-	}
-
-	private void defaultDetails(JPanel panel) {
-		JPanel panelDetails = new JPanel();
-		panelDetails.setBackground(Color.black);
-		panelDetails.setBounds(0,260,800,100);
-		panelDetails.setLayout(new FlowLayout(FlowLayout.CENTER,22,0));
-		chooseFrame.getContentPane().add(panelDetails);
-
-		for (int i=1; i<=5; i++) {
-			Monster monster = this.availableMonsters.get(i);
-			JTextArea details = new JTextArea();
-			details.setPreferredSize(new Dimension(100,100));
-			details.setBounds(0,370,800,100);
-			details.setForeground(Color.white);
-			details.setBackground(Color.black);
-			details.setBorder(null);
-			details.setText(monster.toString());
-
-			panelDetails.add(details);
+		// add details to the panel
+		for (int indexInList=0; indexInList<this.availableMonsters.size(); indexInList++) {
+			panel.add(getMonsterDetail(indexInList));
 		}
-		panel.add(panelDetails);
+
+		return panel;
 	}
 
-	private boolean isMaxSelections() {
-		return this.availableMonsters.size() == 3;
+	private JToggleButton getMonsterButton(int indexInList) {
+		Monster monster = this.availableMonsters.get(indexInList);
+		JToggleButton button = new JToggleButton();
+		button.setText(monster.getName());
+		button.setFont(new Font("Arial", Font.PLAIN, 10));
+		button.setPreferredSize(new Dimension(144,100));
+		button.addActionListener(actionEvent -> {
+			if (button.isSelected()) {
+				System.out.println(button.getName());
+			}
+		});
+		return button;
 	}
 
-	private void addMonsterToList(int selectedMonsterId) {
-		this.selectedMonsters.add(this.availableMonsters.get(selectedMonsterId));
+	private JTextArea getMonsterDetail(int indexInList) {
+		Monster monster = this.availableMonsters.get(indexInList);
+		JTextArea detail = new JTextArea();
+		detail.setPreferredSize(new Dimension(144,100));
+//		detail.setBounds(0,370,800,150);
+		detail.setForeground(Color.white);
+		detail.setBackground(Color.black);
+		detail.setBorder(null);
+		detail.setText(monster.toString());
+		return detail;
+	}
+
+	/*
+	Listeners go here
+	 */
+
+	/*
+	Functions used to interact with gameController
+	 */
+	private ArrayList<Monster> getInitMonsters() {
+		return this.gc.getInitMonsters();
 	}
 }
