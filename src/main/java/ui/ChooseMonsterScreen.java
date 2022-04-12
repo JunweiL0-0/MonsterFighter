@@ -14,6 +14,10 @@ import main.java.controller.GameController;
 import main.java.model.Generator;
 import main.java.model.Monster;
 
+
+/**
+ * ChooseMonsterScreen. This screen will be shown after the user clicked the "Confirm" button on the LandingScreen.
+ */
 public class ChooseMonsterScreen {
 	private JFrame chooseFrame;
 	private ArrayList<Monster> availableMonsters;
@@ -21,25 +25,42 @@ public class ChooseMonsterScreen {
 	private ArrayList<JToggleButton> monsterButtons;
 	private GameController gc;
 
-	//public Team teamMonsters;
 
+	/**
+	 * Constructor for ChooseMonsterScreen.
+	 * @param gc gameController
+	 */
 	public ChooseMonsterScreen(GameController gc) {
-		this.gc = gc;
 		this.availableMonsters = new ArrayList<>();
 		this.selectedMonsters = new ArrayList<>();
 		this.monsterButtons = new ArrayList<>();
+		this.gc = gc;
+		// get initMonsters
+		this.availableMonsters = getInitMonsters();
 
 		initialize();
 		this.setVisible(true);
 	}
 
+	/**
+	 * Initialize the contents of the frame.
+	 */
 	private void initialize() {
-		// get initMonsters
-		this.availableMonsters = getInitMonsters();
+		// *******************************************************************
+		// *                     Choose your Monsters!                       * --> Title
+		// *     ---------- ---------- ---------- ---------- ----------      * -
+		// *     |MONSTER1| |MONSTER2| |MONSTER3| |MONSTER4| |MONSTER5|      *  \
+		// *     ---------- ---------- ---------- ---------- ----------      *   \
+		// *     ---------- ---------- ---------- ---------- ----------      *   / ButtonDetailPanel
+		// *     | DETAIL | | DETAIL | | DETAIL | | DETAIL | | DETAIL |      *  /
+		// *     ---------- ---------- ---------- ---------- ----------      * -
+		// *                                                                 *
+		// *                                                                 *
+		// *******************************************************************
 		// add components to chooseFrame
 		this.chooseFrame = getChooseFrame();
 		this.chooseFrame.getContentPane().add(getTitle());
-		this.chooseFrame.getContentPane().add(getButtonPanel());
+		this.chooseFrame.getContentPane().add(getButtonDetailPanel());
 	}
 
 //
@@ -59,8 +80,8 @@ public class ChooseMonsterScreen {
 	Swing components
 	 */
 	/**
-	 *
-	 * @return
+	 * Return a new chooseFrame
+	 * @return return a new chooseFrame
 	 */
 	private JFrame getChooseFrame() {
 		JFrame chooseFrame = new JFrame();
@@ -74,6 +95,10 @@ public class ChooseMonsterScreen {
 		return chooseFrame;
 	}
 
+	/**
+	 * Return a title for ChooseFrame
+	 * @return a title
+	 */
 	private JLabel getTitle() {
 		JLabel title = new JLabel("Choose your Monsters!",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
@@ -83,7 +108,11 @@ public class ChooseMonsterScreen {
 		return title;
 	}
 
-	private JPanel getButtonPanel() {
+	/**
+	 * Return a buttonPanel which contains monsterButtons and monsterDetails.
+	 * @return a buttonPanel which contains monsterButtons and monsterDetails.
+	 */
+	private JPanel getButtonDetailPanel() {
 		// create panel
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.black);
@@ -103,6 +132,13 @@ public class ChooseMonsterScreen {
 		return panel;
 	}
 
+	/**
+	 * This function will generate a monsterButton for a specific monster in the availableMonsters list.
+	 * The button will have the monster's name as its text.
+	 *
+	 * @param indexInList an index used to locate a specific monster in the availableMonsters list.
+	 * @return a monsterButton
+	 */
 	private JToggleButton getMonsterButton(int indexInList) {
 		Monster monster = this.availableMonsters.get(indexInList);
 		JToggleButton button = new JToggleButton();
@@ -117,6 +153,12 @@ public class ChooseMonsterScreen {
 		return button;
 	}
 
+	/**
+	 * Generate a monster's detail(JTextArea) by using the indexInList.
+	 *
+	 * @param indexInList an index used to locate a specific monster in the availableMonsters list.
+	 * @return a detail(JTextArea) for a single monster
+	 */
 	private JTextArea getMonsterDetail(int indexInList) {
 		Monster monster = this.availableMonsters.get(indexInList);
 		JTextArea detail = new JTextArea();
@@ -135,6 +177,11 @@ public class ChooseMonsterScreen {
 
 	/*
 	Functions used to interact with gameController
+	 */
+
+	/**
+	 * Get initMonsters from the gameController.
+	 * @return iniMonsters
 	 */
 	private ArrayList<Monster> getInitMonsters() {
 		return this.gc.getInitMonsters();

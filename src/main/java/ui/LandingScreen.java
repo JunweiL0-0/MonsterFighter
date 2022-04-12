@@ -6,6 +6,9 @@ import javax.swing.*;
 import main.java.controller.GameController;
 
 
+/**
+ * A landingScreen for user to select difficulty and enter their player name.
+ */
 public class LandingScreen {
 	private final GameController gc;
 	private JFrame landingFrame;
