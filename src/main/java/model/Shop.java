@@ -9,6 +9,7 @@ public class Shop {
     private ArrayList<GameItem> itemForSell;
     private Generator generator;
 
+
     /**
      * Constructor for Shop
      *

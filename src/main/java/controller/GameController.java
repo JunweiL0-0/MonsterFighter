@@ -48,10 +48,11 @@ public class GameController {
 
 //        System.out.println(new MonsterGenerator().generateMonster());
 //        System.out.println(this.generator.generateMonster());
-    	GameController gc = new GameController();
+//        System.out.println(this.shop.getItemForSell());
+//        System.out.println(this.shop.purchaseItem(1));
+
+        GameController gc = new GameController();
     	gc.launchLandingScreen();
-    	System.out.println(this.shop.getItemForSell());
-        System.out.println(this.shop.purchaseItem(1));
 
     }
     public Monster generateMonster() {
