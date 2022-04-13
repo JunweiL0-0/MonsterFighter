@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.*;
 
 import main.java.controller.GameController;
@@ -28,6 +27,7 @@ public class ChooseMonsterScreen {
 
 	/**
 	 * Constructor for ChooseMonsterScreen.
+	 *
 	 * @param gc gameController
 	 */
 	public ChooseMonsterScreen(GameController gc) {
@@ -47,13 +47,16 @@ public class ChooseMonsterScreen {
 	 */
 	private void initialize() {
 		// *******************************************************************
-		// *                     Choose your Monsters!                       * --> Title
+		// *                      CHOOSE YOUR MONSTER!                       * --> Title
 		// *     ---------- ---------- ---------- ---------- ----------      * -
 		// *     |MONSTER1| |MONSTER2| |MONSTER3| |MONSTER4| |MONSTER5|      *  \
 		// *     ---------- ---------- ---------- ---------- ----------      *   \
 		// *     ---------- ---------- ---------- ---------- ----------      *   / ButtonDetailPanel
 		// *     | DETAIL | | DETAIL | | DETAIL | | DETAIL | | DETAIL |      *  /
 		// *     ---------- ---------- ---------- ---------- ----------      * -
+		// *                                                                 *
+		// *                                                                 *
+		// *                                                                 *
 		// *                                                                 *
 		// *                                                                 *
 		// *******************************************************************
@@ -81,6 +84,7 @@ public class ChooseMonsterScreen {
 	 */
 	/**
 	 * Return a new chooseFrame
+	 *
 	 * @return return a new chooseFrame
 	 */
 	private JFrame getChooseFrame() {
@@ -97,10 +101,11 @@ public class ChooseMonsterScreen {
 
 	/**
 	 * Return a title for ChooseFrame
+	 *
 	 * @return a title
 	 */
 	private JLabel getTitle() {
-		JLabel title = new JLabel("Choose your Monsters!",SwingConstants.CENTER);
+		JLabel title = new JLabel("CHOOSE YOUR MONSTER!",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
 		title.setFont(new Font("Serif", Font.PLAIN, 60));
 		title.setBackground(Color.black);
@@ -110,6 +115,7 @@ public class ChooseMonsterScreen {
 
 	/**
 	 * Return a buttonPanel which contains monsterButtons and monsterDetails.
+	 *
 	 * @return a buttonPanel which contains monsterButtons and monsterDetails.
 	 */
 	private JPanel getButtonDetailPanel() {
@@ -178,7 +184,6 @@ public class ChooseMonsterScreen {
 	/*
 	Functions used to interact with gameController
 	 */
-
 	/**
 	 * Get initMonsters from the gameController.
 	 * @return iniMonsters
