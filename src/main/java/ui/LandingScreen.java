@@ -3,6 +3,22 @@ package main.java.ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+//=======
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
+//import java.awt.event.FocusAdapter;
+//import java.awt.event.FocusEvent;
+//import java.awt.event.FocusListener;
+//import java.awt.event.KeyAdapter;
+//import java.awt.event.KeyEvent;
+//
+//import javax.swing.*;
+//import javax.swing.event.DocumentEvent;
+//import javax.swing.event.DocumentListener;
+//import javax.swing.plaf.ColorUIResource;
+//import javax.swing.plaf.metal.MetalButtonUI;
+//
+//>>>>>>> 6283001 (Change landingScreen and chooseMonsterScreen)
 import main.java.controller.GameController;
 
 
@@ -16,8 +32,6 @@ public class LandingScreen {
 	private JLabel hintMessageLabel;
 	private String playerName;
 	private String difficulty;
-
-
 	/**
 	 * LandingScreen's constructor. Launch the application.
 	 *
@@ -28,6 +42,7 @@ public class LandingScreen {
 		this.gc = gc;
 
 		initialize();
+
 		this.setVisible(true);
 	}
 
@@ -376,3 +391,4 @@ public class LandingScreen {
 		gc.launchChooseMonsterScreen(this);
 	}
 }
+	
