@@ -1,7 +1,5 @@
 package main.java.controller;
 
-import javax.swing.SwingUtilities;
-
 import main.java.model.Generator;
 import main.java.model.ItemDataStorage;
 import main.java.model.Monster;

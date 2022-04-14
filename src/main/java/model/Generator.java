@@ -1,12 +1,12 @@
 package main.java.model;
 
-import main.java.utilities.RandomPicker;
-
-import javax.swing.text.Utilities;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import main.java.utilities.RandomPicker;
+
 
 /**
  * The class is used for (randomly) generating gameItem base on the data provided by ItemDataStorage.

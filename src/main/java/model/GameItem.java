@@ -1,7 +1,5 @@
 package main.java.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static java.lang.Math.max;
 
 /**

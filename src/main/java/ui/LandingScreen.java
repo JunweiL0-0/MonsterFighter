@@ -124,7 +124,7 @@ public class LandingScreen {
 	 * @return a new landingFrame
 	 */
 	private JFrame getLandingFrame() {
-		JFrame newLandingFrame = new JFrame();
+		JFrame newLandingFrame = new JFrame("MONSTER FIGHTER");
 		newLandingFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		newLandingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		newLandingFrame.getContentPane().setBackground(Color.black);
@@ -212,7 +212,7 @@ public class LandingScreen {
 		// create Button
 		JRadioButton easyButton = new JRadioButton("Easy");
 		easyButton.setFont(new Font("Serif", Font.PLAIN, 20));
-		easyButton.setForeground(Color.white);
+		easyButton.setForeground(Color.BLACK);
 		easyButton.setBounds(300, 285, 100, 30);
 		easyButton.setHorizontalAlignment(SwingConstants.CENTER);
 		// actionListener
@@ -230,7 +230,7 @@ public class LandingScreen {
 		// create Button
 		JRadioButton hardButton = new JRadioButton("Hard");
 		hardButton.setFont(new Font("Serif", Font.PLAIN, 20));
-		hardButton.setForeground(Color.white);
+		hardButton.setForeground(Color.BLACK);
 		hardButton.setBounds(400, 285, 100, 30);
 		hardButton.setHorizontalAlignment(SwingConstants.CENTER);
 		// actionListener

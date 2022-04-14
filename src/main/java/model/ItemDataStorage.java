@@ -1,8 +1,9 @@
 package main.java.model;
 
+import java.util.*;
+
 import main.java.utilities.ListGenerator;
 
-import java.util.*;
 
 /**
  * This class is used for initialize and store all gameItems data. This class will be used by generator.
