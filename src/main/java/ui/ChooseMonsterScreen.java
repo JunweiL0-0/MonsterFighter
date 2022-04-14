@@ -12,10 +12,10 @@ import main.java.model.Monster;
 
 
 /**
- * ChooseMonsterScreen. This screen will be shown after the user clicked the "Confirm" button on the LandingScreen.
+ * ChooseMonsterScreen. This screen will be shown after the user clicked the "START GAME" button on the LandingScreen.
  */
 public class ChooseMonsterScreen {
-	private GameController gc;
+	private final GameController gc;
 	private ArrayList<Monster> availableMonsters;
 	private ArrayList<Monster> selectedMonsters;
 	private ArrayList<JToggleButton> monsterButtons;
@@ -275,7 +275,7 @@ public class ChooseMonsterScreen {
 	}
 
 	private void switchToMainScreen() {
-//		this.gc.lanucnMainScreen();
+		this.gc.launchMainScreen();
 		closeAndDestroyCurrentScreen();
 	}
 }

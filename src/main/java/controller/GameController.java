@@ -8,6 +8,7 @@ import main.java.model.Monster;
 import main.java.model.Shop;
 import main.java.ui.ChooseMonsterScreen;
 import main.java.ui.LandingScreen;
+import main.java.ui.MainScreen;
 import main.java.utilities.ListGenerator;
 import main.java.utilities.RandomPicker;
 
@@ -38,11 +39,6 @@ public class GameController {
      * A function used to start the game.
      */
     public void startGame() {
-
-//        System.out.println(new MonsterGenerator().generateMonster());
-//        System.out.println(this.generator.generateMonster());
-//        System.out.println(this.shop.getItemForSell());
-//        System.out.println(this.shop.purchaseItem(1));
     	launchLandingScreen();
     }
 
@@ -52,6 +48,10 @@ public class GameController {
 
     public void launchChooseMonsterScreen() {
         new ChooseMonsterScreen(this);
+    }
+
+    public void launchMainScreen() {
+        new MainScreen(this);
     }
 
     public ArrayList<Monster> getInitMonsters() {
