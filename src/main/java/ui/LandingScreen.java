@@ -43,7 +43,7 @@ public class LandingScreen {
 		// *              |       Enter Player Name        |                 *
 		// *              ----------------------------------                 *
 		// *                   Choose your difficulty!                       *
-		// *         Easy(Button)                       Hard(Button)         *
+		// *                  Easy(Button) Hard(Button)                      *
 		// *               Hint Message (Validate Player Name)               *
 		// *                       ----------------                          *
 		// *                       |  START GAME  |                          *
