@@ -258,7 +258,7 @@ public class ChooseMonsterScreen {
 	 * Add an actionListener to the button.
 	 */
 	private void addConfirmButtonListener(JButton button) {
-		button.addActionListener(actionEvent -> switchToGameScreen());
+		button.addActionListener(actionEvent -> switchToMainScreen());
 	}
 
 	/*
@@ -272,8 +272,8 @@ public class ChooseMonsterScreen {
 		return this.gc.getInitMonsters();
 	}
 
-	private void switchToGameScreen() {
-		this.gc.launchLandingScreen();
+	private void switchToMainScreen() {
+//		this.gc.lanucnMainScreen();
 		closeAndDestroyCurrentScreen();
 	}
 }

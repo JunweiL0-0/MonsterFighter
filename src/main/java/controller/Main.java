@@ -2,7 +2,6 @@ package main.java.controller;
 
 
 import javax.swing.*;
-import java.util.Arrays;
 
 /**
  * Main function.
