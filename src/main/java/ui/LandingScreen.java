@@ -11,11 +11,12 @@ import main.java.controller.GameController;
  */
 public class LandingScreen {
 	private final GameController gc;
+	private String playerName;
+	private String difficulty;
+	// swing components
 	private JFrame landingFrame;
 	private JButton confirmButton;
 	private JLabel hintMessageLabel;
-	private String playerName;
-	private String difficulty;
 
 
 	/**
@@ -28,16 +29,7 @@ public class LandingScreen {
 		this.gc = gc;
 
 		initialize();
-		this.setVisible(true);
-	}
-
-	/**
-	 * A function used to show and hide the landingScreen.
-	 *
-	 * @param visible a boolean value.
-	 */
-	public void setVisible(Boolean visible) {
-		this.landingFrame.setVisible(visible);
+		show(true);
 	}
 
 	/**
@@ -54,11 +46,11 @@ public class LandingScreen {
 		// *         Easy(Button)    Medium(Button)     Hard(Button)         *
 		// *               Hint Message (Validate Player Name)               *
 		// *                       ----------------                          *
-		// *                       |    Confirm   |                          *
+		// *                       |  START GAME  |                          *
 		// *                       ----------------                          *
 		// *******************************************************************
-		this.landingFrame = getLandingFrame();
 		// MONSTER FIGHTER
+		this.landingFrame = getLandingFrame();
 		this.landingFrame.getContentPane().add(getTitleLabel());
 		// Label
 		this.landingFrame.getContentPane().add(getEnterNameLabel());
@@ -91,6 +83,15 @@ public class LandingScreen {
 	}
 
 	/**
+	 * A function used to show and hide the landingScreen.
+	 *
+	 * @param visible a boolean value.
+	 */
+	public void show(Boolean visible) {
+		this.landingFrame.setVisible(visible);
+	}
+
+	/**
 	 * Enable the confirmButton on the landingScreen.
 	 */
 	private void enableConfirmButton() {
@@ -107,8 +108,13 @@ public class LandingScreen {
 	/**
 	 * Set the text for hintMessageLabel
 	 */
-	private void changeHint(String hint) {
+	private void setHintMessage(String hint) {
 		this.hintMessageLabel.setText(hint);
+	}
+
+	private void closeAndDestoryCurrentScreen() {
+		show(false);
+		this.landingFrame.dispose();
 	}
 
 	/*
@@ -311,7 +317,7 @@ public class LandingScreen {
 				char c = e.getKeyChar();
 				if(!(Character.isAlphabetic(c) || (c==KeyEvent.VK_BACK_SPACE) || c==KeyEvent.VK_DELETE )) {
 					e.consume();
-					changeHint("You kidding me?! Only alphabet characters!!");
+					setHintMessage("You kidding me?! Only alphabet characters!!");
 				}
 				if (textField.getText().length() >= 15 ) {
 					e.consume();
@@ -319,10 +325,10 @@ public class LandingScreen {
 				if (3 <= textField.getText().length() && textField.getText().length() <= 15) {
 					enableConfirmButton();
 					playerName = textField.getText();
-					changeHint("Well done~ Let's start the game");
+					setHintMessage("Well done~ Let's start the game");
 				} else {
 					disableConfirmButton();
-					changeHint("Keep typing! Your name should longer than three");
+					setHintMessage("Keep typing! Your name should longer than three");
 				}
 			}
 		});
@@ -363,7 +369,6 @@ public class LandingScreen {
 				difficulty = button.getText();
 			}
 		});
-
 	}
 
 	/*
@@ -373,6 +378,7 @@ public class LandingScreen {
 	 *  Hide landingScreen and show chooseMonsterScreen.
 	 */
 	private void switchToChooseMonsterScreen() {
-		gc.launchChooseMonsterScreen(this);
+		gc.launchChooseMonsterScreen();
+		closeAndDestoryCurrentScreen();
 	}
 }

@@ -50,9 +50,8 @@ public class GameController {
         new LandingScreen(this);
     }
 
-    public void launchChooseMonsterScreen(LandingScreen landingScreen) {
+    public void launchChooseMonsterScreen() {
         new ChooseMonsterScreen(this);
-        landingScreen.setVisible(false);
     }
 
     public ArrayList<Monster> getInitMonsters() {

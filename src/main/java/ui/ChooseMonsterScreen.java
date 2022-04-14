@@ -4,13 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
 import main.java.controller.GameController;
-import main.java.model.Generator;
 import main.java.model.Monster;
 
 
@@ -18,11 +15,14 @@ import main.java.model.Monster;
  * ChooseMonsterScreen. This screen will be shown after the user clicked the "Confirm" button on the LandingScreen.
  */
 public class ChooseMonsterScreen {
-	private JFrame chooseFrame;
+	private GameController gc;
 	private ArrayList<Monster> availableMonsters;
 	private ArrayList<Monster> selectedMonsters;
 	private ArrayList<JToggleButton> monsterButtons;
-	private GameController gc;
+	// swing components
+	private JFrame chooseFrame;
+	private JButton confirmButton;
+	private JLabel hintMessageLabel;
 
 
 	/**
@@ -31,15 +31,15 @@ public class ChooseMonsterScreen {
 	 * @param gc gameController
 	 */
 	public ChooseMonsterScreen(GameController gc) {
+		this.gc = gc;
 		this.availableMonsters = new ArrayList<>();
 		this.selectedMonsters = new ArrayList<>();
 		this.monsterButtons = new ArrayList<>();
-		this.gc = gc;
 		// get initMonsters
 		this.availableMonsters = getInitMonsters();
 
 		initialize();
-		this.setVisible(true);
+		show(true);
 	}
 
 	/**
@@ -54,16 +54,21 @@ public class ChooseMonsterScreen {
 		// *     ---------- ---------- ---------- ---------- ----------      *   / ButtonDetailPanel
 		// *     | DETAIL | | DETAIL | | DETAIL | | DETAIL | | DETAIL |      *  /
 		// *     ---------- ---------- ---------- ---------- ----------      * -
-		// *                                                                 *
-		// *                                                                 *
-		// *                                                                 *
-		// *                                                                 *
-		// *                                                                 *
+		// *               Hint Message (Validate Selections)                *
+		// *                       ----------------                          *
+		// *                       |   CONFIRM    |                          *
+		// *                       ----------------                          *
 		// *******************************************************************
 		// add components to chooseFrame
 		this.chooseFrame = getChooseFrame();
 		this.chooseFrame.getContentPane().add(getTitle());
 		this.chooseFrame.getContentPane().add(getButtonDetailPanel());
+		// store the hintMessageLabel into a variable
+		this.hintMessageLabel = getHintMessageLabel();
+		this.chooseFrame.getContentPane().add(this.hintMessageLabel);
+		// store the confirmButton into a variable
+		this.confirmButton = getConfirmButton();
+		this.chooseFrame.getContentPane().add(this.confirmButton);
 	}
 
 //
@@ -75,8 +80,51 @@ public class ChooseMonsterScreen {
 //		this.selectedMonsters.add(this.availableMonsters.get(selectedMonsterId));
 //	}
 
-	public void setVisible(Boolean visible) {
+	public void show(Boolean visible) {
 		this.chooseFrame.setVisible(visible);
+	}
+
+	private void closeAndDestroyCurrentScreen() {
+		show(false);
+		this.chooseFrame.dispose();
+	}
+
+	private void disableConfirmButton() {
+		this.confirmButton.setEnabled(false);
+	}
+
+	private void enableConfirmButton() {
+		this.confirmButton.setEnabled(true);
+	}
+
+	private void validateSelection() {
+		int counter = 0;
+		// loop through the list and count selected button
+		for (JToggleButton b: this.monsterButtons) {
+			if (b.isSelected()) {
+				counter++;
+			}
+		}
+		// enable/disable confirmButton
+		if (counter <= 0) {
+			disableConfirmButton();
+			setHintMessageLabel("Select a monster!");
+		} else if (counter <= 3) {
+			enableConfirmButton();
+			setHintMessageLabel("Cool! You are ready to fight!");
+		} else {
+			disableConfirmButton();
+			setHintMessageLabel("?? No, maximum three monsters!");
+		}
+	}
+
+	private void setHintMessageLabel(String hint) {
+		this.hintMessageLabel.setText(hint);
+	}
+
+	private String constructMonsterDetail(Monster monster) {
+		return String.format("MaxHealth: %d\nDamage: %d\nLevel: %d\n",
+				monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 
 	/*
@@ -105,9 +153,9 @@ public class ChooseMonsterScreen {
 	 * @return a title
 	 */
 	private JLabel getTitle() {
-		JLabel title = new JLabel("CHOOSE YOUR MONSTER!",SwingConstants.CENTER);
+		JLabel title = new JLabel("CHOOSE YOUR MONSTER(S)!",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
-		title.setFont(new Font("Serif", Font.PLAIN, 60));
+		title.setFont(new Font("Serif", Font.PLAIN, 55));
 		title.setBackground(Color.black);
 		title.setForeground(Color.white);
 		return title;
@@ -122,15 +170,15 @@ public class ChooseMonsterScreen {
 		// create panel
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.black);
-		panel.setBounds(20,150,760,250);
+		panel.setBounds(20,140,760,160);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER,5,0));
-		// add buttons to the panel
+		// add buttons to the panel one by one
 		for (int indexInList=0; indexInList<this.availableMonsters.size(); indexInList++) {
 			JToggleButton button = getMonsterButton(indexInList);
 			monsterButtons.add(button);
 			panel.add(button);
 		}
-		// add details to the panel
+		// add details to the panel one by one
 		for (int indexInList=0; indexInList<this.availableMonsters.size(); indexInList++) {
 			panel.add(getMonsterDetail(indexInList));
 		}
@@ -151,11 +199,7 @@ public class ChooseMonsterScreen {
 		button.setText(monster.getName());
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
 		button.setPreferredSize(new Dimension(144,100));
-		button.addActionListener(actionEvent -> {
-			if (button.isSelected()) {
-				System.out.println(button.getName());
-			}
-		});
+		button.addActionListener(actionEvent -> validateSelection());
 		return button;
 	}
 
@@ -173,13 +217,49 @@ public class ChooseMonsterScreen {
 		detail.setForeground(Color.white);
 		detail.setBackground(Color.black);
 		detail.setBorder(null);
-		detail.setText(monster.toString());
+		detail.setText(constructMonsterDetail(monster));
 		return detail;
+	}
+
+	private JLabel getHintMessageLabel() {
+		// create label
+		JLabel diffLabel = new JLabel("", SwingConstants.LEFT);
+		diffLabel.setBounds(200,350,400,30);
+		diffLabel.setFont(new Font("Serif", Font.PLAIN, 13));
+		diffLabel.setBackground(Color.black);
+		diffLabel.setForeground(Color.red);
+
+		return diffLabel;
+	}
+
+	/**
+	 * Return the confirmButton
+	 *
+	 * @return a confirmButton
+	 */
+	private JButton getConfirmButton() {
+		// create button
+		JButton newConfirmButton = new JButton();
+		newConfirmButton.setBounds(200, 380, 400, 50);
+		// setText via html so that we can see the text even the button is being disabled
+		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">CONFIRM</p></html>");
+		// as the player haven't selected anything. We disable the confirm button.
+		newConfirmButton.setEnabled(false);
+		// confirmButton listener
+		addConfirmButtonListener(newConfirmButton);
+
+		return newConfirmButton;
 	}
 
 	/*
 	Listeners go here
 	 */
+	/**
+	 * Add an actionListener to the button.
+	 */
+	private void addConfirmButtonListener(JButton button) {
+		button.addActionListener(actionEvent -> switchToGameScreen());
+	}
 
 	/*
 	Functions used to interact with gameController
@@ -190,5 +270,10 @@ public class ChooseMonsterScreen {
 	 */
 	private ArrayList<Monster> getInitMonsters() {
 		return this.gc.getInitMonsters();
+	}
+
+	private void switchToGameScreen() {
+		this.gc.launchLandingScreen();
+		closeAndDestroyCurrentScreen();
 	}
 }
