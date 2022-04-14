@@ -153,7 +153,7 @@ public class ChooseMonsterScreen {
 	 * @return a title
 	 */
 	private JLabel getTitle() {
-		JLabel title = new JLabel("CHOOSE YOUR MONSTER(S)!",SwingConstants.CENTER);
+		JLabel title = new JLabel("CHOOSE MONSTER(S)!",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
 		title.setFont(new Font("Serif", Font.PLAIN, 55));
 		title.setBackground(Color.black);
