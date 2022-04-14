@@ -3,6 +3,7 @@ package main.java.ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import main.java.controller.GameController;
 
 
@@ -49,8 +50,8 @@ public class LandingScreen {
 		// *                       |  START GAME  |                          *
 		// *                       ----------------                          *
 		// *******************************************************************
-		// MONSTER FIGHTER
 		this.landingFrame = getLandingFrame();
+		// MONSTER FIGHTER
 		this.landingFrame.getContentPane().add(getTitleLabel());
 		// Label
 		this.landingFrame.getContentPane().add(getEnterNameLabel());
@@ -124,12 +125,13 @@ public class LandingScreen {
 	 */
 	private JFrame getLandingFrame() {
 		JFrame newLandingFrame = new JFrame();
-		newLandingFrame.setBounds(100, 100, 800, 500);
+		newLandingFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		newLandingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		newLandingFrame.setLocationRelativeTo(null);
 		newLandingFrame.getContentPane().setBackground(Color.black);
 		newLandingFrame.setLayout(null);
 		newLandingFrame.setResizable(false);
+		newLandingFrame.pack();
+		newLandingFrame.setLocationRelativeTo(null);
 
 		return newLandingFrame;
 	}
