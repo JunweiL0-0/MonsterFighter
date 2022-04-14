@@ -1,6 +1,9 @@
 package main.java.controller;
 
 
+import javax.swing.*;
+import java.util.Arrays;
+
 /**
  * Main function.
  */
@@ -12,7 +15,12 @@ public class Main {
 	 * @param args an array of string
 	 */
 	public static void main(String[] args) {
-		new GameController().startGame();
-	}
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+			new GameController().startGame();
+		}
 
 }
