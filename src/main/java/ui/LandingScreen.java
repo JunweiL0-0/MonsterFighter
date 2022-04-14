@@ -43,7 +43,7 @@ public class LandingScreen {
 		// *              |       Enter Player Name        |                 *
 		// *              ----------------------------------                 *
 		// *                   Choose your difficulty!                       *
-		// *         Easy(Button)    Medium(Button)     Hard(Button)         *
+		// *         Easy(Button)                       Hard(Button)         *
 		// *               Hint Message (Validate Player Name)               *
 		// *                       ----------------                          *
 		// *                       |  START GAME  |                          *
@@ -58,17 +58,14 @@ public class LandingScreen {
 		this.landingFrame.getContentPane().add(getUserNameTextField());
 		// Choose your difficulty
 		this.landingFrame.getContentPane().add(getDiffLabel());
-		// Easy, Medium, Hard Button
+		// Easy, Hard Button
 		JRadioButton easyButton = getEasyButton();
-		JRadioButton mediumButton = getMediumButton();
 		JRadioButton hardButton = getHardButton();
 		this.landingFrame.getContentPane().add(easyButton);
-		this.landingFrame.getContentPane().add(mediumButton);
 		this.landingFrame.getContentPane().add(hardButton);
 		// Add Buttons to a buttonGroup to make a single selection
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(easyButton);
-		buttonGroup.add(mediumButton);
 		buttonGroup.add(hardButton);
 		// In order to enable/disable the confirmButton. We store the confirmButton into the variable.
 		this.confirmButton = getConfirmButton();
@@ -214,30 +211,12 @@ public class LandingScreen {
 		JRadioButton easyButton = new JRadioButton("Easy");
 		easyButton.setFont(new Font("Serif", Font.PLAIN, 20));
 		easyButton.setForeground(Color.white);
-		easyButton.setBounds(200, 285, 133, 30);
-		easyButton.setHorizontalAlignment(SwingConstants.LEFT);
+		easyButton.setBounds(300, 285, 100, 30);
+		easyButton.setHorizontalAlignment(SwingConstants.CENTER);
 		// actionListener
 		addDiffButtonListener(easyButton);
 
 		return easyButton;
-	}
-
-	/**
-	 * Return a Button whose text is "Medium"
-	 *
-	 * @return a Button whose text is "Medium"
-	 */
-	private JRadioButton getMediumButton() {
-		// create Button
-		JRadioButton mediumButton = new JRadioButton("Medium");
-		mediumButton.setFont(new Font("Serif", Font.PLAIN, 20));
-		mediumButton.setForeground(Color.white);
-		mediumButton.setBounds(333, 285, 133, 30);
-		mediumButton.setHorizontalAlignment(SwingConstants.CENTER);
-		// actionListener
-		addDiffButtonListener(mediumButton);
-
-		return mediumButton;
 	}
 
 	/**
@@ -250,8 +229,8 @@ public class LandingScreen {
 		JRadioButton hardButton = new JRadioButton("Hard");
 		hardButton.setFont(new Font("Serif", Font.PLAIN, 20));
 		hardButton.setForeground(Color.white);
-		hardButton.setBounds(467, 285, 133, 30);
-		hardButton.setHorizontalAlignment(SwingConstants.RIGHT);
+		hardButton.setBounds(400, 285, 100, 30);
+		hardButton.setHorizontalAlignment(SwingConstants.CENTER);
 		// actionListener
 		addDiffButtonListener(hardButton);
 
