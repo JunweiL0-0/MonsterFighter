@@ -89,12 +89,14 @@ public class ChooseMonsterScreen {
 	 */
 	private JFrame getChooseFrame() {
 		JFrame chooseFrame = new JFrame();
-		chooseFrame.setBounds(100, 100, 800, 500);
+		chooseFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		chooseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		chooseFrame.setLocationRelativeTo(null);
+		
 		chooseFrame.getContentPane().setBackground(Color.black);
 		chooseFrame.setLayout(null);
 		chooseFrame.setResizable(false);
+		chooseFrame.pack();
+		chooseFrame.setLocationRelativeTo(null);
 
 		return chooseFrame;
 	}
@@ -176,7 +178,6 @@ public class ChooseMonsterScreen {
 		detail.setText(monster.toString());
 		return detail;
 	}
-
 	/*
 	Listeners go here
 	 */
