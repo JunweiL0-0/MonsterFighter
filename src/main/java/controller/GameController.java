@@ -21,6 +21,8 @@ public class GameController {
     private Generator generator;
     private Shop shop;
     private RandomPicker randomPicker;
+    private String playerName;
+    
     
     /**
      * Constructor for the GameController.
@@ -54,6 +56,10 @@ public class GameController {
 
     public ArrayList<Monster> getInitMonsters() {
     	return generator.getInitialMonsters();
+    }
+    
+    public String getPlayerName() {
+    	return this.playerName;
     }
     
 

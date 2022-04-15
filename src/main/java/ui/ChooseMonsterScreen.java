@@ -17,7 +17,7 @@ import main.java.model.Monster;
 public class ChooseMonsterScreen {
 	private final GameController gc;
 	private ArrayList<Monster> availableMonsters;
-	private ArrayList<Monster> selectedMonsters;
+	public ArrayList<Monster> selectedMonsters;
 	private ArrayList<JToggleButton> monsterButtons;
 	// swing components
 	private JFrame chooseFrame;

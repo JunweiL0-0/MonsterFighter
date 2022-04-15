@@ -12,14 +12,14 @@ import main.java.controller.GameController;
  */
 public class LandingScreen {
 	private final GameController gc;
-	private String playerName;
+	private String playerName;//last char isn't regestering for some reason from textfield
 	private String difficulty;
 	// swing components
 	private JFrame landingFrame;
 	private JButton confirmButton;
 	private JLabel hintMessageLabel;
 
-
+	
 	/**
 	 * LandingScreen's constructor. Launch the application.
 	 *
@@ -184,6 +184,7 @@ public class LandingScreen {
 		userNameTextField.setBounds(200, 175, 400, 50);
 		userNameTextField.setHorizontalAlignment(JTextField.CENTER);
 		userNameTextField.setColumns(10);
+		userNameTextField.setBorder(null);
 		// add listeners
 		addKeyListener(userNameTextField);
 		addFocusListener(userNameTextField);
