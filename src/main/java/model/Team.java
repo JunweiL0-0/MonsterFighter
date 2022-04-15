@@ -23,6 +23,4 @@ public class Team {
     public ArrayList<Monster> getTeamMember() {
         return this.teamMember;
     }
-
-
 }
