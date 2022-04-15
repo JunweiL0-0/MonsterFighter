@@ -39,7 +39,7 @@ public class LandingScreen {
 	private void initialize() {
 		// *******************************************************************
 		// *                       MONSTER FIGHTER                           *
-		// *                      Enter Player Name!                         *
+		// *                      Enter Player Name                          *
 		// *              ----------------------------------                 *
 		// *              |       Enter Player Name        |                 *
 		// *              ----------------------------------                 *
@@ -78,6 +78,8 @@ public class LandingScreen {
 		// Default difficulty
 		easyButton.setSelected(true);
 		this.difficulty = easyButton.getText();
+		// Bind the enter key to "START GAME" button
+		this.landingFrame.getRootPane().setDefaultButton(confirmButton);
 	}
 
 	/**
@@ -127,7 +129,7 @@ public class LandingScreen {
 		JFrame newLandingFrame = new JFrame("MONSTER FIGHTER");
 		newLandingFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		newLandingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		newLandingFrame.getContentPane().setBackground(Color.black);
+		newLandingFrame.getContentPane().setBackground(Color.BLACK);
 		newLandingFrame.setLayout(null);
 		newLandingFrame.setResizable(false);
 		newLandingFrame.pack();
@@ -146,8 +148,8 @@ public class LandingScreen {
 		JLabel title = new JLabel("MONSTER FIGHTER",SwingConstants.CENTER);
 		title.setBounds(20,20,760,80);
 		title.setFont(new Font("Serif", Font.PLAIN, 60));
-		title.setBackground(Color.black);
-		title.setForeground(Color.white);
+		title.setBackground(Color.BLACK);
+		title.setForeground(Color.WHITE);
 
 		return title;
 	}
@@ -159,11 +161,11 @@ public class LandingScreen {
 	 */
 	private JLabel getEnterNameLabel() {
 		// create label
-		JLabel diffLabel = new JLabel("Enter Player Name!", SwingConstants.CENTER);
+		JLabel diffLabel = new JLabel("Enter Player Name", SwingConstants.CENTER);
 		diffLabel.setBounds(200,145,400,30);
 		diffLabel.setFont(new Font("Serif", Font.PLAIN, 18));
-		diffLabel.setBackground(Color.black);
-		diffLabel.setForeground(Color.white);
+		diffLabel.setBackground(Color.BLACK);
+		diffLabel.setForeground(Color.WHITE);
 
 		return diffLabel;
 	}
@@ -176,6 +178,8 @@ public class LandingScreen {
 	private JTextField getUserNameTextField() {
 		// create a textField
 		JTextField userNameTextField = new JTextField(15);
+		// remove border
+		userNameTextField.setBorder(BorderFactory.createEmptyBorder());
 		userNameTextField.setText("Enter Player Name");
 		userNameTextField.setBounds(200, 175, 400, 50);
 		userNameTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -197,8 +201,8 @@ public class LandingScreen {
 		JLabel diffLabel = new JLabel("Choose your difficulty", SwingConstants.CENTER);
 		diffLabel.setBounds(200,255,400,30);
 		diffLabel.setFont(new Font("Serif", Font.PLAIN, 18));
-		diffLabel.setBackground(Color.black);
-		diffLabel.setForeground(Color.white);
+		diffLabel.setBackground(Color.BLACK);
+		diffLabel.setForeground(Color.WHITE);
 
 		return diffLabel;
 	}
@@ -249,7 +253,7 @@ public class LandingScreen {
 		JLabel diffLabel = new JLabel("", SwingConstants.LEFT);
 		diffLabel.setBounds(200,350,400,30);
 		diffLabel.setFont(new Font("Serif", Font.PLAIN, 13));
-		diffLabel.setBackground(Color.black);
+		diffLabel.setBackground(Color.BLACK);
 		diffLabel.setForeground(Color.red);
 
 		return diffLabel;
@@ -264,6 +268,8 @@ public class LandingScreen {
 		// create button
 		JButton newConfirmButton = new JButton();
 		newConfirmButton.setBounds(200, 380, 400, 50);
+		// remove border
+		newConfirmButton.setBorder(BorderFactory.createEmptyBorder());
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">START GAME</p></html>");
 		// as the player haven't entered the player name. We disable the confirm button.

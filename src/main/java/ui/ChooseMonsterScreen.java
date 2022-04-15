@@ -47,7 +47,7 @@ public class ChooseMonsterScreen {
 	 */
 	private void initialize() {
 		// *******************************************************************
-		// *                      CHOOSE YOUR MONSTER!                       * --> Title
+		// *                       CHOOSE MONSTER(S)                         * --> Title
 		// *     ---------- ---------- ---------- ---------- ----------      * -
 		// *     |MONSTER1| |MONSTER2| |MONSTER3| |MONSTER4| |MONSTER5|      *  \
 		// *     ---------- ---------- ---------- ---------- ----------      *   \
@@ -69,6 +69,9 @@ public class ChooseMonsterScreen {
 		// store the confirmButton into a variable
 		this.confirmButton = getConfirmButton();
 		this.chooseFrame.getContentPane().add(this.confirmButton);
+
+		// bind the enter key to "CONFIRM" button
+		this.chooseFrame.getRootPane().setDefaultButton(confirmButton);
 	}
 
 //
@@ -136,11 +139,11 @@ public class ChooseMonsterScreen {
 	 * @return return a new chooseFrame
 	 */
 	private JFrame getChooseFrame() {
-		JFrame chooseFrame = new JFrame();
+		JFrame chooseFrame = new JFrame("MONSTER FIGHTER");
 		chooseFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		chooseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		chooseFrame.getContentPane().setBackground(Color.black);
+		chooseFrame.getContentPane().setBackground(Color.BLACK);
 		chooseFrame.setLayout(null);
 		chooseFrame.setResizable(false);
 		chooseFrame.pack();
@@ -155,11 +158,11 @@ public class ChooseMonsterScreen {
 	 * @return a title
 	 */
 	private JLabel getTitle() {
-		JLabel title = new JLabel("CHOOSE MONSTER(S)!",SwingConstants.CENTER);
+		JLabel title = new JLabel("CHOOSE MONSTER(S)",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
 		title.setFont(new Font("Serif", Font.PLAIN, 60));
-		title.setBackground(Color.black);
-		title.setForeground(Color.white);
+		title.setBackground(Color.BLACK);
+		title.setForeground(Color.WHITE);
 		return title;
 	}
 
@@ -171,7 +174,7 @@ public class ChooseMonsterScreen {
 	private JPanel getButtonDetailPanel() {
 		// create panel
 		JPanel panel = new JPanel();
-		panel.setBackground(Color.black);
+		panel.setBackground(Color.BLACK);
 		panel.setBounds(20,140,760,160);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER,5,0));
 		// add buttons to the panel one by one
@@ -215,9 +218,8 @@ public class ChooseMonsterScreen {
 		Monster monster = this.availableMonsters.get(indexInList);
 		JTextArea detail = new JTextArea();
 		detail.setPreferredSize(new Dimension(144,100));
-//		detail.setBounds(0,370,800,150);
-		detail.setForeground(Color.white);
-		detail.setBackground(Color.black);
+		detail.setForeground(Color.WHITE);
+		detail.setBackground(Color.BLACK);
 		detail.setBorder(null);
 		detail.setText(constructMonsterDetail(monster));
 		return detail;
@@ -228,7 +230,7 @@ public class ChooseMonsterScreen {
 		JLabel diffLabel = new JLabel("", SwingConstants.LEFT);
 		diffLabel.setBounds(200,350,400,30);
 		diffLabel.setFont(new Font("Serif", Font.PLAIN, 13));
-		diffLabel.setBackground(Color.black);
+		diffLabel.setBackground(Color.BLACK);
 		diffLabel.setForeground(Color.red);
 
 		return diffLabel;
@@ -243,6 +245,8 @@ public class ChooseMonsterScreen {
 		// create button
 		JButton newConfirmButton = new JButton();
 		newConfirmButton.setBounds(200, 380, 400, 50);
+		// remove border
+		newConfirmButton.setBorder(BorderFactory.createEmptyBorder());
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">CONFIRM</p></html>");
 		// as the player haven't selected anything. We disable the confirm button.
