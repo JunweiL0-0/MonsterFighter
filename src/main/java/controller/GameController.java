@@ -17,9 +17,9 @@ public class GameController {
     // classes
 	private ListGenerator listGenerator;
     private ItemDataStorage itemDataStorage;
-    private Generator generator;
+    private final Generator generator;
     private Shop shop;
-    private Team team;
+    private final Team team;
     private RandomPicker randomPicker;
     // variables
     private String playerName;
@@ -44,22 +44,42 @@ public class GameController {
     	launchLandingScreen();
     }
 
+    /**
+     * Launch a new landingScreen
+     */
     public void launchLandingScreen() {
         new LandingScreen(this);
     }
 
+    /**
+     * Launch a new chooseMonsterScreen
+     */
     public void launchChooseMonsterScreen() {
         new ChooseMonsterScreen(this);
     }
 
+    /**
+     * Launch a new mainScreen
+     */
     public void launchMainScreen() {
         new MainScreen(this);
     }
 
+    /**
+     * Return a list of initialMonster for the player.
+     * This function is designed for the chooseMonsterScreen.
+     *
+     * @return a list of initialMonster for the player.
+     */
     public ArrayList<Monster> getInitMonsters() {
     	return this.generator.getInitialMonsters();
     }
 
+    /**
+     * Add a new monster into the team. A TeamIsAlreadyFullException err will be thrown if the team is full.
+     *
+     * @param monster a monster instance
+     */
     public void addMonsterToTeam(Monster monster) {
         try {
             this.team.addMonsterToTeam(monster);
@@ -71,10 +91,21 @@ public class GameController {
     /*
     getters go here
      */
+
+    /**
+     * Return the playerName stored in the gameController.
+     *
+     * @return the playerName stored in the gameController.
+     */
     public String getPlayerName() {
         return this.playerName;
     }
 
+    /**
+     * Return the difficulty stored in the gameController.
+     *
+     * @return the difficulty stored in the gameController.
+     */
     public String getDifficulty() {
         return this.difficulty;
     }
@@ -82,10 +113,21 @@ public class GameController {
     /*
     setters go here
      */
+
+    /**
+     * Store the playerName in the gameController.
+     *
+     * @param playerName a string represent the player's name.
+     */
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 
+    /**
+     * Store the difficulty in the gameController.
+     *
+     * @param difficulty a string represent the difficulty level. (easy, hard)
+     */
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
