@@ -269,8 +269,6 @@ public class LandingScreen {
 		// create button
 		JButton newConfirmButton = new JButton();
 		newConfirmButton.setBounds(200, 380, 400, 50);
-		// remove border
-		newConfirmButton.setBorder(BorderFactory.createEmptyBorder());
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">START GAME</p></html>");
 		// as the player haven't entered the player name. We disable the confirm button.
@@ -290,7 +288,11 @@ public class LandingScreen {
 	 * @param button confirm button on the landing screen
 	 */
 	private void addConfirmButtonListener(JButton button) {
-		button.addActionListener(actionEvent -> switchToChooseMonsterScreen());
+		button.addActionListener(actionEvent -> {
+			storePlayerName();
+			storeDifficulty();
+			switchToChooseMonsterScreen();
+		});
 	}
 
 	/**
@@ -368,5 +370,23 @@ public class LandingScreen {
 	private void switchToChooseMonsterScreen() {
 		gc.launchChooseMonsterScreen();
 		closeAndDestoryCurrentScreen();
+	}
+
+	/**
+	 * This function will store the playerName into the gameController.
+	 * This function will be triggered by the confirm button's actionListener.
+	 */
+	private void storePlayerName() {
+		// this.playerName will be set by the textField's keyListener.
+		gc.setPlayerName(this.playerName);
+	}
+
+	/**
+	 * This function will store the difficulty into the gameController.
+	 * This function will be triggered by the confirm button;'s actionListener.
+	 */
+	private void storeDifficulty() {
+		// this.difficulty will be set by the button's actionListener.
+		gc.setDifficulty(this.difficulty);
 	}
 }

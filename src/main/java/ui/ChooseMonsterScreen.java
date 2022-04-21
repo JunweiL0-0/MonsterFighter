@@ -69,19 +69,12 @@ public class ChooseMonsterScreen {
 		// store the confirmButton into a variable
 		this.confirmButton = getConfirmButton();
 		this.chooseFrame.getContentPane().add(this.confirmButton);
+		// go back button
+		this.chooseFrame.getContentPane().add(getGoBackButton());
 
 		// bind the enter key to "CONFIRM" button
 		this.chooseFrame.getRootPane().setDefaultButton(confirmButton);
 	}
-
-//
-//	private boolean isMaxSelections() {
-//		return this.availableMonsters.size() == 3;
-//	}
-//
-//	private void addMonsterToList(int selectedMonsterId) {
-//		this.selectedMonsters.add(this.availableMonsters.get(selectedMonsterId));
-//	}
 
 	public void show(Boolean visible) {
 		this.chooseFrame.setVisible(visible);
@@ -245,8 +238,6 @@ public class ChooseMonsterScreen {
 		// create button
 		JButton newConfirmButton = new JButton();
 		newConfirmButton.setBounds(200, 380, 400, 50);
-		// remove border
-		newConfirmButton.setBorder(BorderFactory.createEmptyBorder());
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">CONFIRM</p></html>");
 		// as the player haven't selected anything. We disable the confirm button.
@@ -257,6 +248,23 @@ public class ChooseMonsterScreen {
 		return newConfirmButton;
 	}
 
+	/**
+	 *
+	 */
+	private JButton getGoBackButton() {
+		// create button
+		JButton goBackBtn = new JButton();
+		goBackBtn.setBounds(20, 380, 70, 50);
+		// setText via html so that we can see the text even the button is being disabled
+		goBackBtn.setText("Back");
+		goBackBtn.setBackground(Color.GRAY);
+		goBackBtn.setForeground(Color.WHITE);
+		// confirmButton listener
+		addGoBackButtonListener(goBackBtn);
+
+		return goBackBtn;
+	}
+
 	/*
 	Listeners go here
 	 */
@@ -265,6 +273,10 @@ public class ChooseMonsterScreen {
 	 */
 	private void addConfirmButtonListener(JButton button) {
 		button.addActionListener(actionEvent -> switchToMainScreen());
+	}
+
+	private void addGoBackButtonListener(JButton btn) {
+		btn.addActionListener(actionEvent -> switchToLandingScreen());
 	}
 
 	/*
@@ -280,6 +292,11 @@ public class ChooseMonsterScreen {
 
 	private void switchToMainScreen() {
 		this.gc.launchMainScreen();
+		closeAndDestroyCurrentScreen();
+	}
+
+	private void switchToLandingScreen() {
+		this.gc.launchLandingScreen();
 		closeAndDestroyCurrentScreen();
 	}
 }
