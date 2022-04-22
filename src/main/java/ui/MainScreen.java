@@ -18,8 +18,13 @@ public class MainScreen {
 	private JPanel centerPanel[] = new JPanel[15];
 	private JPanel teamPanel[] = new JPanel[4];
 	private JPanel monsterPanel[] = new JPanel[4];
-
-	//Need to only be able to press one togglebutton at a time
+	private ButtonGroup topGroup;
+	
+//	centerPanel[1]== main center panel
+//	centerPanel[2]== bagPanel
+//	centerPanel[3]== shopPanel
+//	centerPanel[4]== settingsPanel
+	
 
 	public MainScreen(GameController gc) {
 		this.gc = gc;
@@ -36,7 +41,7 @@ public class MainScreen {
 		
 		this.mainFrame.getContentPane().add(getLeftPanel());
 
-		this.mainFrame.getContentPane().add(getCenterPanel());
+		this.mainFrame.getContentPane().add(getMainPanel());
 		
 		this.mainFrame.getContentPane().add(continueButton());
 		
@@ -99,12 +104,23 @@ public class MainScreen {
 		daysLeftLabel.setBackground(Color.BLACK);
 		daysLeftLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
 
-
+		
+		JToggleButton bagButton = getBagButton();
+		JToggleButton shopButton = getShopButton();
+		JToggleButton settingsButton = getSettingsButton();
+		
+		topGroup = new ButtonGroup();
+		topGroup.add(bagButton);
+		topGroup.add(shopButton);
+		topGroup.add(settingsButton);
+		
+		
 		newTopPanel.add(topLeftPanel);
-		newTopPanel.add(getBagButton());
-		newTopPanel.add(getShopButton());
-		newTopPanel.add(getSettingsButton());
+		newTopPanel.add(bagButton);
+		newTopPanel.add(shopButton);
+		newTopPanel.add(settingsButton);
 		newTopPanel.add(daysLeftLabel);
+		
 		return newTopPanel;
 	}
 	
@@ -189,11 +205,21 @@ public class MainScreen {
 		return startingPanel;
 	}
 
-	private JPanel getCenterPanel() {
+	private JPanel getMainPanel() {
 		centerPanel[1] = new JPanel();
-		centerPanel[1].setBackground(Color.black);
+		centerPanel[1].setLayout(null);
+		centerPanel[1].setBackground(Color.BLACK);
 		centerPanel[1].setBounds(120,70,560,280);
-
+		
+		JLabel mainPanel = new JLabel("MAIN",SwingConstants.CENTER);
+		mainPanel.setFont(new Font("Serif", Font.PLAIN, 30));
+		mainPanel.setBounds(230, 0, 100, 35);
+		mainPanel.setForeground(Color.white);
+		mainPanel.setBackground(Color.BLACK);
+		mainPanel.setOpaque(true);
+		
+		centerPanel[1].add(mainPanel);
+		
 		return centerPanel[1];
 	}
 
@@ -203,7 +229,7 @@ public class MainScreen {
 		continueButton.setBounds(540, 455, 120, 25);
 		continueButton.setBackground(Color.white);
 		continueButton.setForeground(Color.BLACK);
-
+		
 		return continueButton;
 	}
 
@@ -214,27 +240,22 @@ public class MainScreen {
 		bagButton.setForeground(Color.white);
 		bagButton.setBackground(Color.BLACK);
 		bagButton.setFocusable(false);
-		bagButton.setOpaque(true);
 		bagButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		bagButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
 				if(e.getStateChange() == ItemEvent.SELECTED) {
-					bagButton.setBackground(Color.white);
-					bagButton.setForeground(Color.BLACK);
 					centerPanel[2] = bagPanel();
 					mainFrame.getContentPane().add(centerPanel[2]);
 					centerPanel[2].setVisible(true);
-					centerPanel[2].setOpaque(true);
 					centerPanel[1].setVisible(false);
+				
 				}
-				else {
-					bagButton.setForeground(Color.white);
-					bagButton.setBackground(Color.BLACK);
-					mainFrame.getContentPane().remove(centerPanel[2]);
+				else if (e.getStateChange() == ItemEvent.DESELECTED) {
+					centerPanel[2].setVisible(false);
 					centerPanel[1].setVisible(true);
 				}
+				
 			}
 		});
 
@@ -253,20 +274,15 @@ public class MainScreen {
 		shopButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
 				if(e.getStateChange() == ItemEvent.SELECTED) {
-					shopButton.setBackground(Color.white);
-					shopButton.setForeground(Color.BLACK);
 					centerPanel[3] = shopPanel();
 					mainFrame.getContentPane().add(centerPanel[3]);
 					centerPanel[3].setVisible(true);
-					centerPanel[3].setOpaque(true);
 					centerPanel[1].setVisible(false);
+				
 				}
-				else {
-					shopButton.setForeground(Color.white);
-					shopButton.setBackground(Color.BLACK);
-					mainFrame.getContentPane().remove(centerPanel[3]);
+				else if (e.getStateChange() == ItemEvent.DESELECTED) {
+					centerPanel[3].setVisible(false);
 					centerPanel[1].setVisible(true);
 				}
 			}
@@ -276,7 +292,7 @@ public class MainScreen {
 	}
 
 
-	public JToggleButton getSettingsButton() {
+	private JToggleButton getSettingsButton() {
 		JToggleButton settingsButton = new JToggleButton();
 		settingsButton.setText("Settings");
 		settingsButton.setFont(new Font("Serif", Font.PLAIN, 25));
@@ -288,20 +304,15 @@ public class MainScreen {
 		settingsButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
 				if(e.getStateChange() == ItemEvent.SELECTED) {
-					settingsButton.setBackground(Color.white);
-					settingsButton.setForeground(Color.BLACK);
 					centerPanel[4] = settingsPanel();
 					mainFrame.getContentPane().add(centerPanel[4]);
 					centerPanel[4].setVisible(true);
-					centerPanel[4].setOpaque(true);
 					centerPanel[1].setVisible(false);
+				
 				}
-				else {
-					settingsButton.setForeground(Color.white);
-					settingsButton.setBackground(Color.BLACK);
-					mainFrame.getContentPane().remove(centerPanel[4]);
+				else if (e.getStateChange() == ItemEvent.DESELECTED) {
+					centerPanel[4].setVisible(false);
 					centerPanel[1].setVisible(true);
 				}
 			}
@@ -311,51 +322,86 @@ public class MainScreen {
 	}
 	
 	//return center bag panel
-	public JPanel bagPanel() {
+	private JPanel bagPanel() {
 		JPanel bagPanel = new JPanel();
-		bagPanel.setLayout(new GridLayout(1,4));
-		bagPanel.setBackground(Color.GREEN);
+		bagPanel.setLayout(null);
+		bagPanel.setBackground(Color.BLACK);
 		bagPanel.setBounds(120,70,560,280);
 		
-		JLabel monsters = new JLabel("Bag");//not showing
-		monsters.setForeground(Color.white);
-		monsters.setBackground(Color.WHITE);
+		JLabel bagTitle = new JLabel("BAG",SwingConstants.CENTER);
+		bagTitle.setFont(new Font("Serif", Font.PLAIN, 30));
+		bagTitle.setBounds(230, 0, 100, 35);
+		bagTitle.setForeground(Color.white);
+		bagTitle.setBackground(Color.BLACK);
+		bagTitle.setOpaque(true);
 		
-		bagPanel.add(monsters);
+		bagPanel.add(bagTitle);
+		bagPanel.add(backButton());
 
 		return bagPanel;
 	}
 
 	//return the center shop panel
-	public JPanel shopPanel() {
+	private JPanel shopPanel() {
 		JPanel shopPanel = new JPanel();
-		shopPanel.setLayout(new GridLayout(1,4));
-		shopPanel.setBackground(Color.RED);
+		shopPanel.setLayout(null);
+		shopPanel.setBackground(Color.BLACK);
 		shopPanel.setBounds(120,70,560,280);
 		
-		JLabel items = new JLabel("Shop");//not showing
-		items.setForeground(Color.white);
-		items.setBackground(Color.WHITE);
-
-		shopPanel.add(items);
+		JLabel shopTitle = new JLabel("SHOP",SwingConstants.CENTER);
+		shopTitle.setFont(new Font("Serif", Font.PLAIN, 30));
+		shopTitle.setBounds(230, 0, 100, 35);
+		shopTitle.setForeground(Color.white);
+		shopTitle.setBackground(Color.BLACK);
+		shopTitle.setOpaque(true);
+		
+		shopPanel.add(shopTitle);
+		shopPanel.add(backButton());
 
 		return shopPanel;
 	}
 	
 	//return the center setting panel
-	public JPanel settingsPanel() {
+	private JPanel settingsPanel() {
 		JPanel settingsPanel = new JPanel();
-		settingsPanel.setLayout(new GridLayout(4,1));
-		settingsPanel.setBackground(Color.YELLOW);
+		settingsPanel.setLayout(null);
+		settingsPanel.setBackground(Color.BLACK);
 		settingsPanel.setBounds(120,70,560,280);
 
-		JLabel items = new JLabel("Settings");//not showing
-		items.setForeground(Color.white);
-		items.setBackground(Color.WHITE);
-
-		settingsPanel.add(items);
-
-
+		JLabel settingsTitle = new JLabel("SETTINGS",SwingConstants.CENTER);
+		settingsTitle.setFont(new Font("Serif", Font.PLAIN, 30));
+		settingsTitle.setBounds(205, 0, 150, 35);
+		settingsTitle.setForeground(Color.white);
+		settingsTitle.setBackground(Color.BLACK);
+		settingsTitle.setOpaque(true);
+		
+		settingsPanel.add(settingsTitle);
+		settingsPanel.add(backButton());
+		
 		return settingsPanel;
 	}
+	
+	private JButton backButton() {
+		JButton backButton = new JButton();
+		backButton.setText("Back");
+		backButton.setFont(new Font("Serif", Font.PLAIN, 15));
+		backButton.setForeground(Color.white);
+		backButton.setBounds(15,250,50,20);
+		backButton.setBackground(Color.BLACK);
+		backButton.setFocusable(false);
+		backButton.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		backButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == backButton) {
+					topGroup.clearSelection();
+				}
+			}
+		});
+		
+		return backButton;
+		
+		
+	}
+	
+	
 }
