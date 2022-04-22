@@ -11,7 +11,6 @@ import static java.lang.Math.max;
 public class GameItem {
     private String name;
     private int price;
-    private int refundPrice;
 
 
     /**
@@ -22,7 +21,6 @@ public class GameItem {
     public GameItem(String name, int price) {
         this.name = name;
         this.price = price;
-        initRefundPrice(price);
     }
 
     /* getters go here */
@@ -50,7 +48,7 @@ public class GameItem {
      * @return Item's refund price if the user wants to refund this item
      */
     public int getRefundPrice() {
-        return this.refundPrice;
+        return max(0, this.price-50);
     }
 
     /* setters go here */
@@ -70,16 +68,5 @@ public class GameItem {
      */
     public void setPrice(int price) {
         this.price = price;
-    }
-
-    /* private functions */
-    /**
-     * This function will init the refundPrice for each single item if the user wants to refund the item.
-     * The refundPrice is equals to price-50. If item's price is lower than 50, the refundPrice will be set to 0;
-     *
-     * @param price item's sell price
-     */
-    private void initRefundPrice(int price) {
-        this.refundPrice = max(0, this.price-50);
     }
 }

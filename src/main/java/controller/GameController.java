@@ -72,7 +72,7 @@ public class GameController {
      * @return a list of initialMonster for the player.
      */
     public ArrayList<Monster> getInitMonsters() {
-    	return this.generator.getInitialMonsters();
+    	return this.generator.generateInitialMonsters();
     }
 
     /**

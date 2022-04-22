@@ -56,7 +56,7 @@ public class Generator {
      *
      * @return a list of initMonster
      */
-    public ArrayList<Monster> getInitialMonsters() {
+    public ArrayList<Monster> generateInitialMonsters() {
         ArrayList<Monster> initMonsters = new ArrayList<>();
         Monster monster1 = new Monster("Monster1", 100, 500, 200, 1);
         Monster monster2 = new Monster("Monster2", 100, 550, 150, 1);

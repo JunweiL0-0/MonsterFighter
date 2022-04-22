@@ -47,7 +47,7 @@ public class Shop {
      * @return a GameItem instance
      * @see GameItem
      */
-    public GameItem purchaseItem(int index) {
+    public GameItem sellItem(int index) {
         GameItem purchasedItem = this.itemForSell.get(index);
         this.itemForSell.remove(index);
         return purchasedItem;
