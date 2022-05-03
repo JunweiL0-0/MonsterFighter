@@ -5,9 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.*;
-
 
 import main.java.controller.GameController;
 
@@ -26,10 +24,9 @@ public class MainScreen {
 		initialize();
 
 		mainFrame.setVisible(true);
-		
 	}
+
 	public void initialize() {
-		
 		this.mainFrame = getMainFrame();
 		
 		this.mainFrame.getContentPane().add(getTopPanel());
@@ -37,14 +34,12 @@ public class MainScreen {
 		this.mainFrame.getContentPane().add(getLeftPanel());
 
 		this.mainFrame.getContentPane().add(getCenterPanel());
-		
-		this.mainFrame.getContentPane().add(continueButton());
-		
+
 		this.mainFrame.getContentPane().add(getRightPanel());
 		
 		this.mainFrame.getContentPane().add(getBottomPanel());
 
-
+		this.mainFrame.getContentPane().add(continueButton());
 
 
 //		this.mainFrame.getContentPane().add(continueButton());
@@ -354,7 +349,6 @@ public class MainScreen {
 		items.setBackground(Color.WHITE);
 
 		settingsPanel.add(items);
-
 
 		return settingsPanel;
 	}
