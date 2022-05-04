@@ -3,6 +3,8 @@ package main.java.ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import main.java.controller.GameController;
 
@@ -188,6 +190,7 @@ public class LandingScreen {
 		// add listeners
 		addKeyListener(userNameTextField);
 		addFocusListener(userNameTextField);
+		addDocumentListener(userNameTextField);
 
 		return userNameTextField;
 	}
@@ -220,6 +223,7 @@ public class LandingScreen {
 		easyButton.setForeground(Color.BLACK);
 		easyButton.setBounds(300, 285, 100, 30);
 		easyButton.setHorizontalAlignment(SwingConstants.CENTER);
+		easyButton.setFocusable(false);
 		// actionListener
 		addDiffButtonListener(easyButton);
 
@@ -238,6 +242,7 @@ public class LandingScreen {
 		hardButton.setForeground(Color.BLACK);
 		hardButton.setBounds(400, 285, 100, 30);
 		hardButton.setHorizontalAlignment(SwingConstants.CENTER);
+		hardButton.setFocusable(false);
 		// actionListener
 		addDiffButtonListener(hardButton);
 
@@ -305,13 +310,30 @@ public class LandingScreen {
 		textField.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				if(!(Character.isAlphabetic(c) || (c==KeyEvent.VK_BACK_SPACE) || c==KeyEvent.VK_DELETE )) {
+				if (!(Character.isAlphabetic(c) || (c == KeyEvent.VK_BACK_SPACE) || c == KeyEvent.VK_DELETE)) {
 					e.consume();
 					setHintMessage("You kidding me?! Only alphabet characters!!");
 				}
 				if (textField.getText().length() >= 15 ) {
 					e.consume();
 				}
+			}
+		});
+	}
+
+	private void addDocumentListener(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				check();
+			}
+			public void removeUpdate(DocumentEvent e) {
+				check();
+			}
+			public void insertUpdate(DocumentEvent e) {
+				check();
+			}
+
+			public void check() {
 				if (3 <= textField.getText().length() && textField.getText().length() <= 15) {
 					enableConfirmButton();
 					playerName = textField.getText();
