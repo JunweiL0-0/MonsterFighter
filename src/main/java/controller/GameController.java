@@ -9,6 +9,7 @@ import main.java.utilities.ListGenerator;
 import main.java.utilities.RandomPicker;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A java.controller handling the game logic.
@@ -24,6 +25,10 @@ public class GameController {
     // variables
     private String playerName;
     private String difficulty;
+    private int currentDay;
+    private int totalDay;
+    private int gold;
+    private int point;
 
     /**
      * Constructor for the GameController.
@@ -62,6 +67,9 @@ public class GameController {
      * Launch a new mainScreen
      */
     public void launchMainScreen() {
+        initCurrAndTotalDay();
+        initGold();
+        initPoint();
         new MainScreen(this);
     }
 
@@ -88,6 +96,55 @@ public class GameController {
         }
     }
 
+    public void incrementDay() {
+        if (this.currentDay <= this.totalDay) {
+            this.currentDay += 1;
+        }
+    }
+
+    private void initCurrAndTotalDay() {
+        this.currentDay = 1;
+        if (isEasyMode()) {
+            this.totalDay = 10;
+        } else if (isHardMode()) {
+            this.totalDay = 5;
+        }
+    }
+
+    private void initGold() {
+        if (isEasyMode()) {
+            this.gold = 100;
+        } else if (isHardMode()) {
+            this.gold = 200;
+        }
+    }
+
+    private void initPoint() {
+        if (isEasyMode()) {
+            this.point = 500;
+        } else if (isHardMode()) {
+            this.point = 600;
+        }
+    }
+
+    /**
+     * Return true if the game is in easy mode. False otherwise.
+     *
+     * @return true if game is in easy mode. False otherwise.
+     */
+    private boolean isEasyMode() {
+        return Objects.equals(this.difficulty, "Easy");
+    }
+
+    /**
+     * Return true if the game is in hard mode. False otherwise.
+     *
+     * @return true if game is in hard mode. False otherwise.
+     */
+    private boolean isHardMode() {
+        return Objects.equals(this.difficulty, "Hard");
+    }
+
     /*
     getters go here
      */
@@ -108,6 +165,22 @@ public class GameController {
      */
     public String getDifficulty() {
         return this.difficulty;
+    }
+
+    public int getGold() {
+        return this.gold;
+    }
+
+    public int getPoint() {
+        return this.point;
+    }
+
+    public int getCurrentDay() {
+        return this.currentDay;
+    }
+
+    public int getTotalDay() {
+        return this.totalDay;
     }
 
     /*
@@ -131,4 +204,23 @@ public class GameController {
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
+
+    /**
+     * Store the gold in the gameController.
+     *
+     * @param gold an integer represent the current gold the player has.
+     */
+    public void setGold(int gold) {
+        this.gold = gold;
+    }
+
+    /**
+     * Store the point in the gameController.
+     *
+     * @param point a integer represent the current point the player has.
+     */
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
 }

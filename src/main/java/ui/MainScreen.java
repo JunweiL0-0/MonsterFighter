@@ -56,7 +56,7 @@ public class MainScreen {
 	}
 	
 	private JFrame getMainFrame() {
-		JFrame newMainFrame = new JFrame();
+		JFrame newMainFrame = new JFrame("MONSTER FIGHTER");
 		newMainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		newMainFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		newMainFrame.getContentPane().setBackground(Color.black);
@@ -83,13 +83,13 @@ public class MainScreen {
 		topLeftPanel.setLayout(new GridLayout(2,1));
 		
 		JLabel playerName = new JLabel("", SwingConstants.CENTER);
-		playerName.setText("Get Name Function here");
+		playerName.setText("Player: " + this.gc.getPlayerName());
 		playerName.setFont(new Font("Serif", Font.PLAIN, 15));
 		playerName.setForeground(Color.white);
 
 		goldPoints = new JLabel("", SwingConstants.CENTER);
 		goldPoints.setFont(new Font("Serif", Font.PLAIN, 15));
-		goldPoints.setText("get curr gold and points func here");
+		goldPoints.setText("Gold: " + this.gc.getGold() + " Point: " + this.gc.getPoint());
 		goldPoints.setForeground(Color.white);
 
 		topLeftPanel.add(playerName);
@@ -98,7 +98,7 @@ public class MainScreen {
 
 
 		JLabel daysLeftLabel = new JLabel("",SwingConstants.CENTER);
-		daysLeftLabel.setText("Days Left: 1/15");
+		daysLeftLabel.setText(String.format("Days left: %d/%d", this.gc.getCurrentDay(), this.gc.getTotalDay()));
 		daysLeftLabel.setFont(new Font("Serif",Font.PLAIN,15));
 		daysLeftLabel.setForeground(Color.white);
 		daysLeftLabel.setBackground(Color.BLACK);
@@ -127,7 +127,7 @@ public class MainScreen {
 	private JPanel getLeftPanel() {
 			
 		JPanel leftPanel = new JPanel();
-		leftPanel.setBounds(0,60,120,440);
+		leftPanel.setBounds(0,70,120,430);
 		leftPanel.setLayout(new GridLayout(teamPanel.length,1));
 		leftPanel.setBackground(Color.black);
 		leftPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 3, 3, Color.WHITE));
