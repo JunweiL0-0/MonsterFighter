@@ -8,6 +8,7 @@ public class Monster extends GameItem {
     private int currentHealth;
     private int damage;
     private int level;
+    private int rarity;
 
 
     /**
@@ -19,13 +20,15 @@ public class Monster extends GameItem {
      * @param maxHealth an integer representing the monster's maxHealth
      * @param damage an integer representing the monster's damage
      * @param level an integer representing the monster's level
+     * @param rarity an integer representing the monster's rarity
      */
-    public Monster(String name, int price, int maxHealth, int damage, int level) {
+    public Monster(String name, int price, int maxHealth, int damage, int level, int rarity) {
         super(name, price);
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.damage = damage;
         this.level = level;
+        this.rarity = rarity;
     }
 
     /**
@@ -95,16 +98,11 @@ public class Monster extends GameItem {
 
     /**
      * A getter function for the monster's property "rarity".
-     * This function will calculate and return current monster's rarity.
      *
      * @return an integer which representing current monster's rarity.
      */
     public int getRarity() {
-        if (this.damage > 200) {
-            return 5;
-        } else {
-            return 1;
-        }
+        return this.rarity;
     }
 
 }

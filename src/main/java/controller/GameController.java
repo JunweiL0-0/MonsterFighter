@@ -1,12 +1,9 @@
 package main.java.controller;
 
 import main.java.model.*;
-import main.java.model.exception.TeamIsAlreadyFullException;
 import main.java.ui.ChooseMonsterScreen;
 import main.java.ui.LandingScreen;
 import main.java.ui.MainScreen;
-import main.java.utilities.ListGenerator;
-import main.java.utilities.RandomPicker;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -16,12 +13,9 @@ import java.util.Objects;
  */
 public class GameController {
     // classes
-	private ListGenerator listGenerator;
-    private ItemDataStorage itemDataStorage;
-    private final Generator generator;
+    private final MonsterGenerator monsterGenerator;
     private Shop shop;
     private final Team team;
-    private RandomPicker randomPicker;
     // variables
     private String playerName;
     private String difficulty;
@@ -34,11 +28,8 @@ public class GameController {
      * Constructor for the GameController.
      */
     public GameController() {
-        this.listGenerator = new ListGenerator();
-        this.randomPicker = new RandomPicker();
-        this.itemDataStorage = new ItemDataStorage(this.listGenerator);
-        this.generator = new Generator(this.itemDataStorage, this.randomPicker);
-        this.shop = new Shop(this.generator);
+        this.monsterGenerator = new MonsterGenerator();
+        this.shop = new Shop(this.monsterGenerator);
         this.team = new Team();
     }
 
@@ -80,7 +71,7 @@ public class GameController {
      * @return a list of initialMonster for the player.
      */
     public ArrayList<Monster> getInitMonsters() {
-    	return this.generator.generateInitialMonsters();
+    	return this.monsterGenerator.generateInitialMonsters();
     }
 
     /**
@@ -89,10 +80,9 @@ public class GameController {
      * @param monster a monster instance
      */
     public void addMonsterToTeam(Monster monster) {
-        try {
-            this.team.addMonsterToTeam(monster);
-        } catch (TeamIsAlreadyFullException err) {
-            System.out.println("Team is full");
+        boolean added = this.team.addMonsterToTeam(monster);
+        if (!added) {
+            System.out.println("Can not add monster into team");
         }
     }
 

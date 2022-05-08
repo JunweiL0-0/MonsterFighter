@@ -7,16 +7,16 @@ import java.util.ArrayList;
  */
 public class Shop {
     private ArrayList<GameItem> itemForSell;
-    private Generator generator;
+    private MonsterGenerator generator;
 
 
     /**
      * Constructor for Shop
      *
      * @param generator a Generator instance
-     * @see Generator
+     * @see MonsterGenerator
      */
-    public Shop(Generator generator) {
+    public Shop(MonsterGenerator generator) {
         this.generator = generator;
         this.itemForSell = new ArrayList<>();
         reloadMonsters();

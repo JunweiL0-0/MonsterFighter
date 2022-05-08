@@ -1,8 +1,5 @@
 package main.java.model;
 
-import main.java.model.exception.TeamIsAlreadyFullException;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,20 +21,20 @@ public class Team {
     }
 
     /**
-     * Add a new monster to the team. An TeamIsAlreadyFullException will be thrown if the team is full.
+     * Add a new monster to the team.
      *
      * @param newMonster a monster instance
-     * @throws TeamIsAlreadyFullException if team is already full.
      */
-    public void addMonsterToTeam(Monster newMonster) throws TeamIsAlreadyFullException {
+    public boolean addMonsterToTeam(Monster newMonster) {
         if(teamIsFull()) {
-            throw new TeamIsAlreadyFullException("Team is already full");
+            return false;
         } else {
             for (int i=0; i<this.maxTeamMember; i++) {
                 if (!teamMember.containsKey(i)) {
                     teamMember.put(i, newMonster);
                 }
             }
+            return true;
         }
     }
 

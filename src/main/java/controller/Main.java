@@ -1,6 +1,8 @@
 package main.java.controller;
 
 
+import main.java.model.MonsterGenerator;
+
 import javax.swing.*;
 
 /**
@@ -19,6 +21,6 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-			new GameController().startGame();
+		new GameController().startGame();
 		}
 }
