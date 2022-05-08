@@ -1,5 +1,8 @@
 package main.java.model;
 
+/**
+ * MonsterBuilderImpl handle the creation of the Monster through exposed methods by implementing the MonsterBuilder interface
+ */
 public class MonsterBuilderImpl implements MonsterBuilder {
     private String name;
     private int price;

@@ -1,15 +1,15 @@
 package main.java.controller;
 
 import main.java.model.*;
-import main.java.ui.ChooseMonsterScreen;
-import main.java.ui.LandingScreen;
-import main.java.ui.MainScreen;
+import main.java.view.ChooseMonsterScreen;
+import main.java.view.LandingScreen;
+import main.java.view.MainScreen;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * A java.controller handling the game logic.
+ * A java controller handling the game logic.
  */
 public class GameController {
     // classes

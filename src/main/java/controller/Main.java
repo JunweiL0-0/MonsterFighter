@@ -1,8 +1,6 @@
 package main.java.controller;
 
 
-import main.java.model.MonsterGenerator;
-
 import javax.swing.*;
 
 /**

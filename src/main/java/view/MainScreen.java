@@ -1,4 +1,4 @@
-package main.java.ui;
+package main.java.view;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,7 +28,7 @@ public class MainScreen {
 		this.gc = gc;
 		initialize();
 
-		mainFrame.setVisible(true);
+		show(true);
 	}
 
 	public void initialize() {
@@ -47,9 +47,6 @@ public class MainScreen {
 		this.mainFrame.getContentPane().add(getBottomPanel());
 
 		this.mainFrame.getContentPane().add(continueButton());
-
-
-//		this.mainFrame.getContentPane().add(continueButton());
 	}
 	
 	private JFrame getMainFrame() {
@@ -399,6 +396,8 @@ public class MainScreen {
 		
 		
 	}
-	
-	
+
+	public void show(boolean val) {
+		this.mainFrame.setVisible(val);
+	}
 }

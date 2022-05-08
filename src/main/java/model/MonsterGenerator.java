@@ -4,14 +4,15 @@ import java.util.*;
 
 
 /**
- * The class is used for (randomly) generating gameItem base on the data provided by ItemDataStorage.
- *
+ * The class is used for (randomly) generating monster(s)
  */
 public class MonsterGenerator {
     // {rarity: [name1, name2], rarity2: .... }
     private final Map<Integer, List<String>> mRarityAndName;
 
-
+    /**
+     * MonsterGenerator's constructor. Set monster's rarity and name.
+     */
     public MonsterGenerator() {
         this.mRarityAndName = new HashMap<>();
         this.mRarityAndName.put(1, Arrays.asList("Monster1", "Monster11"));

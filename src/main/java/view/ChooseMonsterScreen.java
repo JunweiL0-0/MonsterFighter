@@ -1,4 +1,4 @@
-package main.java.ui;
+package main.java.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
