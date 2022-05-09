@@ -3,7 +3,6 @@ package main.java.view;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
-
 import main.java.controller.GameController;
 
 /**
@@ -52,10 +51,10 @@ public class MainScreen {
 		this.mainFrame.getContentPane().add(getContinueButton());
 		this.mainFrame.getContentPane().add(getBottomPanel());
 		// panels which will be shown in the center
-		this.mainPanel = getMainPanel(); // default shown panel
-		this.bagPanel = getBagPanel(); // this panel will be hided by default
-		this.shopPanel = getShopPanel(); // this panel will be hided by default
-		this.settingsPanel = getSettingsPanel(); // this panel will be hided by default
+		this.mainPanel = getMainPanel(); // visible by default
+		this.bagPanel = getBagPanel(); // not visible by default
+		this.shopPanel = getShopPanel(); // not visible by default
+		this.settingsPanel = getSettingsPanel(); // not visible by default
 		this.mainFrame.getContentPane().add(this.mainPanel);
 		this.mainFrame.getContentPane().add(this.bagPanel);
 		this.mainFrame.getContentPane().add(this.shopPanel);
@@ -91,6 +90,9 @@ public class MainScreen {
 	 */
 	private JPanel getTopPanel() {
 		// TopPanel
+		//    TopLeftPanel     BagBtn    ShopBtn    SettingsBtn  DaysLeftLabel
+		//   /            \       |           |           |           |
+		// /                \     |           |           |           |
 		// *******************************************************************
 		// *    Player:      *          *           *           *            *
 		// * Gold:  Points:  *   Bag    *    Shop   *  Settings * Days Left: *
@@ -105,7 +107,7 @@ public class MainScreen {
 		JToggleButton bagButton = getBagButton();
 		JToggleButton shopButton = getShopButton();
 		JToggleButton settingsButton = getSettingsButton();
-		// add them into a buttonGroup. Once selection at a time
+		// add them into a buttonGroup. Once selection at a time.
 		topGroup = new ButtonGroup();
 		topGroup.add(bagButton);
 		topGroup.add(shopButton);
@@ -128,8 +130,8 @@ public class MainScreen {
 	private JPanel getTopLeftPanel() {
 		// TopLeftPanel (topPanel component)
 		// *******************
-		// *    Player:      *
-		// * Gold:  Points:  *
+		// *    Player:      *  ----> PlayerNameLabel
+		// * Gold:  Points:  *  ----> GoldPointsLabel
 		// *******************
 		JPanel topLeftPanel = new JPanel();
 		topLeftPanel.setBackground(Color.BLACK);
@@ -208,7 +210,7 @@ public class MainScreen {
 	private JPanel getBottomPanel() {
 		// startingPanel
 		// *******************************************************************
-		// * Welcome Player                                                  *
+		// * Welcome Player                                                  * ----> TextPane
 		// *                                                                 *
 		// *******************************************************************
 		// create a startingPanel
