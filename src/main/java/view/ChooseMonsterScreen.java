@@ -76,60 +76,11 @@ public class ChooseMonsterScreen {
 		this.chooseFrame.getRootPane().setDefaultButton(confirmButton);
 	}
 
-	public void show(Boolean visible) {
-		this.chooseFrame.setVisible(visible);
-	}
-
-	private void closeAndDestroyCurrentScreen() {
-		show(false);
-		this.chooseFrame.dispose();
-	}
-
-	private void disableConfirmButton() {
-		this.confirmButton.setEnabled(false);
-	}
-
-	private void enableConfirmButton() {
-		this.confirmButton.setEnabled(true);
-	}
-
-	private void validateSelection() {
-		int counter = 0;
-		// loop through the list and count selected button
-		for (JToggleButton b: this.monsterButtons) {
-			if (b.isSelected()) {
-				counter++;
-			}
-		}
-		// enable/disable confirmButton
-		if (counter <= 0) {
-			disableConfirmButton();
-			setHintMessageLabel("Select a monster!");
-		} else if (counter <= 3) {
-			enableConfirmButton();
-			setHintMessageLabel("Cool! You are ready to fight!");
-		} else {
-			disableConfirmButton();
-			setHintMessageLabel("?? No, maximum three monsters!");
-		}
-	}
-
-	private void setHintMessageLabel(String hint) {
-		this.hintMessageLabel.setText(hint);
-	}
-
-	private String constructMonsterDetail(Monster monster) {
-		return String.format("MaxHealth: %d\nDamage: %d\nLevel: %d\n",
-				monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
-	}
-
-	/*
-	Swing components
-	 */
+	/* JFrame */
 	/**
-	 * Return a new chooseFrame
+	 * Return a new chooseFrame.
 	 *
-	 * @return return a new chooseFrame
+	 * @return return a new chooseFrame.
 	 */
 	private JFrame getChooseFrame() {
 		JFrame chooseFrame = new JFrame("MONSTER FIGHTER");
@@ -145,20 +96,40 @@ public class ChooseMonsterScreen {
 		return chooseFrame;
 	}
 
+	/* JLabel */
 	/**
-	 * Return a title for ChooseFrame
+	 * Return a title for ChooseFrame.
 	 *
 	 * @return a title
 	 */
 	private JLabel getTitle() {
+		// create title
 		JLabel title = new JLabel("CHOOSE MONSTER(S)",SwingConstants.CENTER);
 		title.setBounds(20,20,760,120);
 		title.setFont(new Font("Serif", Font.PLAIN, 60));
 		title.setBackground(Color.BLACK);
 		title.setForeground(Color.WHITE);
+		// return title
 		return title;
 	}
 
+	/**
+	 * Create and return the hintMessageLabel. This label will be shown just above the confirmBtn.
+	 *
+	 * @return a hintMessageLabel(JLabel)
+	 */
+	private JLabel getHintMessageLabel() {
+		// create label
+		JLabel diffLabel = new JLabel("", SwingConstants.LEFT);
+		diffLabel.setBounds(200,350,400,30);
+		diffLabel.setFont(new Font("Serif", Font.PLAIN, 13));
+		diffLabel.setBackground(Color.BLACK);
+		diffLabel.setForeground(Color.red);
+		// return label
+		return diffLabel;
+	}
+
+	/* JPanel */
 	/**
 	 * Return a buttonPanel which contains monsterButtons and monsterDetails.
 	 *
@@ -184,6 +155,7 @@ public class ChooseMonsterScreen {
 		return panel;
 	}
 
+	/* JToggleButton */
 	/**
 	 * This function will generate a monsterButton for a specific monster in the availableMonsters list.
 	 * The button will have the monster's name as its text.
@@ -218,17 +190,7 @@ public class ChooseMonsterScreen {
 		return detail;
 	}
 
-	private JLabel getHintMessageLabel() {
-		// create label
-		JLabel diffLabel = new JLabel("", SwingConstants.LEFT);
-		diffLabel.setBounds(200,350,400,30);
-		diffLabel.setFont(new Font("Serif", Font.PLAIN, 13));
-		diffLabel.setBackground(Color.BLACK);
-		diffLabel.setForeground(Color.red);
-
-		return diffLabel;
-	}
-
+	/* JButton */
 	/**
 	 * Return the confirmButton
 	 *
@@ -244,12 +206,14 @@ public class ChooseMonsterScreen {
 		newConfirmButton.setEnabled(false);
 		// confirmButton listener
 		addConfirmButtonListener(newConfirmButton);
-
+		// return btn
 		return newConfirmButton;
 	}
 
 	/**
-	 *
+	 * Create a goBackBtn so the player can go back to the LandingScreen
+	 * 
+	 * @return a goBackBtn(JButton)
 	 */
 	private JButton getGoBackButton() {
 		// create button
@@ -261,20 +225,25 @@ public class ChooseMonsterScreen {
 		goBackBtn.setForeground(Color.WHITE);
 		// confirmButton listener
 		addGoBackButtonListener(goBackBtn);
-
+		// return btn
 		return goBackBtn;
 	}
 
-	/*
-	Listeners go here
-	 */
+	/* Listener */
 	/**
-	 * Add an actionListener to the button.
+	 * Add an actionListener to the confirmButton.
+	 * 
+	 * @param button a confirmBtn
 	 */
 	private void addConfirmButtonListener(JButton button) {
 		button.addActionListener(actionEvent -> switchToMainScreen());
 	}
 
+	/**
+	 * Add an actionListener to the goBackButton.
+	 * 
+	 * @param btn a goBackBtn
+	 */
 	private void addGoBackButtonListener(JButton btn) {
 		btn.addActionListener(actionEvent -> switchToLandingScreen());
 	}
@@ -284,19 +253,103 @@ public class ChooseMonsterScreen {
 	 */
 	/**
 	 * Get initMonsters from the gameController.
+	 * 
 	 * @return iniMonsters
 	 */
 	private ArrayList<Monster> getInitMonsters() {
 		return this.gc.getInitMonsters();
 	}
 
+	/**
+	 * Launch MainScreen and close this screen(ChooseMonsterScreen).
+	 */
 	private void switchToMainScreen() {
 		this.gc.launchMainScreen();
-		closeAndDestroyCurrentScreen();
+		closeAndDestroyChooseScreen();
 	}
 
+	/**
+	 * Launch LandingScreen and close this screen(ChooseMonsterScreen).
+	 */
 	private void switchToLandingScreen() {
 		this.gc.launchLandingScreen();
-		closeAndDestroyCurrentScreen();
+		closeAndDestroyChooseScreen();
+	}
+
+	/* Other functions */
+	/**
+	 * Show/hide chooseFrame.
+	 *
+	 * @param visible a boolean value used to toggle the visible status of the chooseFrame.
+	 */
+	public void show(Boolean visible) {
+		this.chooseFrame.setVisible(visible);
+	}
+
+	/**
+	 * Close and destroy current chooseScreen.
+	 */
+	private void closeAndDestroyChooseScreen() {
+		show(false);
+		this.chooseFrame.dispose();
+	}
+
+	/**
+	 * Disable the confirmBtn on the chooseFrame.
+	 */
+	private void disableConfirmButton() {
+		this.confirmButton.setEnabled(false);
+	}
+
+	/**
+	 * Enable the confirmBtn on the chooseFrame.
+	 */
+	private void enableConfirmButton() {
+		this.confirmButton.setEnabled(true);
+	}
+
+	/**
+	 * Validate the selection of monsters and change the hint message.
+	 */
+	private void validateSelection() {
+		int counter = 0;
+		// loop through the list and count selected button
+		for (JToggleButton b: this.monsterButtons) {
+			if (b.isSelected()) {
+				counter++;
+			}
+		}
+		// enable/disable confirmButton
+		if (counter <= 0) {
+			disableConfirmButton();
+			setHintMessageLabel("Select a monster!");
+		} else if (counter <= 3) {
+			enableConfirmButton();
+			setHintMessageLabel("Cool! You are ready to fight!");
+		} else {
+			disableConfirmButton();
+			setHintMessageLabel("?? No, maximum three monsters!");
+		}
+	}
+
+	/**
+	 * Set the hint message. This function will be called by the "validateSelection" function.
+	 *
+	 * @see ChooseMonsterScreen::validateSelection()
+	 * @param hint a string(hint)
+	 */
+	private void setHintMessageLabel(String hint) {
+		this.hintMessageLabel.setText(hint);
+	}
+
+	/**
+	 * Construct the monster information for the monsterBtn.
+	 *
+	 * @param monster a monster instance
+	 * @return a string represents the detail of the monster and will be shown on the monsterBtn.
+	 */
+	private String constructMonsterDetail(Monster monster) {
+		return String.format("MaxHealth: %d\nDamage: %d\nLevel: %d\n",
+				monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 }
