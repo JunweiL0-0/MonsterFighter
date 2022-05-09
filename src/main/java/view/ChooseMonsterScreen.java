@@ -135,11 +135,11 @@ public class ChooseMonsterScreen {
 		JFrame chooseFrame = new JFrame("MONSTER FIGHTER");
 		chooseFrame.getContentPane().setPreferredSize(new Dimension(800,500));
 		chooseFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		chooseFrame.getContentPane().setBackground(Color.BLACK);
 		chooseFrame.setLayout(null);
 		chooseFrame.setResizable(false);
 		chooseFrame.pack();
+		// place the frame in the center of the screen
 		chooseFrame.setLocationRelativeTo(null);
 
 		return chooseFrame;

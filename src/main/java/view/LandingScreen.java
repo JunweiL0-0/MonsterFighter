@@ -135,6 +135,7 @@ public class LandingScreen {
 		newLandingFrame.setLayout(null);
 		newLandingFrame.setResizable(false);
 		newLandingFrame.pack();
+		// place the frame in the center of the screen
 		newLandingFrame.setLocationRelativeTo(null);
 
 		return newLandingFrame;
