@@ -44,6 +44,19 @@ public class MainScreen {
 	 * Create mainFrame and add components to it.
 	 */
 	public void initialize() {
+		// *******************************************************************
+		// *    Player:      *          *           *           *            *
+		// * Gold:  Points:  *   Bag    *    Shop   *  Settings * Days Left: *
+		// *******************************************************************
+		// * LeftPanel  *                                       * RightPanel *
+		// *            *                                       *            *
+		// *            *     Main/Bag/Shop/Settings panel      *            *
+		// *            *                                       *            *
+		// *            *                                       *            *
+		// *            *****************************************            *
+		// *            *            BottomPanel                *            *
+		// *            *                           ContinueBtn *            *
+		// *******************************************************************
 		this.mainFrame = getMainFrame();
 		this.mainFrame.getContentPane().add(getTopPanel());
 		this.mainFrame.getContentPane().add(getLeftPanel());
