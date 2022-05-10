@@ -17,7 +17,7 @@ import main.java.model.Monster;
 public class ChooseMonsterScreen {
 	private final GameController gc;
 	private ArrayList<Monster> availableMonsters;
-	public ArrayList<Monster> selectedMonsters;
+	private ArrayList<Monster> selectedMonsters;
 	private ArrayList<JToggleButton> monsterButtons;
 	// swing components
 	private JFrame chooseFrame;
@@ -98,6 +98,7 @@ public class ChooseMonsterScreen {
 		// loop through the list and count selected button
 		for (JToggleButton b: this.monsterButtons) {
 			if (b.isSelected()) {
+				
 				counter++;
 			}
 		}
@@ -194,10 +195,12 @@ public class ChooseMonsterScreen {
 	private JToggleButton getMonsterButton(int indexInList) {
 		Monster monster = this.availableMonsters.get(indexInList);
 		JToggleButton button = new JToggleButton();
+		button.setFocusable(false);
 		button.setText(monster.getName());
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
 		button.setPreferredSize(new Dimension(144,100));
 		button.addActionListener(actionEvent -> validateSelection());
+
 		return button;
 	}
 
@@ -244,6 +247,7 @@ public class ChooseMonsterScreen {
 		newConfirmButton.setEnabled(false);
 		// confirmButton listener
 		addConfirmButtonListener(newConfirmButton);
+		newConfirmButton.setFocusable(false);
 
 		return newConfirmButton;
 	}
@@ -252,17 +256,20 @@ public class ChooseMonsterScreen {
 	 *
 	 */
 	private JButton getGoBackButton() {
+		
 		// create button
-		JButton goBackBtn = new JButton();
-		goBackBtn.setBounds(20, 380, 70, 50);
+		JButton backButton = new JButton();
 		// setText via html so that we can see the text even the button is being disabled
-		goBackBtn.setText("Back");
-		goBackBtn.setBackground(Color.GRAY);
-		goBackBtn.setForeground(Color.WHITE);
-		// confirmButton listener
-		addGoBackButtonListener(goBackBtn);
+		backButton.setText("Back");
+		backButton.setFont(new Font("Serif", Font.PLAIN, 15));
+		backButton.setForeground(Color.white);
+		backButton.setBounds(20,380,70,50);
+		backButton.setBackground(Color.BLACK);
+		backButton.setFocusable(false);
+		backButton.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		addGoBackButtonListener(backButton);
 
-		return goBackBtn;
+		return backButton;
 	}
 
 	/*
@@ -291,6 +298,14 @@ public class ChooseMonsterScreen {
 	}
 
 	private void switchToMainScreen() {
+		int i = 0;
+		for (JToggleButton button : monsterButtons) {
+			if (button.isSelected()) {
+				selectedMonsters.add(availableMonsters.get(i));
+			}
+			i++;
+		}
+		selectedMonsters();
 		this.gc.launchMainScreen();
 		closeAndDestroyCurrentScreen();
 	}
@@ -298,5 +313,9 @@ public class ChooseMonsterScreen {
 	private void switchToLandingScreen() {
 		this.gc.launchLandingScreen();
 		closeAndDestroyCurrentScreen();
+	}
+	private void selectedMonsters() {
+		System.out.println(selectedMonsters);
+		gc.setSelectedMonsters(selectedMonsters);
 	}
 }

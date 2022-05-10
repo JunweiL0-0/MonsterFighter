@@ -5,9 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 import main.java.controller.GameController;
+import main.java.model.Monster;
+import main.java.model.Team;
 
 public class MainScreen {
 	private JFrame mainFrame;
@@ -17,6 +21,11 @@ public class MainScreen {
 	private JPanel teamPanel[] = new JPanel[4];
 	private JPanel monsterPanel[] = new JPanel[4];
 	private ButtonGroup topGroup;
+	private ArrayList<Monster> selectedMonsters;
+	private Team team;
+	//private 
+//	private ArrayList<Monster> monsterBag;
+	
 	
 //	centerPanel[1]== main center panel
 //	centerPanel[2]== bagPanel
@@ -26,6 +35,8 @@ public class MainScreen {
 
 	public MainScreen(GameController gc) {
 		this.gc = gc;
+		this.team = gc.getTeam();
+		this.selectedMonsters = gc.getSelectedMonster();
 		initialize();
 
 		show(true);
@@ -101,18 +112,18 @@ public class MainScreen {
 		
 		JToggleButton bagButton = getBagButton();
 		JToggleButton shopButton = getShopButton();
-		JToggleButton settingsButton = getSettingsButton();
+		//JToggleButton settingsButton = getSettingsButton();
 		
 		topGroup = new ButtonGroup();
 		topGroup.add(bagButton);
 		topGroup.add(shopButton);
-		topGroup.add(settingsButton);
+		//topGroup.add(settingsButton);
 		
 		
 		newTopPanel.add(topLeftPanel);
 		newTopPanel.add(bagButton);
 		newTopPanel.add(shopButton);
-		newTopPanel.add(settingsButton);
+		//newTopPanel.add(settingsButton);
 		newTopPanel.add(daysLeftLabel);
 		
 		return newTopPanel;
@@ -122,27 +133,58 @@ public class MainScreen {
 			
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBounds(0,70,120,430);
-		leftPanel.setLayout(new GridLayout(teamPanel.length,1));
+		leftPanel.setLayout(new GridLayout(4,1));
 		leftPanel.setBackground(Color.black);
 		leftPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 3, 3, Color.WHITE));
-
-		for (int i=0; i < teamPanel.length; i++) {
+	
+		for (int i=0; i < team.getTeam().size(); i++) {
 			teamPanel[i] = new JPanel();
 			teamPanel[i].setLayout(new GridLayout(4,1));
-			teamPanel[i].setBackground(Color.black);
+			teamPanel[i].setBackground(Color.blue);
 			teamPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
-
+			
 			JLabel monsterName = new JLabel();
 			monsterName.setForeground(Color.white);
-			monsterName.setText("Monster "+Integer.toString(i));//getName method for n index in selected monster in gc?
-
+			monsterName.setText(team.getTeam().get(i).getName());//getName method for n index in selected monster in gc?
+			monsterName.setFont(new Font("Serif", Font.PLAIN, 15));
+			
+			JLabel monsterHealth = new JLabel();
+			monsterHealth.setForeground(Color.white);
+			monsterHealth.setText("Health: "+selectedMonsters.get(i).getCurrentHealth());//getName method for n index in selected monster in gc?
+			monsterHealth.setFont(new Font("Serif", Font.PLAIN, 15));
+			
+			
+			JLabel monsterLevel = new JLabel();
+			monsterLevel.setForeground(Color.white);
+			monsterLevel.setText("Level: "+selectedMonsters.get(i).getRarity());//getName method for n index in selected monster in gc?
+			monsterLevel.setFont(new Font("Serif", Font.PLAIN, 15));
+			
+			JLabel monsterDamage = new JLabel();
+			monsterDamage.setForeground(Color.white);
+			monsterDamage.setText("Damage: "+selectedMonsters.get(i).getDamage());//getName method for n index in selected monster in gc?
+			monsterDamage.setFont(new Font("Serif", Font.PLAIN, 15));
+			
+			
 			teamPanel[i].add(monsterName);
-
-
+			teamPanel[i].add(monsterHealth);
+			teamPanel[i].add(monsterLevel);
+			teamPanel[i].add(monsterDamage);
+			
 			leftPanel.add(teamPanel[i]);
-			if (i == 3) {
+			if (i == 3) {	
 				teamPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
 			}
+
+//		setSelectedMonsters();
+		//initialize the selected monsters in the left Panels
+//		for (int index=0; index <= selectedMonsters.size(); index++ ) {
+//			JLabel monsterName = new JLabel();
+//			monsterName.setForeground(Color.white);
+//			monsterName.setText(gc.getSelectedMonster().get(i).getName());//getName method for n index in selected monster in gc?
+//			monsterName.setFont(new Font("Serif", Font.PLAIN, 10));
+//			teamPanel[i].add(monsterName);
+//		}
+		
 		}
 
 
@@ -396,7 +438,24 @@ public class MainScreen {
 		
 		
 	}
-
+	
+//	private ArrayList<Monster> MonsterBag(){
+//		
+//	}
+	
+//	private void setSelectedMonsters() {
+//		int i = selectedMonsters.size();
+//		for (Monster monster : selectedMonsters) {
+//			JLabel monsterName = new JLabel();
+//			monsterName.setForeground(Color.white);
+//			monsterName.setText(monster.getName());//getName method for n index in selected monster in gc?
+//			monsterName.setFont(new Font("Serif", Font.PLAIN, 10));
+//			teamPanel[i].add(monsterName);
+//			i++;
+//		}
+//		
+//	}
+	
 	public void show(boolean val) {
 		this.mainFrame.setVisible(val);
 	}

@@ -6,6 +6,7 @@ import main.java.view.LandingScreen;
 import main.java.view.MainScreen;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,7 +16,8 @@ public class GameController {
     // classes
     private final MonsterGenerator monsterGenerator;
     private Shop shop;
-    private final Team team;
+    private Team team;
+    //private Map<Integer,Monster> team;
     // variables
     private String playerName;
     private String difficulty;
@@ -23,6 +25,8 @@ public class GameController {
     private int totalDay;
     private int gold;
     private int point;
+    private ArrayList<Monster> selectedMonsters;
+    
 
     /**
      * Constructor for the GameController.
@@ -97,7 +101,7 @@ public class GameController {
         if (isEasyMode()) {
             this.totalDay = 10;
         } else if (isHardMode()) {
-            this.totalDay = 5;
+            this.totalDay = 15;
         }
     }
 
@@ -146,6 +150,19 @@ public class GameController {
      */
     public String getPlayerName() {
         return this.playerName;
+    }
+    
+    /**
+     * Return the selected Monsters in the gameController
+     * 
+     * @return the selected Monsters in the gameController
+     */
+    public ArrayList<Monster> getSelectedMonster(){
+    	return this.selectedMonsters;
+    }
+    
+    public Team getTeam() {
+    	return this.team;
     }
 
     /**
@@ -212,5 +229,20 @@ public class GameController {
     public void setPoint(int point) {
         this.point = point;
     }
+    
+    /**
+     * Store the selected Monster/s.
+     * 
+     * @param selectedMonsters a ArrayList containing initially selected monster/s.
+     */
+    public void setSelectedMonsters(ArrayList<Monster> selected) {
+    	for(Monster monster : selected) {
+    		team.addMonsterToTeam(monster);
+    	}
+    	System.out.println();
+    	this.selectedMonsters = selected;
+    }
+    
+    
 
 }
