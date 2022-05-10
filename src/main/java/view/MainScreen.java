@@ -4,11 +4,13 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
 import main.java.controller.GameController;
+import main.java.utilities.Observable;
+import main.java.utilities.Observer;
 
 /**
  * MainScreen. This is where we play the game.
  */
-public class MainScreen {
+public class MainScreen implements Observer {
 	// game controller
 	private final GameController gc;
 	// components
@@ -16,15 +18,30 @@ public class MainScreen {
 	private final JPanel[] monsterPanel = new JPanel[4];
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
-	// variable (Change dynamically)
-	private JLabel goldPoints;
-	private JPanel mainPanel;
-	private JPanel bagPanel;
-	private JPanel shopPanel;
-	private JPanel settingsPanel;
+	// variable (Toggle visibility)
+	// centerPanel
+	private JPanel centerMainPanel;
+	private JPanel centerBagPanel;
+	private JPanel centerShopPanel;
+	private JPanel centerSettingsPanel;
+	// bottomPanel
+	private JPanel bottomMainPanel;
+	private JPanel bottomBagPanel;
+	private JPanel bottomShopPanel;
+	private JPanel bottomSettingsPanel;
 	// enum
 	private enum TopBtn {
 		MAIN, BAG, SHOP, SETTINGS;
+
+		@Override
+		public String toString() {
+			return switch (this) {
+				case MAIN -> "Main";
+				case BAG -> "Bag";
+				case SHOP -> "Shop";
+				case SETTINGS -> "Settings";
+			};
+		}
 	}
 
 
@@ -44,34 +61,44 @@ public class MainScreen {
 	 * Create mainFrame and add components to it.
 	 */
 	public void initialize() {
-		// *******************************************************************
-		// *    Player:      *          *           *           *            *
-		// * Gold:  Points:  *   Bag    *    Shop   *  Settings * Days Left: *
-		// *******************************************************************
+		// *******************************************************************\
+		// *    Player:      *          *           *           *            *  \ TopPanel
+		// * Gold:  Points:  *   Bag    *    Shop   *  Settings * Days Left: *  /
+		// *******************************************************************/
 		// * LeftPanel  *                                       * RightPanel *
 		// *            *                                       *            *
 		// *            *     Main/Bag/Shop/Settings panel      *            *
 		// *            *                                       *            *
 		// *            *                                       *            *
 		// *            *****************************************            *
-		// *            *            BottomPanel                *            *
-		// *            *                           ContinueBtn *            *
+		// *            *  Bottom Main/Bag/Shop/Settings panel  *            *
+		// *            *                         (ContinueBtn) *            *
 		// *******************************************************************
 		this.mainFrame = getMainFrame();
+		// Top, Left, Right
 		this.mainFrame.getContentPane().add(getTopPanel());
 		this.mainFrame.getContentPane().add(getLeftPanel());
 		this.mainFrame.getContentPane().add(getRightPanel());
-		this.mainFrame.getContentPane().add(getContinueButton());
-		this.mainFrame.getContentPane().add(getBottomPanel());
-		// panels which will be shown in the center
-		this.mainPanel = getMainPanel(); // visible by default
-		this.bagPanel = getBagPanel(); // not visible by default
-		this.shopPanel = getShopPanel(); // not visible by default
-		this.settingsPanel = getSettingsPanel(); // not visible by default
-		this.mainFrame.getContentPane().add(this.mainPanel);
-		this.mainFrame.getContentPane().add(this.bagPanel);
-		this.mainFrame.getContentPane().add(this.shopPanel);
-		this.mainFrame.getContentPane().add(this.settingsPanel);
+		// Center
+		// create panel and store them into variables
+		initCenterMainPanel(); // Visible by default
+		initCenterBagPanel(); // Not visible until btn being pressed
+		initCenterShopPanel(); // Not visible until btn being pressed
+		initCenterSettingsPanel(); // Not visible until btn being pressed
+		// Bottom
+		initBottomMainPanel(); // Visible by default
+		initBottomBagPanel(); // Not visible until btn being pressed
+		initBottomShopPanel(); // Not visible until btn being pressed
+		initBottomSettingsPanel(); // Not visible until btn being pressed
+		// add panels
+		this.mainFrame.getContentPane().add(this.centerMainPanel);
+		this.mainFrame.getContentPane().add(this.centerBagPanel);
+		this.mainFrame.getContentPane().add(this.centerShopPanel);
+		this.mainFrame.getContentPane().add(this.centerSettingsPanel);
+		this.mainFrame.getContentPane().add(this.bottomMainPanel);
+		this.mainFrame.getContentPane().add(this.bottomBagPanel);
+		this.mainFrame.getContentPane().add(this.bottomShopPanel);
+		this.mainFrame.getContentPane().add(this.bottomSettingsPanel);
 	}
 
 	/*JFrame*/
@@ -216,111 +243,33 @@ public class MainScreen {
 	}
 
 	/**
-	 * Create and return the bottomPanel.
-	 *
+	 * Create and return a new centerPanel. This is a panel template.
+	 * <br>
+	 * CenterPanel: (A panel which will be shown in the center of the mainFrame)
+	 * @return a new CenterPanel(A panel which will be shown in the middle of the mainFrame)
+	 */
+	private JPanel getNewCenterPanel() {
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(null);
+		centerPanel.setBackground(Color.BLACK);
+		centerPanel.setBounds(120,70,560,280);
+		return centerPanel;
+	}
+
+	/**
+	 * Create and return the bottomPanel. This is a panel template.
+	 * <br>
+	 * BottomPanel: (A panel which will be shown at the bottom of the mainFrame)
 	 * @return a newly created bottomPanel.
 	 */
-	private JPanel getBottomPanel() {
+	private JPanel getNewBottomPanel() {
 		// startingPanel
-		// *******************************************************************
-		// * Welcome Player                                                  * ----> TextPane
-		// *                                                                 *
-		// *******************************************************************
-		// create a startingPanel
-		JPanel startingPanel = new JPanel();
-		startingPanel.setBackground(Color.BLACK);
-		startingPanel.setBounds(120,350,560,150);
-		startingPanel.setLayout(new GridLayout(2,1));
-		startingPanel.setBorder(BorderFactory.createMatteBorder(3, 0, 3, 0, Color.WHITE));
-		// add components to the startingPanel
-		startingPanel.add(getTextPane());
-		// return the startingPanel
-		return startingPanel;
-	}
-
-	/**
-	 * Create and return a mainPanel. This panel is part of the centerPanel
-	 *
-	 * @return a newly created mainPanel
-	 */
-	private JPanel getMainPanel() {
-		// MainPanel (centerPanel component)
-		// create a JPanel
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(null);
-		mainPanel.setBackground(Color.BLACK);
-		mainPanel.setBounds(120,70,560,280);
-		// create a JLabel
-		JLabel mainPanelLabel = new JLabel("MAIN", SwingConstants.CENTER);
-		mainPanelLabel.setFont(new Font("Serif", Font.PLAIN, 30));
-		mainPanelLabel.setBounds(230, 0, 100, 35);
-		mainPanelLabel.setForeground(Color.WHITE);
-		mainPanelLabel.setBackground(Color.BLACK);
-		mainPanelLabel.setOpaque(true);
-		// add components to JPanel
-		mainPanel.add(mainPanelLabel);
-		// return panel
-		return mainPanel;
-	}
-
-	/**
-	 * Create and return a bagPanel. This panel will be stored in the variable "centerPanel".
-	 *
-	 * @return a bagPanel
-	 */
-	private JPanel getBagPanel() {
-		// create a bagPanel
-		JPanel bagPanel = new JPanel();
-		bagPanel.setLayout(null);
-		bagPanel.setBackground(Color.BLACK);
-		bagPanel.setBounds(120,70,560,280);
-		// add component
-		bagPanel.add(getBagTitle());
-		bagPanel.add(backButton());
-		// set it to not visible (Default)
-		bagPanel.setVisible(false);
-		// return panel
-		return bagPanel;
-	}
-
-	/**
-	 * Create and return a settingsPanel. The settingsPanel will be shown in the middle of the mainFrame if "Visible" is true。
-	 *
-	 * @return a settingsPanel
-	 */
-	private JPanel getSettingsPanel() {
-		// create a settingsPanel (This panel will be stored in a variable)
-		JPanel settingsPanel = new JPanel();
-		settingsPanel.setLayout(null);
-		settingsPanel.setBackground(Color.BLACK);
-		settingsPanel.setBounds(120,70,560,280);
-		// add component
-		settingsPanel.add(getSettingsTitle());
-		settingsPanel.add(backButton());
-		// set the panel to not visible (Default)
-		settingsPanel.setVisible(false);
-		// return settingsPanel
-		return settingsPanel;
-	}
-
-	/**
-	 * Create and return a shopPanel. The shopPanel will be shown in the middle of the mainFrame if "Visible" is true。
-	 *
-	 * @return a shopPanel
-	 */
-	private JPanel getShopPanel() {
-		// create a shopPanel (This panel will be stored in a variable)
-		JPanel shopPanel = new JPanel();
-		shopPanel.setLayout(null);
-		shopPanel.setBackground(Color.BLACK);
-		shopPanel.setBounds(120,70,560,280);
-		// add components
-		shopPanel.add(getShopTitle());
-		shopPanel.add(backButton());
-		// set it to not visible (Default)
-		shopPanel.setVisible(false);
-		// return panel
-		return shopPanel;
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(null);
+		bottomPanel.setBackground(Color.BLACK);
+		bottomPanel.setBounds(120,350,560,150);
+		bottomPanel.setBorder(BorderFactory.createMatteBorder(3, 0, 3, 0, Color.WHITE));
+		return bottomPanel;
 	}
 
 	/* JTextPane */
@@ -329,15 +278,16 @@ public class MainScreen {
 	 *
 	 * @return a textPane(JTextPane)
 	 */
-	private JTextPane getTextPane() {
-		// textPane (bottomPanel component)
+	private JTextPane getBottomMainTextPane() {
+		// textPane (bottomMainPanel component)
 		// textPane for displaying text
 		JTextPane textPane = new JTextPane();
+		textPane.setText("Welcome Player!");
 		textPane.setForeground(Color.WHITE);
 		textPane.setBackground(Color.BLACK);
 		textPane.setFont(new Font("Serif", Font.PLAIN, 25));
-		textPane.setText("Welcome Player!");
-		textPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		// as bottomPanel has border. We increase x and y by 3. Decrease Width and height accordingly.
+		textPane.setBounds(3,3,554,112);
 		textPane.setEditable(false);
 		// return statement
 		return textPane;
@@ -365,7 +315,7 @@ public class MainScreen {
 	 */
 	private JLabel getGoldPointsLabel() {
 		// gold and point (TopLeftPanel/TopPanel component)
-		goldPoints = new JLabel("", SwingConstants.CENTER);
+		JLabel goldPoints = new JLabel("", SwingConstants.CENTER);
 		goldPoints.setFont(new Font("Serif", Font.PLAIN, 15));
 		goldPoints.setText("Gold: " + this.gc.getGold() + " Point: " + this.gc.getPoint());
 		goldPoints.setForeground(Color.WHITE);
@@ -391,54 +341,20 @@ public class MainScreen {
 	}
 
 	/**
-	 * This function will return the title of the bagPanel.
+	 * This function will return the title of the centerPanel.
 	 *
-	 * @return a bagTitle
+	 * @return a title(JLabel)
 	 */
-	private JLabel getBagTitle() {
-		// bagTitle (BagPanel component)
-		JLabel bagTitle = new JLabel("BAG",SwingConstants.CENTER);
-		bagTitle.setFont(new Font("Serif", Font.PLAIN, 30));
-		bagTitle.setBounds(230, 0, 100, 35);
-		bagTitle.setForeground(Color.WHITE);
-		bagTitle.setBackground(Color.BLACK);
-		bagTitle.setOpaque(true);
-		// return bagTitle
-		return bagTitle;
-	}
-
-	/**
-	 * This function will return the title of the settingsPanel.
-	 *
-	 * @return a settingsTitle(JLabel)
-	 */
-	private JLabel getSettingsTitle() {
-		// settingsTitle (SettingsPanel component)
-		JLabel settingsTitle = new JLabel("SETTINGS",SwingConstants.CENTER);
-		settingsTitle.setFont(new Font("Serif", Font.PLAIN, 30));
-		settingsTitle.setBounds(205, 0, 150, 35);
-		settingsTitle.setForeground(Color.WHITE);
-		settingsTitle.setBackground(Color.BLACK);
-		settingsTitle.setOpaque(true);
-		// return settingsTitle
-		return settingsTitle;
-	}
-
-	/**
-	 * This function will return the title of the shopPanel.
-	 *
-	 * @return a ShopTitle(JLabel)
-	 */
-	private JLabel getShopTitle() {
-		// shopTitle (ShopPanel component)
-		JLabel shopTitle = new JLabel("SHOP",SwingConstants.CENTER);
-		shopTitle.setFont(new Font("Serif", Font.PLAIN, 30));
-		shopTitle.setBounds(230, 0, 100, 35);
-		shopTitle.setForeground(Color.WHITE);
-		shopTitle.setBackground(Color.BLACK);
-		shopTitle.setOpaque(true);
-		// return title
-		return shopTitle;
+	private JLabel getTitle(String title) {
+		// title (BagPanel/ShopPanel/SettingsPanel/SellPanel/BuyPanel component)
+		JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
+		titleLabel.setFont(new Font("Serif", Font.PLAIN, 30));
+		titleLabel.setBounds(230, 0, 100, 35);
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBackground(Color.BLACK);
+		titleLabel.setOpaque(true);
+		// return titleLabel
+		return titleLabel;
 	}
 
 	/* JButton */
@@ -454,7 +370,7 @@ public class MainScreen {
 		// continue button
 		JButton continueButton = new JButton();
 		continueButton.setText("Continue");
-		continueButton.setBounds(540, 455, 120, 25);
+		continueButton.setBounds(420, 115, 120, 25);
 		continueButton.setBackground(Color.WHITE);
 		continueButton.setForeground(Color.BLACK);
 		continueButton.setFocusable(false);
@@ -463,7 +379,7 @@ public class MainScreen {
 	}
 
 	/**
-	 * Create and return a backBtn. Once the btn is being clicked. The mainPanel will be shown.
+	 * Create and return a backBtn. MainPanel/BottomMainPanel will be shown once this btn in being clicked.
 	 *
 	 * @return a backBtn (JBtn)
 	 */
@@ -483,6 +399,82 @@ public class MainScreen {
 		return backButton;
 	}
 
+	/**
+	 * Create and return a sellBtn for BottomShopPanel.
+	 *
+	 * @return a buyBtn
+	 */
+	private JButton getBuyBtn() {
+		// create a buyBtn (BottomShopPanel component)
+		JButton buyBtn = new JButton();
+		buyBtn.setText("Buy");
+		buyBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		buyBtn.setBounds(45, 50, 210, 50);
+		buyBtn.setBackground(Color.BLACK);
+		buyBtn.setForeground(Color.WHITE);
+		buyBtn.setFocusable(false);
+		buyBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// return
+		return buyBtn;
+	}
+
+	/**
+	 * Create and return a sellBtn for BottomShopPanel.
+	 *
+	 * @return a sellBtn.
+	 */
+	private JButton getSellBtn() {
+		// create a sellBtn(BottomShopPanel component)
+		JButton sellBtn = new JButton();
+		sellBtn.setText("Sell");
+		sellBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		sellBtn.setBounds(305, 50, 210, 50);
+		sellBtn.setBackground(Color.BLACK);
+		sellBtn.setForeground(Color.WHITE);
+		sellBtn.setFocusable(false);
+		sellBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// return
+		return sellBtn;
+	}
+
+	/**
+	 * Create and return a saveBtn for BottomSettingsPanel.
+	 *
+	 * @return a saveBtn(JButton)
+	 */
+	private JButton getSaveBtn() {
+		// create a saveBtn (BottomSettingsPanel component)
+		JButton saveBtn = new JButton();
+		saveBtn.setText("Save");
+		saveBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		saveBtn.setBounds(45, 50, 210, 50);
+		saveBtn.setBackground(Color.BLACK);
+		saveBtn.setForeground(Color.WHITE);
+		saveBtn.setFocusable(false);
+		saveBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// return
+		return saveBtn;
+	}
+
+	/**
+	 * Create and return a restartBtn for BottomSettingsPanel.
+	 *
+	 * @return a restartBtn(JButton)
+	 */
+	private JButton getRestartBtn() {
+		// create a restartBtn (BottomSettingsPanel component)
+		JButton restartBtn = new JButton();
+		restartBtn.setText("Restart");
+		restartBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		restartBtn.setBounds(305, 50, 210, 50);
+		restartBtn.setBackground(Color.BLACK);
+		restartBtn.setForeground(Color.WHITE);
+		restartBtn.setFocusable(false);
+		restartBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// return
+		return restartBtn;
+	}
+
 	/* JToggleButton */
 	/**
 	 * Create and return the bagButton for the TopPanel
@@ -499,7 +491,7 @@ public class MainScreen {
 		bagButton.setFocusable(false);
 		bagButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// bagBtn listener
-		addBagBtnListener(bagButton);
+		addTopBtnListener(bagButton, TopBtn.BAG);
 		// return btn
 		return bagButton;
 	}
@@ -519,7 +511,7 @@ public class MainScreen {
 		shopButton.setFocusable(false);
 		shopButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// shopButton listener
-		addShopBtnListener(shopButton);
+		addTopBtnListener(shopButton, TopBtn.SHOP);
 		// return btn
 		return shopButton;
 	}
@@ -540,7 +532,7 @@ public class MainScreen {
 		settingsButton.setFocusable(false);
 		settingsButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// event listener
-		addSettingsBtnListener(settingsButton);
+		addTopBtnListener(settingsButton, TopBtn.SETTINGS);
 		return settingsButton;
 	}
 
@@ -555,51 +547,24 @@ public class MainScreen {
 			// unSelected all buttons
 			topGroup.clearSelection();
 			// show mainPanel
-			showCenterPanel(TopBtn.MAIN);
+			showCenterPanelOf(TopBtn.MAIN);
+			showBottomPanelOf(TopBtn.MAIN);
 		});
 	}
 
 	/**
-	 * BagBtn listener. Show bagPanel when button selected, show the mainPanel otherwise.
+	 * CenterBtn listener. Show panel when button selected, show the mainPanel otherwise.
 	 *
 	 * @param b a JButton (From one of the top buttons)
 	 */
-	private void addBagBtnListener(JToggleButton b) {
+	private void addTopBtnListener(JToggleButton b, TopBtn tBtn) {
 		b.addItemListener(e -> {
 			if(e.getStateChange() == ItemEvent.SELECTED) {
-				showCenterPanel(TopBtn.BAG);
+				showCenterPanelOf(tBtn);
+				showBottomPanelOf(tBtn);
 			} else if (e.getStateChange() == ItemEvent.DESELECTED) {
-				showCenterPanel(TopBtn.MAIN);
-			}
-		});
-	}
-
-	/**
-	 * ShopBtn listener. Show shopPanel when button selected, show the mainPanel otherwise.
-	 *
-	 * @param b a JButton (From one of the top buttons)
-	 */
-	private void addShopBtnListener(JToggleButton b) {
-		b.addItemListener(e -> {
-			if(e.getStateChange() == ItemEvent.SELECTED) {
-				showCenterPanel(TopBtn.SHOP);
-			} else if (e.getStateChange() == ItemEvent.DESELECTED) {
-				showCenterPanel(TopBtn.MAIN);
-			}
-		});
-	}
-
-	/**
-	 * SettingsBtn listener. Show settingsPanel when button selected, show the mainPanel otherwise.
-	 *
-	 * @param b a JButton (From one of the top buttons)
-	 */
-	private void addSettingsBtnListener(JToggleButton b) {
-		b.addItemListener(e -> {
-			if(e.getStateChange() == ItemEvent.SELECTED) {
-				showCenterPanel(TopBtn.SETTINGS);
-			} else if (e.getStateChange() == ItemEvent.DESELECTED) {
-				showCenterPanel(TopBtn.MAIN);
+				showBottomPanelOf(TopBtn.MAIN);
+				showBottomPanelOf(TopBtn.MAIN);
 			}
 		});
 	}
@@ -608,22 +573,42 @@ public class MainScreen {
 	Other functions
 	 */
 	/**
-	 * This function will hide all panels first and show the selected panel.
+	 * This function will hide all center panels first and show the selected panel.
 	 *
-	 * @param TBtn an enum type represents the type of the button. (MAIN, BAG, SHOP, SETTINGS)
+	 * @param tBtn an enum type represents the type of the top button. (MAIN, BAG, SHOP, SETTINGS)
 	 */
-	private void showCenterPanel(TopBtn TBtn) {
-		// hide all panels
-		this.mainPanel.setVisible(false);
-		this.bagPanel.setVisible(false);
-		this.shopPanel.setVisible(false);
-		this.settingsPanel.setVisible(false);
+	private void showCenterPanelOf(TopBtn tBtn) {
+		// hide all center panels
+		this.centerMainPanel.setVisible(false);
+		this.centerBagPanel.setVisible(false);
+		this.centerShopPanel.setVisible(false);
+		this.centerSettingsPanel.setVisible(false);
 		// show one panel
-		switch(TBtn) {
-			case MAIN -> this.mainPanel.setVisible(true);
-			case BAG -> this.bagPanel.setVisible(true);
-			case SHOP -> this.shopPanel.setVisible(true);
-			case SETTINGS -> this.settingsPanel.setVisible(true);
+		switch(tBtn) {
+			case MAIN -> this.centerMainPanel.setVisible(true);
+			case BAG -> this.centerBagPanel.setVisible(true);
+			case SHOP -> this.centerShopPanel.setVisible(true);
+			case SETTINGS -> this.centerSettingsPanel.setVisible(true);
+		}
+	}
+
+	/**
+	 * This function will hide all bottom panels first and show the selected panel.
+	 *
+	 * @param tBtn an enum type represents the type of the top button. (MAIN, BAG, SHOP, SETTINGS)
+	 */
+	private void showBottomPanelOf(TopBtn tBtn) {
+		// hide all bottom panels
+		this.bottomMainPanel.setVisible(false);
+		this.bottomBagPanel.setVisible(false);
+		this.bottomShopPanel.setVisible(false);
+		this.bottomSettingsPanel.setVisible(false);
+		// show one panel
+		switch(tBtn) {
+			case MAIN -> this.bottomMainPanel.setVisible(true);
+			case BAG -> this.bottomBagPanel.setVisible(true);
+			case SHOP -> this.bottomShopPanel.setVisible(true);
+			case SETTINGS -> this.bottomSettingsPanel.setVisible(true);
 		}
 	}
 
@@ -634,5 +619,126 @@ public class MainScreen {
 	 */
 	public void show(boolean val) {
 		this.mainFrame.setVisible(val);
+	}
+
+	// observer
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("Receive new update");
+	}
+
+	/* initialization */
+	/**
+	 * Create a bottomMainPanel and store it into a variable.
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initBottomMainPanel() {
+		// *******************************************************************
+		// * Welcome Player                                                  * ----> TextPane
+		// *                                                                 *
+		// *******************************************************************
+		// create a bottomPanel
+		this.bottomMainPanel = getNewBottomPanel();
+		// add components to the startingPanel
+		this.bottomMainPanel.add(getBottomMainTextPane());
+		this.bottomMainPanel.add(getContinueButton());
+	}
+
+	/**
+	 * Create a bottomBagPanel and store it into a variable
+	 */
+	private void initBottomBagPanel() {
+		// bottomBagPanel
+		this.bottomBagPanel = getNewBottomPanel();
+		// set it to not visible (Default)
+		this.bottomBagPanel.setVisible(false);
+	}
+
+	/**
+	 * Create a bottomShopPanel and store it into a variable
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initBottomShopPanel() {
+		// bottomShopPanel
+		this.bottomShopPanel = getNewBottomPanel();
+		// add components to panel
+		this.bottomShopPanel.add(getBuyBtn());
+		this.bottomShopPanel.add(getSellBtn());
+		// set it to not visible (Default)
+		this.bottomShopPanel.setVisible(false);
+	}
+
+	/**
+	 * Create a bottomSettingsPanel and store it into a variable
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initBottomSettingsPanel() {
+		// bottomSettingsPanel
+		this.bottomSettingsPanel = getNewBottomPanel();
+		// add components to panel
+		this.bottomSettingsPanel.add(getSaveBtn());
+		this.bottomSettingsPanel.add(getRestartBtn());
+		// set it to not visible (Default)
+		this.bottomSettingsPanel.setVisible(false);
+	}
+
+	/**
+	 * Create a centerPanel(MainPanel in this case) and store the reference into a variable.
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initCenterMainPanel() {
+		// centerMainPanel
+		this.centerMainPanel = getNewCenterPanel();
+		// add components to panel
+		this.centerMainPanel.add(getTitle("Main"));
+	}
+
+	/**
+	 * Create a centerPanel(BagPanel in this case) and store the reference into a variable.
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initCenterBagPanel() {
+		// create a bagPanel
+		this.centerBagPanel = getNewCenterPanel();
+		// add component
+		this.centerBagPanel.add(getTitle("Bag"));
+		this.centerBagPanel.add(backButton());
+		// set it to not visible (Default)
+		this.centerBagPanel.setVisible(false);
+	}
+
+	/**
+	 * Create a centerPanel(ShopPanel in this case) and store the reference into a variable.
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initCenterShopPanel() {
+		// create a shopPanel (This panel will be stored in a variable)
+		this.centerShopPanel = getNewCenterPanel();
+		// add component
+		this.centerShopPanel.add(getTitle("Shop"));
+		this.centerShopPanel.add(backButton());
+		// set it to not visible (Default)
+		this.centerShopPanel.setVisible(false);
+	}
+
+	/**
+	 * Create a centerPanel(SettingsPanel in this case) and store the reference into a variable.
+	 * <br>
+	 * This function will add components to the panel.
+	 */
+	private void initCenterSettingsPanel() {
+		// create a settingsPanel
+		this.centerSettingsPanel = getNewCenterPanel();
+		// add component
+		this.centerSettingsPanel.add(getTitle("Settings"));
+		this.centerSettingsPanel.add(backButton());
+		// set it to not visible (Default)
+		this.centerSettingsPanel.setVisible(false);
 	}
 }

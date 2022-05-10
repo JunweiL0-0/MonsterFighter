@@ -4,11 +4,11 @@ package main.java.model;
  * A class representing monster.
  */
 public class Monster extends GameItem {
-    private int maxHealth;
-    private int currentHealth;
-    private int damage;
-    private int level;
-    private int rarity;
+    private final int maxHealth;
+    private final int currentHealth;
+    private final int damage;
+    private final int level;
+    private final int rarity;
 
 
     /**

@@ -19,6 +19,9 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		new GameController().startGame();
-		}
+		// store the reference of the gameController (Otherwise JVM might garbage collect this object as it is not reachable)
+		// Maybe shouldn't? Idk ..
+		GameController gc = new GameController();
+		gc.startGame();
+	}
 }
