@@ -2,6 +2,7 @@ package main.java.model;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,23 +13,25 @@ import java.util.List;
 
 /**
  * The class is used for (randomly) generating monster(s)
+ * <br>
+ * Note: When constructing a monster, we have to fetch the image first! Otherwise, the monster's name will be random.
+ * <br>
+ * Note: The rarity level should be consistence with the amount of folder we have in image/monster.
+ * <br>
+ * Note: If you want to add a new monster into the game. Place its image in the image/monster, the new constructed
+ * monster's will be the file(image) name.
  */
 public class MonsterGenerator {
-    private static final String IMAGEPATH = "src/main/java/image/";
-    // {rarity: [name1, name2], rarity2: .... }
-    private final Map<Integer, List<String>> mRarityAndName;
+    private static final String IMAGEPATH = "src/main/java/image/monster/";
+    // temporary variable for storing the image's name and assign it to the monster
+    private String monsterName;
+
 
     /**
      * MonsterGenerator's constructor. Set monster's rarity and name.
      */
     public MonsterGenerator() {
-        this.mRarityAndName = new HashMap<>();
-        this.mRarityAndName.put(1, Arrays.asList("Monster1", "Monster11"));
-        this.mRarityAndName.put(2, Arrays.asList("Monster2", "Monster22"));
-        this.mRarityAndName.put(3, Arrays.asList("Monster3", "Monster33"));
-        this.mRarityAndName.put(4, Arrays.asList("Monster4", "Monster44"));
-        this.mRarityAndName.put(5, Arrays.asList("Monster5", "Monster55"));
-        this.mRarityAndName.put(6, Arrays.asList("Monster6", "Monster66"));
+        this.monsterName = "DefaultMonsterName";
     }
 
     /**
@@ -41,15 +44,14 @@ public class MonsterGenerator {
         MonsterBuilderImpl b = new MonsterBuilderImpl();
         // randomly
         int rarity = getRarityRand();
-        String monsterName = getNameRand(rarity);
         // price, health, damage, level
-        return b.name(monsterName)
+        return b.imageIcon(getImageIconForRarityRand(rarity))
+                .name(this.monsterName)
                 .price(getPriceRand(rarity))
                 .maxHealth(getMaxHealthRand(rarity))
                 .damage(getDamageRand(rarity))
                 .level(1)
                 .rarity(rarity)
-                .imageIcon(getImageIconForRarityRand(rarity))
                 .build();
     }
 
@@ -58,23 +60,29 @@ public class MonsterGenerator {
      *
      * @return a list of initMonster
      */
+    // TODO: ASSIGN NAME WITH THE IMAGE
     public ArrayList<Monster> generateInitialMonsters() {
         ArrayList<Monster> initMonsters = new ArrayList<>();
         Monster monster1 = new MonsterBuilderImpl()
-                .name("DefMonster1").price(100).maxHealth(500).damage(200).level(1).rarity(1)
-                .imageIcon(getImageIconForRarityRand(1)).build();
+                .imageIcon(getImageIconForRarityRand(1))
+                .name(this.monsterName).price(100).maxHealth(500).damage(200).level(1).rarity(1)
+                .build();
         Monster monster2 = new MonsterBuilderImpl()
-                .name("DefMonster2").price(100).maxHealth(550).damage(150).level(1).rarity(1)
-                .imageIcon(getImageIconForRarityRand(1)).build();
+                .imageIcon(getImageIconForRarityRand(1))
+                .name(this.monsterName).price(100).maxHealth(550).damage(150).level(1).rarity(1)
+                .build();
         Monster monster3 = new MonsterBuilderImpl()
-                .name("DefMonster3").price(100).maxHealth(600).damage(100).level(1).rarity(1)
-                .imageIcon(getImageIconForRarityRand(1)).build();
+                .imageIcon(getImageIconForRarityRand(1))
+                .name(this.monsterName).price(100).maxHealth(600).damage(100).level(1).rarity(1)
+                .build();
         Monster monster4 = new MonsterBuilderImpl()
-                .name("DefMonster4").price(100).maxHealth(600).damage(100).level(1).rarity(1)
-                .imageIcon(getImageIconForRarityRand(1)).build();
+                .imageIcon(getImageIconForRarityRand(1))
+                .name(this.monsterName).price(100).maxHealth(600).damage(100).level(1).rarity(1)
+                .build();
         Monster monster5 = new MonsterBuilderImpl()
-                .name("DefMonster5").price(100).maxHealth(800).damage(30).level(1).rarity(1)
-                .imageIcon(getImageIconForRarityRand(1)).build();
+                .imageIcon(getImageIconForRarityRand(1))
+                .name(this.monsterName).price(100).maxHealth(800).damage(30).level(1).rarity(1)
+                .build();
         Collections.addAll(initMonsters, monster1, monster2, monster3, monster4, monster5);
         return initMonsters;
     }
@@ -82,19 +90,6 @@ public class MonsterGenerator {
     /*
     private function
      */
-
-    /**
-     * Select a list of monster names with the preset rarity and randomly get a name from the list.
-     *
-     * @param rarity a integer representing the rarity of the monster
-     * @return monster name (String)
-     */
-    private String getNameRand(int rarity) {
-        Random r = new Random();
-        List<String> nameList = this.mRarityAndName.get(rarity);
-        return nameList.get(r.nextInt(nameList.size()));
-    }
-
     /**
      * Randomly get a rarity.
      * Using Random() to randomly get an integer [0, 101) and used the integer to get a rarity.
@@ -151,25 +146,30 @@ public class MonsterGenerator {
         return (int)(Math.random() * rarity * 300 + 1);
     }
 
-//    		try {
-//        Image image = ImageIO.read(new File("src/main/java/image/boss/ifrit.png"));
-//        daysLeftLabel.setIcon(new ImageIcon(image.getScaledInstance(10, 10, Image.SCALE_SMOOTH)));
-//    } catch (
-//    IOException e) {
-//        e.printStackTrace();
-//    }
     private ImageIcon getImageIconForRarityRand(int rarity) {
         Random r = new Random();
+        // folder which contains monster's image
         File imageFolder = new File(IMAGEPATH+rarity);
+        // extract all files in that folder and store them into a list.
         File[] images = imageFolder.listFiles();
         if (images != null) {
             try {
-                Image image = ImageIO.read(images[r.nextInt(images.length)]);
-                return new ImageIcon(image);
+                // randomly get a imageFile
+                File imageFile = images[r.nextInt(images.length)];
+                // get imageFile's name
+                String imageFileName = imageFile.getName();
+                // remove extension and add it save it
+                // add an if statement to handle the error(File does not contain any extension)
+                if(imageFileName.contains(".")) {
+                    this.monsterName = imageFileName.substring(0, imageFileName.lastIndexOf('.'));
+                }
+                return new ImageIcon(ImageIO.read(imageFile));
             } catch (IOException e) {
+                // this exception will occur if the IO stream can not be established.
                 e.printStackTrace();
             }
         }
+        // create a blank image if we can't find any image
         BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
         return new ImageIcon(img);
     }
