@@ -16,7 +16,7 @@ public class MainScreen implements Observer {
 	private final GameController gc;
 	// components
 	private final JPanel[] playerTeamPanel = new JPanel[4];
-	private final JPanel[] monsterPanel = new JPanel[4];
+	private final JPanel[] enemyMonsterPanel = new JPanel[4];
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
 	// variable (Toggle visibility)
@@ -191,7 +191,6 @@ public class MainScreen implements Observer {
 		return topLeftPanel;
 	}
 
-	// TODO: Add drag and drop
 	private JPanel getLeftPanel() {
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBounds(0,70,120,430);
@@ -227,7 +226,6 @@ public class MainScreen implements Observer {
 		return nameLabel;
 	}
 
-	// TODO: Add drag and drop
 	private JPanel getRightPanel() {
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new GridLayout(4,1));
@@ -236,16 +234,16 @@ public class MainScreen implements Observer {
 		rightPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
 
 		for (int i=0; i < 4; i++) {
-			monsterPanel[i] = new JPanel();
-			monsterPanel[i].setLayout(new GridLayout(4,1));
-			monsterPanel[i].setBackground(Color.BLACK);
-			monsterPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
+			enemyMonsterPanel[i] = new JPanel();
+			enemyMonsterPanel[i].setLayout(new GridLayout(4,1));
+			enemyMonsterPanel[i].setBackground(Color.BLACK);
+			enemyMonsterPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
 
 			JLabel monster = new JLabel("Gen Monster here");
 			monster.setForeground(Color.WHITE);
 
-			monsterPanel[i].add(monster);
-			rightPanel.add(monsterPanel[i]);
+			enemyMonsterPanel[i].add(monster);
+			rightPanel.add(enemyMonsterPanel[i]);
 		}
 		return rightPanel;
 	}
