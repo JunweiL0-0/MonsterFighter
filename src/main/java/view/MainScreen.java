@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
 import main.java.controller.GameController;
+import main.java.model.Monster;
 import main.java.utilities.Observable;
 import main.java.utilities.Observer;
 
@@ -14,7 +15,7 @@ public class MainScreen implements Observer {
 	// game controller
 	private final GameController gc;
 	// components
-	private final JPanel[] teamPanel = new JPanel[4];
+	private final JPanel[] playerTeamPanel = new JPanel[4];
 	private final JPanel[] monsterPanel = new JPanel[4];
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
@@ -79,8 +80,8 @@ public class MainScreen implements Observer {
 		this.mainFrame.getContentPane().add(getTopPanel());
 		this.mainFrame.getContentPane().add(getLeftPanel());
 		this.mainFrame.getContentPane().add(getRightPanel());
-		// Center
 		// create panel and store them into variables
+		// Center
 		initCenterMainPanel(); // Visible by default
 		initCenterBagPanel(); // Not visible until btn being pressed
 		initCenterShopPanel(); // Not visible until btn being pressed
@@ -90,6 +91,8 @@ public class MainScreen implements Observer {
 		initBottomBagPanel(); // Not visible until btn being pressed
 		initBottomShopPanel(); // Not visible until btn being pressed
 		initBottomSettingsPanel(); // Not visible until btn being pressed
+		// PlayerTeamPanel
+		initPlayerTeamPanel1();
 		// add panels
 		this.mainFrame.getContentPane().add(this.centerMainPanel);
 		this.mainFrame.getContentPane().add(this.centerBagPanel);
@@ -99,6 +102,10 @@ public class MainScreen implements Observer {
 		this.mainFrame.getContentPane().add(this.bottomBagPanel);
 		this.mainFrame.getContentPane().add(this.bottomShopPanel);
 		this.mainFrame.getContentPane().add(this.bottomSettingsPanel);
+	}
+
+	private void initPlayerTeamPanel1() {
+
 	}
 
 	/*JFrame*/
@@ -188,28 +195,36 @@ public class MainScreen implements Observer {
 	private JPanel getLeftPanel() {
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBounds(0,70,120,430);
-		leftPanel.setLayout(new GridLayout(teamPanel.length,1));
+		leftPanel.setLayout(new GridLayout(this.playerTeamPanel.length,1));
 		leftPanel.setBackground(Color.BLACK);
-		leftPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 3, 3, Color.WHITE));
+		leftPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
 
-		for (int i=0; i < teamPanel.length; i++) {
-			teamPanel[i] = new JPanel();
-			teamPanel[i].setLayout(new GridLayout(4,1));
-			teamPanel[i].setBackground(Color.BLACK);
-			teamPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
-
-			JLabel monsterName = new JLabel();
-			monsterName.setForeground(Color.WHITE);
-			monsterName.setText("Monster "+Integer.toString(i));//getName method for n index in selected monster in gc?
-
-			teamPanel[i].add(monsterName);
-
-			leftPanel.add(teamPanel[i]);
-			if (i == 3) {
-				teamPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		for (int i=0; i < this.playerTeamPanel.length; i++) {
+			JPanel panel = getNewPlayerTeamPanel();
+			// add name label if we have monster in the team
+			if (i < this.gc.getMonsterTeamMember().size()) {
+				panel.add(getNameLabelForMonster(i));
 			}
+			this.playerTeamPanel[i] = panel;
+			leftPanel.add(this.playerTeamPanel[i]);
 		}
 		return leftPanel;
+	}
+
+	private JPanel getNewPlayerTeamPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
+		panel.setBackground(Color.BLACK);
+		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
+		return panel;
+	}
+
+	private JLabel getNameLabelForMonster(int monsterIndex) {
+		Monster monster = this.gc.getMonsterFromTeamByIndex(monsterIndex);
+		JLabel nameLabel = new JLabel();
+		nameLabel.setForeground(Color.WHITE);
+		nameLabel.setText(monster.getName());
+		return nameLabel;
 	}
 
 	// TODO: Add drag and drop
@@ -218,7 +233,7 @@ public class MainScreen implements Observer {
 		rightPanel.setLayout(new GridLayout(4,1));
 		rightPanel.setBackground(Color.BLACK);
 		rightPanel.setBounds(680,70,120,430);
-		rightPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 3, 3, Color.WHITE));
+		rightPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
 
 		for (int i=0; i < 4; i++) {
 			monsterPanel[i] = new JPanel();
@@ -229,16 +244,9 @@ public class MainScreen implements Observer {
 			JLabel monster = new JLabel("Gen Monster here");
 			monster.setForeground(Color.WHITE);
 
-//			JButton button = new JButton();
-//			button.setText("test");
 			monsterPanel[i].add(monster);
-//			monsterPanel[i].add(button);
 			rightPanel.add(monsterPanel[i]);
-			if (i == 3) {
-				monsterPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
-			}
 		}
-
 		return rightPanel;
 	}
 

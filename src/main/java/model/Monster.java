@@ -4,11 +4,12 @@ package main.java.model;
  * A class representing monster.
  */
 public class Monster extends GameItem {
-    private final int maxHealth;
-    private final int currentHealth;
-    private final int damage;
-    private final int level;
-    private final int rarity;
+    private int maxHealth;
+    private int currentHealth;
+    private int damage;
+    private int level;
+    private int rarity;
+    private int actionCounter;
 
 
     /**
@@ -29,6 +30,7 @@ public class Monster extends GameItem {
         this.damage = damage;
         this.level = level;
         this.rarity = rarity;
+        this.actionCounter = 0;
     }
 
     /**
@@ -105,4 +107,19 @@ public class Monster extends GameItem {
         return this.rarity;
     }
 
+    public int getActionCounter() {
+        return this.actionCounter;
+    }
+
+    public void harmBy(int incomingDamage) {
+        this.currentHealth = Math.max(0, this.currentHealth - incomingDamage);
+    }
+
+    public void resetActionCounter() {
+        this.actionCounter = 0;
+    }
+
+    public void incrementActionCounter() {
+        this.actionCounter += 1;
+    }
 }

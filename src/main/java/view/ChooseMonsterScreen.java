@@ -71,7 +71,6 @@ public class ChooseMonsterScreen {
 		this.chooseFrame.getContentPane().add(this.confirmButton);
 		// go back button
 		this.chooseFrame.getContentPane().add(getGoBackButton());
-
 		// bind the enter key to "CONFIRM" button
 		this.chooseFrame.getRootPane().setDefaultButton(confirmButton);
 	}
@@ -144,7 +143,7 @@ public class ChooseMonsterScreen {
 		// add buttons to the panel one by one
 		for (int indexInList=0; indexInList<this.availableMonsters.size(); indexInList++) {
 			JToggleButton button = getMonsterButton(indexInList);
-			monsterButtons.add(button);
+			this.monsterButtons.add(button);
 			panel.add(button);
 		}
 		// add details to the panel one by one
@@ -169,6 +168,8 @@ public class ChooseMonsterScreen {
 		button.setText(monster.getName());
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
 		button.setPreferredSize(new Dimension(144,100));
+		button.setFocusable(false);
+		// Listeners
 		button.addActionListener(actionEvent -> validateSelection());
 		return button;
 	}
@@ -187,6 +188,7 @@ public class ChooseMonsterScreen {
 		detail.setBackground(Color.BLACK);
 		detail.setBorder(null);
 		detail.setText(constructMonsterDetail(monster));
+		detail.setEditable(false);
 		return detail;
 	}
 
@@ -264,6 +266,7 @@ public class ChooseMonsterScreen {
 	 * Launch MainScreen and close this screen(ChooseMonsterScreen).
 	 */
 	private void switchToMainScreen() {
+		storeSelectedMonsters();
 		this.gc.launchMainScreen();
 		closeAndDestroyChooseScreen();
 	}
@@ -351,5 +354,14 @@ public class ChooseMonsterScreen {
 	private String constructMonsterDetail(Monster monster) {
 		return String.format("MaxHealth: %d\nDamage: %d\nLevel: %d\n",
 				monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
+	}
+
+	private void storeSelectedMonsters() {
+		for (int i=0; i<this.monsterButtons.size(); i++) {
+			if (this.monsterButtons.get(i).isSelected()) {
+				Monster monster = this.availableMonsters.get(i);
+				this.gc.addMonsterToPlayerTeam(monster);
+			}
+		}
 	}
 }

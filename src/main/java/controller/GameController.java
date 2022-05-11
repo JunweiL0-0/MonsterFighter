@@ -16,7 +16,7 @@ public class GameController extends Observable {
     // classes
     private final MonsterGenerator monsterGenerator;
     private Shop shop;
-    private final Team team;
+    private final Team playerTeam;
     // variables
     private String playerName;
     private String difficulty;
@@ -31,7 +31,7 @@ public class GameController extends Observable {
     public GameController() {
         this.monsterGenerator = new MonsterGenerator();
         this.shop = new Shop(this.monsterGenerator);
-        this.team = new Team();
+        this.playerTeam = new Team(4);
     }
 
     /**
@@ -201,11 +201,15 @@ public class GameController extends Observable {
      *
      * @param monster a monster instance
      */
-    public void addMonsterToTeam(Monster monster) {
-        boolean added = this.team.addMonsterToTeam(monster);
+    public void addMonsterToPlayerTeam(Monster monster) {
+        boolean added = this.playerTeam.addMonsterToTeam(monster);
         if (!added) {
-            System.out.println("Can not add monster into team");
+            System.out.println("Team is full. Can not add monster into team");
         }
+    }
+
+    public ArrayList<Monster> getMonsterTeamMember() {
+        return this.playerTeam.getTeamMember();
     }
 
     public void incrementDay() {
@@ -224,5 +228,9 @@ public class GameController extends Observable {
      */
     public ArrayList<Monster> getInitMonsters() {
         return this.monsterGenerator.generateInitialMonsters();
+    }
+
+    public Monster getMonsterFromTeamByIndex(int i) {
+        return this.playerTeam.getMonsterByIndex(i);
     }
 }
