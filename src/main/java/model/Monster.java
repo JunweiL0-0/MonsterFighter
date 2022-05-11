@@ -1,5 +1,7 @@
 package main.java.model;
 
+import javax.swing.*;
+
 /**
  * A class representing monster.
  */
@@ -10,6 +12,7 @@ public class Monster extends GameItem {
     private int level;
     private int rarity;
     private int actionCounter;
+    private ImageIcon imageIcon;
 
 
     /**
@@ -23,13 +26,14 @@ public class Monster extends GameItem {
      * @param level an integer representing the monster's level
      * @param rarity an integer representing the monster's rarity
      */
-    public Monster(String name, int price, int maxHealth, int damage, int level, int rarity) {
+    public Monster(String name, int price, int maxHealth, int damage, int level, int rarity, ImageIcon icon) {
         super(name, price);
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.damage = damage;
         this.level = level;
         this.rarity = rarity;
+        this.imageIcon = icon;
         this.actionCounter = 0;
     }
 
@@ -105,6 +109,10 @@ public class Monster extends GameItem {
      */
     public int getRarity() {
         return this.rarity;
+    }
+
+    public ImageIcon getImageIcon() {
+        return this.imageIcon;
     }
 
     public int getActionCounter() {

@@ -1,5 +1,7 @@
 package main.java.model;
 
+import javax.swing.*;
+
 /**
  * MonsterBuilderImpl handle the creation of the Monster through exposed methods by implementing the MonsterBuilder interface
  */
@@ -10,6 +12,7 @@ public class MonsterBuilderImpl implements MonsterBuilder {
     private int damage;
     private int level;
     private int rarity;
+    private ImageIcon imageIcon;
 
 
     /**
@@ -78,12 +81,17 @@ public class MonsterBuilderImpl implements MonsterBuilder {
         return this;
     }
 
+    public MonsterBuilder imageIcon(ImageIcon icon) {
+        this.imageIcon = icon;
+        return this;
+    }
+
     /**
      * Build and return a monster instance.
      *
      * @return a newly created monster instance.
      */
     public Monster build() {
-        return new Monster(this.name, this.price, this.maxHealth, this.damage, this.level, this.rarity);
+        return new Monster(this.name, this.price, this.maxHealth, this.damage, this.level, this.rarity, this.imageIcon);
     }
 }

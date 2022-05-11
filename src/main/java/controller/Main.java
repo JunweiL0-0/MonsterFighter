@@ -1,6 +1,5 @@
 package main.java.controller;
 
-
 import javax.swing.*;
 
 /**

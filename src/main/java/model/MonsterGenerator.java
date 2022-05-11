@@ -1,12 +1,20 @@
 package main.java.model;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 
 /**
  * The class is used for (randomly) generating monster(s)
  */
 public class MonsterGenerator {
+    private static final String IMAGEPATH = "src/main/java/image/";
     // {rarity: [name1, name2], rarity2: .... }
     private final Map<Integer, List<String>> mRarityAndName;
 
@@ -41,6 +49,7 @@ public class MonsterGenerator {
                 .damage(getDamageRand(rarity))
                 .level(1)
                 .rarity(rarity)
+                .imageIcon(getImageIconForRarityRand(rarity))
                 .build();
     }
 
@@ -52,15 +61,20 @@ public class MonsterGenerator {
     public ArrayList<Monster> generateInitialMonsters() {
         ArrayList<Monster> initMonsters = new ArrayList<>();
         Monster monster1 = new MonsterBuilderImpl()
-                .name("DefMonster1").price(100).maxHealth(500).damage(200).level(1).rarity(1).build();
+                .name("DefMonster1").price(100).maxHealth(500).damage(200).level(1).rarity(1)
+                .imageIcon(getImageIconForRarityRand(1)).build();
         Monster monster2 = new MonsterBuilderImpl()
-                .name("DefMonster2").price(100).maxHealth(550).damage(150).level(1).rarity(1).build();
+                .name("DefMonster2").price(100).maxHealth(550).damage(150).level(1).rarity(1)
+                .imageIcon(getImageIconForRarityRand(1)).build();
         Monster monster3 = new MonsterBuilderImpl()
-                .name("DefMonster3").price(100).maxHealth(600).damage(100).level(1).rarity(1).build();
+                .name("DefMonster3").price(100).maxHealth(600).damage(100).level(1).rarity(1)
+                .imageIcon(getImageIconForRarityRand(1)).build();
         Monster monster4 = new MonsterBuilderImpl()
-                .name("DefMonster4").price(100).maxHealth(600).damage(100).level(1).rarity(1).build();
+                .name("DefMonster4").price(100).maxHealth(600).damage(100).level(1).rarity(1)
+                .imageIcon(getImageIconForRarityRand(1)).build();
         Monster monster5 = new MonsterBuilderImpl()
-                .name("DefMonster5").price(100).maxHealth(800).damage(30).level(1).rarity(1).build();
+                .name("DefMonster5").price(100).maxHealth(800).damage(30).level(1).rarity(1)
+                .imageIcon(getImageIconForRarityRand(1)).build();
         Collections.addAll(initMonsters, monster1, monster2, monster3, monster4, monster5);
         return initMonsters;
     }
@@ -135,5 +149,28 @@ public class MonsterGenerator {
      */
     private int getDamageRand(int rarity) {
         return (int)(Math.random() * rarity * 300 + 1);
+    }
+
+//    		try {
+//        Image image = ImageIO.read(new File("src/main/java/image/boss/ifrit.png"));
+//        daysLeftLabel.setIcon(new ImageIcon(image.getScaledInstance(10, 10, Image.SCALE_SMOOTH)));
+//    } catch (
+//    IOException e) {
+//        e.printStackTrace();
+//    }
+    private ImageIcon getImageIconForRarityRand(int rarity) {
+        Random r = new Random();
+        File imageFolder = new File(IMAGEPATH+rarity);
+        File[] images = imageFolder.listFiles();
+        if (images != null) {
+            try {
+                Image image = ImageIO.read(images[r.nextInt(images.length)]);
+                return new ImageIcon(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        return new ImageIcon(img);
     }
 }

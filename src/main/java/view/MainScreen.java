@@ -2,6 +2,10 @@ package main.java.view;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import main.java.controller.GameController;
 import main.java.model.Monster;
@@ -148,7 +152,7 @@ public class MainScreen implements Observer {
 		JPanel newTopPanel = new JPanel();
 		newTopPanel.setBounds(0,0,800,70);
 		newTopPanel.setBackground(Color.BLACK);
-		newTopPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE,3));
+		newTopPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.WHITE));
 		newTopPanel.setLayout(new GridLayout(1,5));
 		// create buttons (Bag, Shop, Settings)
 		JToggleButton bagButton = getBagButton();
@@ -612,9 +616,6 @@ public class MainScreen implements Observer {
 		b.addActionListener(e -> {
 			// unSelected all buttons
 			topGroup.clearSelection();
-			// show mainPanel
-			showCenterPanelOf(TopBtn.MAIN);
-			showBottomPanelOf(TopBtn.MAIN);
 		});
 	}
 
@@ -629,8 +630,10 @@ public class MainScreen implements Observer {
 				showCenterPanelOf(tBtn);
 				showBottomPanelOf(tBtn);
 			} else if (e.getStateChange() == ItemEvent.DESELECTED) {
+				showCenterPanelOf(TopBtn.MAIN);
 				showBottomPanelOf(TopBtn.MAIN);
-				showBottomPanelOf(TopBtn.MAIN);
+				// testing
+				this.centerMainPanel.requestFocus();
 			}
 		});
 	}

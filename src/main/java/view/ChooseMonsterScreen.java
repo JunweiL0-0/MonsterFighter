@@ -1,9 +1,6 @@
 package main.java.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -165,7 +162,11 @@ public class ChooseMonsterScreen {
 	private JToggleButton getMonsterButton(int indexInList) {
 		Monster monster = this.availableMonsters.get(indexInList);
 		JToggleButton button = new JToggleButton();
-		button.setText(monster.getName());
+		// resize the image
+		Image monsterImage = monster.getImageIcon().getImage().getScaledInstance(100, 60, java.awt.Image.SCALE_SMOOTH);
+		// create the imageIcon
+		ImageIcon imageIcon = new ImageIcon(monsterImage);
+		button.setIcon(imageIcon);
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
 		button.setPreferredSize(new Dimension(144,100));
 		button.setFocusable(false);
@@ -352,8 +353,8 @@ public class ChooseMonsterScreen {
 	 * @return a string represents the detail of the monster and will be shown on the monsterBtn.
 	 */
 	private String constructMonsterDetail(Monster monster) {
-		return String.format("MaxHealth: %d\nDamage: %d\nLevel: %d\n",
-				monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
+		return String.format("Name: %s\nMaxHealth: %d\nDamage: %d\nLevel: %d\n",
+				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 
 	private void storeSelectedMonsters() {
