@@ -234,18 +234,28 @@ public class MainScreen implements Observer {
 		rightPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
 
 		for (int i=0; i < 4; i++) {
-			enemyMonsterPanel[i] = new JPanel();
-			enemyMonsterPanel[i].setLayout(new GridLayout(4,1));
-			enemyMonsterPanel[i].setBackground(Color.BLACK);
-			enemyMonsterPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
-
-			JLabel monster = new JLabel("Gen Monster here");
-			monster.setForeground(Color.WHITE);
-
-			enemyMonsterPanel[i].add(monster);
+			JPanel panel = getNewEnemyMonsterPanel();
+			// add label
+			panel.add(getEnemyMonsterPanelLabel());
+			// store them in to a list
+			enemyMonsterPanel[i] = panel;
 			rightPanel.add(enemyMonsterPanel[i]);
 		}
 		return rightPanel;
+	}
+
+	private JPanel getNewEnemyMonsterPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
+		panel.setBackground(Color.BLACK);
+		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
+		return panel;
+	}
+
+	private JLabel getEnemyMonsterPanelLabel() {
+		JLabel label = new JLabel("Gen Monster here");
+		label.setForeground(Color.WHITE);
+		return label;
 	}
 
 	/**
