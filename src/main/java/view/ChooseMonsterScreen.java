@@ -319,3 +319,4 @@ public class ChooseMonsterScreen {
 		gc.setSelectedMonsters(selectedMonsters);
 	}
 }
+
