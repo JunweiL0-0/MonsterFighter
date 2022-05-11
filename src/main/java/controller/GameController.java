@@ -1,6 +1,7 @@
 package main.java.controller;
 
 import main.java.model.*;
+import main.java.utilities.Observable;
 import main.java.view.ChooseMonsterScreen;
 import main.java.view.LandingScreen;
 import main.java.view.MainScreen;
@@ -12,7 +13,7 @@ import java.util.Objects;
 /**
  * A java controller handling the game logic.
  */
-public class GameController {
+public class GameController extends Observable {
     // classes
     private final MonsterGenerator monsterGenerator;
     private Shop shop;
@@ -66,34 +67,6 @@ public class GameController {
         initGold();
         initPoint();
         new MainScreen(this);
-    }
-
-    /**
-     * Return a list of initialMonster for the player.
-     * This function is designed for the chooseMonsterScreen.
-     *
-     * @return a list of initialMonster for the player.
-     */
-    public ArrayList<Monster> getInitMonsters() {
-    	return this.monsterGenerator.generateInitialMonsters();
-    }
-
-    /**
-     * Add a new monster into the team. A TeamIsAlreadyFullException err will be thrown if the team is full.
-     *
-     * @param monster a monster instance
-     */
-    public void addMonsterToTeam(Monster monster) {
-        boolean added = this.team.addMonsterToTeam(monster);
-        if (!added) {
-            System.out.println("Can not add monster into team");
-        }
-    }
-
-    public void incrementDay() {
-        if (this.currentDay <= this.totalDay) {
-            this.currentDay += 1;
-        }
     }
 
     private void initCurrAndTotalDay() {
@@ -218,7 +191,12 @@ public class GameController {
      * @param gold an integer represent the current gold the player has.
      */
     public void setGold(int gold) {
+        int prev_val = this.gold;
         this.gold = gold;
+        if (prev_val != this.gold) {
+            setChanged();
+            notifyObservers();
+        }
     }
 
     /**
@@ -227,7 +205,24 @@ public class GameController {
      * @param point a integer represent the current point the player has.
      */
     public void setPoint(int point) {
+        int prev_val = this.point;
         this.point = point;
+        if (prev_val != this.point) {
+            setChanged();
+            notifyObservers();
+        }
+    }
+
+    /**
+     * Add a new monster into the team. A TeamIsAlreadyFullException err will be thrown if the team is full.
+     *
+     * @param monster a monster instance
+     */
+    public void addMonsterToTeam(Monster monster) {
+        boolean added = this.team.addMonsterToTeam(monster);
+        if (!added) {
+            System.out.println("Can not add monster into team");
+        }
     }
     
     /**
@@ -243,6 +238,23 @@ public class GameController {
     	this.selectedMonsters = selected;
     }
     
-    
 
+    public void incrementDay() {
+        if (this.currentDay <= this.totalDay) {
+            this.currentDay += 1;
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Return a list of initialMonster for the player.
+     * This function is designed for the chooseMonsterScreen.
+     *
+     * @return a list of initialMonster for the player.
+     */
+    public ArrayList<Monster> getInitMonsters() {
+        return this.monsterGenerator.generateInitialMonsters();
+    }
 }
+

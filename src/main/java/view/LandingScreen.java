@@ -76,7 +76,6 @@ public class LandingScreen {
 		// Store the hintMessageLabel, so that we can change the label dynamically.
 		this.hintMessageLabel = getHintMessageLabel();
 		this.landingFrame.getContentPane().add(hintMessageLabel);
-
 		// Default difficulty
 		easyButton.setSelected(true);
 		this.difficulty = easyButton.getText();
@@ -135,6 +134,7 @@ public class LandingScreen {
 		newLandingFrame.setLayout(null);
 		newLandingFrame.setResizable(false);
 		newLandingFrame.pack();
+		// place the frame in the center of the screen
 		newLandingFrame.setLocationRelativeTo(null);
 
 		return newLandingFrame;
