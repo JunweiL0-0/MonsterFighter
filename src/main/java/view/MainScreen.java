@@ -191,60 +191,71 @@ public class MainScreen implements Observer {
 		return topLeftPanel;
 	}
 
+	/**
+	 * Create and return the leftPanel. This panel will contain several playerTeamPanel.
+	 * <br>
+	 * This panel will be shown on the left side of the mainFrame.
+	 *
+	 * @return a leftPanel
+	 */
 	private JPanel getLeftPanel() {
+		// create a leftPanel
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBounds(0,70,120,430);
 		leftPanel.setLayout(new GridLayout(this.playerTeamPanel.length,1));
 		leftPanel.setBackground(Color.BLACK);
 		leftPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
-
+		// add playerTeamPanel
 		for (int i=0; i < this.playerTeamPanel.length; i++) {
 			JPanel panel = getNewPlayerTeamPanel();
 			// add name label if we have monster in the team
 			if (i < this.gc.getMonsterTeamMember().size()) {
 				panel.add(getNameLabelForMonster(i));
 			}
+			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
+			// add playerTeamPanel into leftPanel
 			leftPanel.add(this.playerTeamPanel[i]);
 		}
 		return leftPanel;
 	}
 
-	private JPanel getNewPlayerTeamPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
-		panel.setBackground(Color.BLACK);
-		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
-		return panel;
-	}
-
-	private JLabel getNameLabelForMonster(int monsterIndex) {
-		Monster monster = this.gc.getMonsterFromTeamByIndex(monsterIndex);
-		JLabel nameLabel = new JLabel();
-		nameLabel.setForeground(Color.WHITE);
-		nameLabel.setText(monster.getName());
-		return nameLabel;
-	}
-
+	/**
+	 * Create and return a rightPanel. This panel will contain several enemyMonsterPanels.
+	 * <br>
+	 * This panel will be shown on the right side of the mainFrame.
+	 *
+	 * @return a rightPanel
+	 */
 	private JPanel getRightPanel() {
+		// create a rightPanel
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new GridLayout(4,1));
 		rightPanel.setBackground(Color.BLACK);
 		rightPanel.setBounds(680,70,120,430);
 		rightPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
-
+		// add enemyMonsterPanel
 		for (int i=0; i < 4; i++) {
 			JPanel panel = getNewEnemyMonsterPanel();
 			// add label
 			panel.add(getEnemyMonsterPanelLabel());
-			// store them in to a list
+			// store reference in to a list
 			enemyMonsterPanel[i] = panel;
+			// add enemyMonsterPanel into the rightPanel
 			rightPanel.add(enemyMonsterPanel[i]);
 		}
 		return rightPanel;
 	}
 
-	private JPanel getNewEnemyMonsterPanel() {
+	/**
+	 * Create and return a new player team panel. This panel will be part of the left panel.
+	 * <br>
+	 * This is a template.
+	 *
+	 * @return a new player team panel
+	 */
+	private JPanel getNewPlayerTeamPanel() {
+		// (leftPanel component)
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(4,1));
 		panel.setBackground(Color.BLACK);
@@ -252,10 +263,20 @@ public class MainScreen implements Observer {
 		return panel;
 	}
 
-	private JLabel getEnemyMonsterPanelLabel() {
-		JLabel label = new JLabel("Gen Monster here");
-		label.setForeground(Color.WHITE);
-		return label;
+	/**
+	 * Create and return a new enemy monster panel. This panel will be part of the right panel.
+	 * <br>
+	 * This is a template.
+	 *
+	 * @return a enemy monster panel.
+	 */
+	private JPanel getNewEnemyMonsterPanel() {
+		// (rightPanel component)
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
+		panel.setBackground(Color.BLACK);
+		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
+		return panel;
 	}
 
 	/**
@@ -310,6 +331,35 @@ public class MainScreen implements Observer {
 	}
 
 	/* JLabel */
+	/**
+	 * Create and return the name label for player monster.
+	 *
+	 * @param monsterIndex an index represent the location of the monster in the team.
+	 * @return a JLabel with the monster's name on it.
+	 */
+	private JLabel getNameLabelForMonster(int monsterIndex) {
+		// NameLabel (playerTeamPanel component)
+		// get monster by index
+		Monster monster = this.gc.getMonsterFromTeamByIndex(monsterIndex);
+		// create the nameLabel
+		JLabel nameLabel = new JLabel();
+		nameLabel.setForeground(Color.WHITE);
+		// get and set the monster's name
+		nameLabel.setText(monster.getName());
+		return nameLabel;
+	}
+
+	/**
+	 * Create and return the Label for the enemy monster panel.
+	 *
+	 * @return a JLabel with the text on it.
+	 */
+	private JLabel getEnemyMonsterPanelLabel() {
+		JLabel label = new JLabel("Gen Monster here");
+		label.setForeground(Color.WHITE);
+		return label;
+	}
+
 	/**
 	 * Create and return a playerNameLabel.
 	 *
