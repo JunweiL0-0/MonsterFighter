@@ -92,6 +92,10 @@ public class Team {
         return this.teamMember.get(i);
     }
 
+    public int size() {
+        return this.teamMember.size();
+    }
+
     /**
      * Loop through the teamMember and trying to find a not fainted monster and return the index of that monster.
      *

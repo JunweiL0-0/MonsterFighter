@@ -21,7 +21,7 @@ public class MainScreen implements Observer {
 	private final JPanel[] enemyMonsterPanel = new JPanel[4];
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
-	// variable (Toggle visibility)
+	// PanelMap (Toggle visibility)
 	// centerPanel
 	private final Map<CenterPanel, JPanel> centerPanelMap;
 	// bottomPanel
@@ -60,24 +60,28 @@ public class MainScreen implements Observer {
 		// *******************************************************************/
 		// * LeftPanel  *                                       * RightPanel *
 		// *            *                                       *            *
-		// *            *     Main/Bag/Shop/Settings panel      *            *
+		// *            *  CenterPanel(Main/Bag/Shop/Settings)  *            *
 		// *            *                                       *            *
 		// *            *                                       *            *
 		// *            *****************************************            *
-		// *            *  Bottom Main/Bag/Shop/Settings panel  *            *
-		// *            *                         (ContinueBtn) *            *
+		// *            *  BottomPanel(Main/Bag/Shop/Settings)  *            *
+		// *            *                                       *            *
 		// *******************************************************************
 		this.mainFrame = getMainFrame();
 		// Top, Left, Right
 		this.mainFrame.getContentPane().add(getTopPanel());
 		this.mainFrame.getContentPane().add(getLeftPanel());
 		this.mainFrame.getContentPane().add(getRightPanel());
-		// create panel and store them into variables
-		// Center
+		// Center and bottom panel
 		addCenterPanelToFrame(this.mainFrame);
 		addBottomPanelToFrame(this.mainFrame);
 	}
 
+	/**
+	 * Store centerPanel into this.CenterPanelMap and add the panel to the frame.
+	 *
+	 * @param frame a JFrame. (mainScreen in this case)
+	 */
 	private void addCenterPanelToFrame(JFrame frame) {
 		// center
 		JPanel centerMainPanel = getCenterMainPanel();
@@ -97,6 +101,11 @@ public class MainScreen implements Observer {
 
 	}
 
+	/**
+	 * Store bottomPale into this.BottomPanel and add the panel to the frame.
+	 *
+	 * @param frame a JFrame. (mainScreen in this case)
+	 */
 	private void addBottomPanelToFrame(JFrame frame) {
 		// bottom
 		JPanel bottomMainPanel = getBottomMainPanel();
@@ -114,6 +123,56 @@ public class MainScreen implements Observer {
 			frame.getContentPane().add(panel);
 		}
 	}
+
+	/**
+	 * This function will hide all center panels first and show the selected panel.
+	 *
+	 * @param cP an enum value from this.CenterPanel (MAIN, BAG, SHOP, SETTINGS)
+	 */
+	private void showCenterPanel(CenterPanel cP) {
+		// Loop through the map and hide all centerPanel
+		for (JPanel centerPanel : centerPanelMap.values()) {
+			centerPanel.setVisible(false);
+		}
+		// show one panel
+		centerPanelMap.get(cP).setVisible(true);
+	}
+
+	/**
+	 * This function will hide all bottom panels first and show the selected panel.
+	 *
+	 * @param bP an enum value from this.BottomPanel (MAIN, BAG, SHOP, SETTINGS)
+	 */
+	private void showBottomPanel(BottomPanel bP) {
+		// Loop through the map and hide all centerPanel and hide all bottom panels
+		for (JPanel bottomPanel : bottomPanelMap.values()) {
+			bottomPanel.setVisible(false);
+		}
+		// show one panel
+		bottomPanelMap.get(bP).setVisible(true);
+	}
+
+	/**
+	 * Show or hide the mainFrame.
+	 *
+	 * @param val a boolean value used show/hide the mainFrame.
+	 */
+	public void show(boolean val) {
+		this.mainFrame.setVisible(val);
+	}
+
+	// observer
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("Receive new update");
+	}
+
+	//***************************************************************************************************************
+	//**********************   Functions below are used to create Swing components  *********************************
+	//******************** They are seperated into different group for reading purpose ******************************
+	//**  JFrame: 177, JPanel: 198, JTextPane: 520, JLabel: 541, JButton: 632, JToggleButton: 750, Listeners: 811  **
+	//********************************** Warning: Lots of reading! **************************************************
+	//***************************************************************************************************************
 
 	/*JFrame*/
 	/**
@@ -206,6 +265,16 @@ public class MainScreen implements Observer {
 	 * @return a leftPanel
 	 */
 	private JPanel getLeftPanel() {
+		// **************
+		// * LeftPanel  *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// **************
 		// create a leftPanel
 		JPanel leftPanel = new JPanel();
 		leftPanel.setBounds(0,70,120,430);
@@ -217,7 +286,8 @@ public class MainScreen implements Observer {
 			JPanel panel = getNewPlayerTeamPanel();
 			// add name label if we have monster in the team
 			if (i < this.gc.getMonsterTeamMember().size()) {
-				panel.add(getNameLabelForMonster(i));
+				Monster monster = this.gc.getMonsterFromTeamByIndex(i);
+				panel.add(getNameLabelForMonster(monster));
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -235,6 +305,16 @@ public class MainScreen implements Observer {
 	 * @return a rightPanel
 	 */
 	private JPanel getRightPanel() {
+		// **************
+		// * RightPanel *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// *            *
+		// **************
 		// create a rightPanel
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(new GridLayout(4,1));
@@ -278,6 +358,7 @@ public class MainScreen implements Observer {
 	 * @return a enemy monster panel.
 	 */
 	private JPanel getNewEnemyMonsterPanel() {
+		// Template
 		// (rightPanel component)
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(4,1));
@@ -287,12 +368,17 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create and return a new centerPanel. This is a panel template.
+	 * Create and return a new centerPanel.
 	 * <br>
 	 * CenterPanel: (A panel which will be shown in the center of the mainFrame)
+	 * <br>
+	 * This is a template.
+	 *
 	 * @return a new CenterPanel(A panel which will be shown in the middle of the mainFrame)
 	 */
 	private JPanel getNewCenterPanel() {
+		// Template
+		// This panel will be shown in the middle of the mainFrame
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(null);
 		centerPanel.setBackground(Color.BLACK);
@@ -304,10 +390,14 @@ public class MainScreen implements Observer {
 	 * Create and return the bottomPanel. This is a panel template.
 	 * <br>
 	 * BottomPanel: (A panel which will be shown at the bottom of the mainFrame)
+	 * <br>
+	 * This is a template.
+	 *
 	 * @return a newly created bottomPanel.
 	 */
 	private JPanel getNewBottomPanel() {
-		// startingPanel
+		// Template
+		// This panel will be shown in the bottom of the mainFrame
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(null);
 		bottomPanel.setBackground(Color.BLACK);
@@ -324,7 +414,7 @@ public class MainScreen implements Observer {
 	private JPanel getBottomMainPanel() {
 		// *******************************************************************
 		// * Welcome Player                                                  * ----> TextPane
-		// *                                                                 *
+		// *                                                  ContinueBtn    * ----> ContinueBtn
 		// *******************************************************************
 		// create a bottomPanel
 		JPanel bottomMainPanel = getNewBottomPanel();
@@ -335,7 +425,7 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create a bottomBagPanel and store it into a variable
+	 * Create and return a bottomBagPanel. This function is using the bottom panel template function(getNewBottomPanel).
 	 */
 	private JPanel getBottomBagPanel() {
 		// bottomBagPanel
@@ -346,9 +436,8 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create a bottomShopPanel and store it into a variable
+	 * Create a bottomShopPanel. This function is using the bottom panel template function(getNewBottomPanel).
 	 * <br>
-	 * This function will add components to the panel.
 	 */
 	private JPanel getBottomShopPanel() {
 		// bottomShopPanel
@@ -362,9 +451,7 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create a bottomSettingsPanel and store it into a variable
-	 * <br>
-	 * This function will add components to the panel.
+	 * Create a bottomSettingsPanel. This function is using the bottom panel template function(getNewBottomPanel).
 	 */
 	private JPanel getBottomSettingsPanel() {
 		// bottomSettingsPanel
@@ -378,61 +465,53 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create a centerPanel(MainPanel in this case) and store the reference into a variable.
-	 * <br>
-	 * This function will add components to the panel.
+	 * Create a centerMainPanel. This function is using the bottom panel template function(getNewCenterPanel).
 	 */
 	private JPanel getCenterMainPanel() {
 		// centerMainPanel
 		JPanel centerMainPanel = getNewCenterPanel();
 		// add components to panel
-		centerMainPanel.add(getTitle("Main"));
+		centerMainPanel.add(getCenterPanelTitle("Main"));
 		return centerMainPanel;
 	}
 
 	/**
-	 * Create a centerPanel(BagPanel in this case) and store the reference into a variable.
-	 * <br>
-	 * This function will add components to the panel.
+	 * Create a centerBagPanel. This function is using the bottom panel template function(getNewCenterPanel)
 	 */
 	private JPanel getCenterBagPanel() {
 		// create a bagPanel
 		JPanel centerBagPanel = getNewCenterPanel();
 		// add component
-		centerBagPanel.add(getTitle("Bag"));
-		centerBagPanel.add(backButton());
+		centerBagPanel.add(getCenterPanelTitle("Bag"));
+		centerBagPanel.add(getBackButton());
 		// set it to not visible (Default)
 		centerBagPanel.setVisible(false);
 		return centerBagPanel;
 	}
 
 	/**
-	 * Create a centerPanel(ShopPanel in this case) and store the reference into a variable.
-	 * <br>
-	 * This function will add components to the panel.
+	 * Create a centerShopPanel. This function is using the bottom panel template function(getNewCenterPanel)
 	 */
 	private JPanel getCenterShopPanel() {
 		// create a shopPanel (This panel will be stored in a variable)
 		JPanel centerShopPanel = getNewCenterPanel();
 		// add component
-		centerShopPanel.add(getTitle("Shop"));
-		centerShopPanel.add(backButton());
+		centerShopPanel.add(getCenterPanelTitle("Shop"));
+		centerShopPanel.add(getBackButton());
 		// set it to not visible (Default)
 		centerShopPanel.setVisible(false);
 		return centerShopPanel;
 	}
 
 	/**
-	 * Create a centerPanel(SettingsPanel in this case) and store the reference into a variable.
-	 * <br>
-	 * This function will add components to the panel.
+	 * Create a centerSettingsPanel. This function is using the bottom panel template function(getNewCenterPanel)
 	 */
 	private JPanel getCenterSettingsPanel() {
 		// create a settingsPanel
 		JPanel centerSettingsPanel = getNewCenterPanel();
 		// add component
-		centerSettingsPanel.add(getTitle("Settings"));
-		centerSettingsPanel.add(backButton());
+		centerSettingsPanel.add(getCenterPanelTitle("Settings"));
+		centerSettingsPanel.add(getBackButton());
 		// set it to not visible (Default)
 		centerSettingsPanel.setVisible(false);
 		return centerSettingsPanel;
@@ -440,7 +519,7 @@ public class MainScreen implements Observer {
 
 	/* JTextPane */
 	/**
-	 * This function will create and return a textPane so that we can display information on the bottomPanel.
+	 * This function will create and return a textPane so that we can display information on the bottomMainPanel.
 	 *
 	 * @return a textPane(JTextPane)
 	 */
@@ -463,13 +542,11 @@ public class MainScreen implements Observer {
 	/**
 	 * Create and return the name label for player monster.
 	 *
-	 * @param monsterIndex an index represent the location of the monster in the team.
+	 * @param monster a monster instance.
 	 * @return a JLabel with the monster's name on it.
 	 */
-	private JLabel getNameLabelForMonster(int monsterIndex) {
+	private JLabel getNameLabelForMonster(Monster monster) {
 		// NameLabel (playerTeamPanel component)
-		// get monster by index
-		Monster monster = this.gc.getMonsterFromTeamByIndex(monsterIndex);
 		// create the nameLabel
 		JLabel nameLabel = new JLabel();
 		nameLabel.setForeground(Color.WHITE);
@@ -538,10 +615,10 @@ public class MainScreen implements Observer {
 	/**
 	 * This function will return the title of the centerPanel.
 	 *
-	 * @return a title(JLabel)
+	 * @return a centerPanelTitle(JLabel)
 	 */
-	private JLabel getTitle(String title) {
-		// title (BagPanel/ShopPanel/SettingsPanel/SellPanel/BuyPanel component)
+	private JLabel getCenterPanelTitle(String title) {
+		// title (centerBagPanel/centerShopPanel/centerSettingsPanel component)
 		JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Serif", Font.PLAIN, 30));
 		titleLabel.setBounds(230, 0, 100, 35);
@@ -554,7 +631,7 @@ public class MainScreen implements Observer {
 
 	/* JButton */
 	/**
-	 * Create and return a ContinueBtn. This button will be part of the mainFrame components.
+	 * Create and return a ContinueBtn for bottomMainPanel
 	 *
 	 * @return a continueBtn(JButton)
 	 */
@@ -562,7 +639,7 @@ public class MainScreen implements Observer {
 		// **************
 		// *  Continue  *
 		// **************
-		// continue button
+		// continue button (bottomMainPanel component)
 		JButton continueButton = new JButton();
 		continueButton.setText("Continue");
 		continueButton.setBounds(420, 115, 120, 25);
@@ -578,7 +655,7 @@ public class MainScreen implements Observer {
 	 *
 	 * @return a backBtn (JBtn)
 	 */
-	private JButton backButton() {
+	private JButton getBackButton() {
 		// create a backBtn (BagPanel/ShopPanel/settingsPanel component)
 		JButton backButton = new JButton();
 		backButton.setText("Back");
@@ -686,7 +763,7 @@ public class MainScreen implements Observer {
 		bagButton.setFocusable(false);
 		bagButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// bagBtn listener
-		bindBtnToPanel(bagButton, CenterPanel.BAG, BottomPanel.BAG);
+		bindToggleBtnToPanel(bagButton, CenterPanel.BAG, BottomPanel.BAG);
 		// return btn
 		return bagButton;
 	}
@@ -706,7 +783,7 @@ public class MainScreen implements Observer {
 		shopButton.setFocusable(false);
 		shopButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// shopButton listener
-		bindBtnToPanel(shopButton, CenterPanel.SHOP, BottomPanel.SHOP);
+		bindToggleBtnToPanel(shopButton, CenterPanel.SHOP, BottomPanel.SHOP);
 		// return btn
 		return shopButton;
 	}
@@ -727,29 +804,29 @@ public class MainScreen implements Observer {
 		settingsButton.setFocusable(false);
 		settingsButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
 		// event listener
-		bindBtnToPanel(settingsButton, CenterPanel.SETTINGS, BottomPanel.SETTINGS);
+		bindToggleBtnToPanel(settingsButton, CenterPanel.SETTINGS, BottomPanel.SETTINGS);
 		return settingsButton;
 	}
 
 	/* Listeners */
 	/**
-	 * BackBtn listener. Clear all selected button and show mainPanel.
+	 * BackBtn listener. Deselected all top buttons.
 	 *
-	 * @param b a JButton (From one of the top buttons)
+	 * @param b a backButton from one of the top buttons (JButton)
 	 */
 	private void addBackBtnListener(JButton b) {
 		b.addActionListener(e -> {
 			// unSelected all buttons
-			topGroup.clearSelection();
+			this.topGroup.clearSelection();
 		});
 	}
 
 	/**
-	 * CenterBtn listener. Show panel when button selected, show the mainPanel otherwise.
+	 * Top toggle button listener. Show bind center/bottom panel when button selected, show the mainPanel when deselected.
 	 *
-	 * @param b a JButton (From one of the top buttons)
+	 * @param b a JToggleBtn from one of the topBtn.
 	 */
-	private void bindBtnToPanel(JToggleButton b, CenterPanel cP, BottomPanel bp) {
+	private void bindToggleBtnToPanel(JToggleButton b, CenterPanel cP, BottomPanel bp) {
 		b.addItemListener(e -> {
 			if(e.getStateChange() == ItemEvent.SELECTED) {
 				showCenterPanel(cP);
@@ -759,51 +836,5 @@ public class MainScreen implements Observer {
 				showBottomPanel(BottomPanel.MAIN);
 			}
 		});
-	}
-
-	/*
-	Other functions
-	 */
-	/**
-	 * This function will hide all center panels first and show the selected panel.
-	 *
-	 * @param cP an enum value from this.CenterPanel (MAIN, BAG, SHOP, SETTINGS)
-	 */
-	private void showCenterPanel(CenterPanel cP) {
-		// hide all centerPanel
-		for (JPanel centerPanel : centerPanelMap.values()) {
-			centerPanel.setVisible(false);
-		}
-		// show one panel
-		centerPanelMap.get(cP).setVisible(true);
-	}
-
-	/**
-	 * This function will hide all bottom panels first and show the selected panel.
-	 *
-	 * @param bP an enum value from this.BottomPanel (MAIN, BAG, SHOP, SETTINGS)
-	 */
-	private void showBottomPanel(BottomPanel bP) {
-		// hide all bottom panels
-		for (JPanel bottomPanel : bottomPanelMap.values()) {
-			bottomPanel.setVisible(false);
-		}
-		// show one panel
-		bottomPanelMap.get(bP).setVisible(true);
-	}
-
-	/**
-	 * Show or hide the mainFrame.
-	 *
-	 * @param val a boolean value used show/hide the mainFrame.
-	 */
-	public void show(boolean val) {
-		this.mainFrame.setVisible(val);
-	}
-
-	// observer
-	@Override
-	public void update(Observable o, Object arg) {
-		System.out.println("Receive new update");
 	}
 }
