@@ -202,6 +202,7 @@ public class ChooseMonsterScreen {
 	private JButton getConfirmButton() {
 		// create button
 		JButton newConfirmButton = new JButton();
+		newConfirmButton.setFocusable(false);
 		newConfirmButton.setBounds(200, 380, 400, 50);
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">CONFIRM</p></html>");
@@ -219,14 +220,15 @@ public class ChooseMonsterScreen {
 	 * @return a goBackBtn(JButton)
 	 */
 	private JButton getGoBackButton() {
-		// create button
 		JButton goBackBtn = new JButton();
-		goBackBtn.setBounds(20, 380, 70, 50);
-		// setText via html so that we can see the text even the button is being disabled
 		goBackBtn.setText("Back");
-		goBackBtn.setBackground(Color.GRAY);
+		goBackBtn.setFont(new Font("Serif", Font.PLAIN, 15));
 		goBackBtn.setForeground(Color.WHITE);
-		// confirmButton listener
+		goBackBtn.setBounds(20,380,70,50);
+		goBackBtn.setBackground(Color.BLACK);
+		goBackBtn.setFocusable(false);
+		goBackBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// event listener
 		addGoBackButtonListener(goBackBtn);
 		// return btn
 		return goBackBtn;

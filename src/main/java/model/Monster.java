@@ -130,4 +130,8 @@ public class Monster extends GameItem {
     public void incrementActionCounter() {
         this.actionCounter += 1;
     }
+    
+    public void receiveDamage() {
+    	this.currentHealth = this.currentHealth - 10; //example
+    }
 }

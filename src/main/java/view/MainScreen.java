@@ -1,7 +1,7 @@
 package main.java.view;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -289,7 +289,55 @@ public class MainScreen implements Observer {
 			// add name label if we have monster in the team
 			if (i < this.gc.getMonsterTeamMember().size()) {
 				Monster monster = this.gc.getMonsterFromTeamByIndex(i);
-				panel.add(getNameLabelForMonster(monster));
+				
+				// resize the image
+				Image image = monster.getImageIcon().getImage().getScaledInstance(50, 40, java.awt.Image.SCALE_SMOOTH);
+				ImageIcon monsterImage = new ImageIcon(image);
+				JLabel labelWithMonsterImg = new JLabel(monsterImage);
+				//set bounds for label with monster Image
+				labelWithMonsterImg.setBounds(0, 0, 50, 40);
+				
+				//add the monster name
+				JLabel monsterName = getNameLabelForMonster(monster);
+				monsterName.setBounds(53, 14, 57, 15);
+				
+				//add the level on leftPanel
+				JLabel levelLabel = new JLabel("LVL: "+monster.getLevel());
+				levelLabel.setBounds(53, 30, 50, 10);
+				levelLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+				levelLabel.setForeground(Color.white);
+				
+				JLabel health = new JLabel("HP");
+				JLabel damageAndShield = new JLabel("DMG: " + monster.getDamage() + "    SHD: N");
+				JLabel exp = new JLabel("EXP");
+				
+				health.setBounds(6, 45, 40, 10);
+				exp.setBounds(2, 65, 40, 10);
+				damageAndShield.setBounds(2, 85, 128, 10);
+				
+				health.setForeground(Color.white);
+				damageAndShield.setForeground(Color.white);
+				exp.setForeground(Color.white);
+				
+				
+				JProgressBar healthBar  = getHealthBar(monster);
+				JProgressBar expBar = getExpBar(monster);
+				
+				
+				JLabel order = new JLabel(""+Integer.toString(i+1));
+				order.setForeground(Color.white);
+				order.setBounds(105, 2, 10, 10);
+				
+				panel.add(autoResizeFont(monsterName));
+				panel.add(order);
+				panel.add(levelLabel);
+				panel.add(labelWithMonsterImg);
+				panel.add(autoResizeFont(health));
+				panel.add(autoResizeFont(damageAndShield));
+				panel.add(autoResizeFont(exp));
+				
+				panel.add(healthBar);
+				panel.add(expBar);
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -346,7 +394,7 @@ public class MainScreen implements Observer {
 	private JPanel getNewPlayerTeamPanel() {
 		// (leftPanel component)
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
+		panel.setLayout(null);
 		panel.setBackground(Color.BLACK);
 		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
 		return panel;
@@ -555,6 +603,71 @@ public class MainScreen implements Observer {
 		// get and set the monster's name
 		nameLabel.setText(monster.getName());
 		return nameLabel;
+	}
+	
+	/* JProgressBar */
+	/**
+	 * Create and return the health bar for monster
+	 * 
+	 * @param monster a Monster instance
+	 * @return a JProgressBar with the monsters max health
+	 */
+	private JProgressBar getHealthBar(Monster monster) {
+		JProgressBar healthBar = new JProgressBar(0,monster.getMaxHealth());
+		healthBar.setBounds(20,45,90,10);
+		healthBar.setValue(monster.getMaxHealth());
+		healthBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
+		healthBar.setForeground(Color.red);
+		healthBar.setBackground(Color.black);
+		healthBar.setString(Integer.toString(monster.getCurrentHealth()));
+		
+		return healthBar;
+	}
+	
+	/*JProgressBar */
+	/**
+	 * Create and return the experience bar for player monster
+	 * 
+	 * @param monster a Monster instance
+	 * @return a JProgressBar with the monsters experience bar
+	 */
+	private JProgressBar getExpBar(Monster monster) {
+		JProgressBar expBar = new JProgressBar(0,100);
+		expBar.setBounds(20,65,90,10);
+		expBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
+		expBar.setForeground(Color.white);
+		expBar.setBackground(Color.black);
+		expBar.setString(Integer.toString(monster.getCurrentHealth()));
+		
+		return expBar;
+	}
+	
+	/*JLabel */
+	/**
+	 * Resize the font for the monster name to fit in the JLabel
+	 * 
+	 * @param monsterName a JLabel instance for the monsters name
+	 * @return a JLabel with the monsterName
+	 */
+	private JLabel autoResizeFont(JLabel monsterName) {
+		Font monsterNameFont = monsterName.getFont();
+		String monsterNameText = monsterName.getText();
+
+		int stringWidth = monsterName.getFontMetrics(monsterNameFont).stringWidth(monsterNameText);
+		int componentWidth = monsterName.getWidth();
+
+		// Find out how much the font can grow in width.
+		double widthRatio = (double)componentWidth / (double)stringWidth;
+
+		int newFontSize = (int)(monsterNameFont.getSize() * widthRatio);
+		int componentHeight = monsterName.getHeight();
+
+		// Pick a new font size so it will not be larger than the height of monsterName.
+		int fontSizeToUse = Math.min(newFontSize, componentHeight);
+
+		// Set the monsterName's font size to the newly determined size.
+		monsterName.setFont(new Font(monsterNameFont.getName(), Font.PLAIN, fontSizeToUse));
+		return monsterName;
 	}
 
 	/**
@@ -839,4 +952,9 @@ public class MainScreen implements Observer {
 			}
 		});
 	}
+	
+//	private void changeOrderOfMonsters() {
+//		
+//	}
+	
 }

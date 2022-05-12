@@ -273,6 +273,7 @@ public class LandingScreen {
 	private JButton getConfirmButton() {
 		// create button
 		JButton newConfirmButton = new JButton();
+		newConfirmButton.setFocusable(false);
 		newConfirmButton.setBounds(200, 380, 400, 50);
 		// setText via html so that we can see the text even the button is being disabled
 		newConfirmButton.setText("<html><p style=\"color:red;font-size:20\">START GAME</p></html>");
