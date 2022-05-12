@@ -1,9 +1,6 @@
 package main.java.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A class represent a team of monster.
