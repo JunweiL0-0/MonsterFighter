@@ -168,10 +168,12 @@ public class MainScreen implements Observer {
 	}
 
 	//***************************************************************************************************************
+	//
 	//**********************   Functions below are used to create Swing components  *********************************
 	//******************** They are seperated into different group for reading purpose ******************************
 	//**  JFrame: 177, JPanel: 198, JTextPane: 520, JLabel: 541, JButton: 632, JToggleButton: 750, Listeners: 811  **
 	//********************************** Warning: Lots of reading! **************************************************
+	//
 	//***************************************************************************************************************
 
 	/*JFrame*/
