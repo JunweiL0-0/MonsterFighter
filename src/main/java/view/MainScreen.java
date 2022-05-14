@@ -9,6 +9,7 @@ import main.java.controller.GameController;
 import main.java.model.Monster;
 import main.java.utilities.Observable;
 import main.java.utilities.Observer;
+import main.java.utilities.GamePanel;
 
 /**
  * MainScreen. This is where we play the game.
@@ -136,6 +137,7 @@ public class MainScreen implements Observer {
 		}
 		// show one panel
 		centerPanelMap.get(cP).setVisible(true);
+		centerPanelMap.get(cP).requestFocus();
 	}
 
 	/**
@@ -223,10 +225,10 @@ public class MainScreen implements Observer {
 		JToggleButton shopButton = getShopButton();
 		JToggleButton settingsButton = getSettingsButton();
 		// add them into a buttonGroup. Once selection at a time.
-		topGroup = new ButtonGroup();
-		topGroup.add(bagButton);
-		topGroup.add(shopButton);
-		topGroup.add(settingsButton);
+		this.topGroup = new ButtonGroup();
+		this.topGroup.add(bagButton);
+		this.topGroup.add(shopButton);
+		this.topGroup.add(settingsButton);
 		// add components to the panel
 		newTopPanel.add(getTopLeftPanel());
 		newTopPanel.add(bagButton);
@@ -519,10 +521,13 @@ public class MainScreen implements Observer {
 	 */
 	private JPanel getCenterMainPanel() {
 		// centerMainPanel
-		JPanel centerMainPanel = getNewCenterPanel();
-		// add components to panel
-		centerMainPanel.add(getCenterPanelTitle("Main"));
+		JPanel centerMainPanel = new GamePanel(120,70,560,280);
+		centerMainPanel.requestFocus();
 		return centerMainPanel;
+//		JPanel centerMainPanel = getNewCenterPanel();
+//		// add components to panel
+//		centerMainPanel.add(getCenterPanelTitle("Main"));
+//		return centerMainPanel;
 	}
 
 	/**
