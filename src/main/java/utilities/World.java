@@ -1,5 +1,7 @@
 package main.java.utilities;
 
+import main.java.controller.GameController;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,37 +9,56 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 
 public class World {
-    private static final String TILE_IMAGE_PATH = "src/main/java/image/tile/";
-    private static final String WORLD_FILE_PATH = "src/main/java/utilities/map/world.txt";
+    // other classes can directly access these constants
     public static final int MAX_WORLD_COL = 50;
     public static final int MAX_WORLD_ROW = 50;
     public static final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
-    public static final int SCALE = 2;
+    public static final int SCALE = 3;
     public static final int UNIT_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 32x32
+    // place the player in the middle of the world
     public static final int PLAYER_DEFAULT_WORLD_X = (MAX_WORLD_COL/2) * UNIT_SIZE;
     public static final int PLAYER_DEFAULT_WORLD_Y = (MAX_WORLD_ROW/2) * UNIT_SIZE;
+    // file paths
+    private static final String TILE_IMAGE_PATH = "src/main/java/image/tile/";
+    private static final String WORLD_FILE_PATH = "src/main/java/utilities/map/world.txt";
     // variable
     private final MyKeyHandler keyHandler;
     private final Player player;
-    // double array for storing the map
     private final int[][] encodedWorld;
     private final Tile[] tile;
+    private final Enemy[] enemies;
+    private boolean gamePaused;
+    private int encounteredEnemyIndex;
+    private GamePanel gp;
 
 
-    public World(Player player, MyKeyHandler keyHandler) {
-        this.keyHandler = keyHandler;
+    public World(Player player, Enemy[] enemies, MyKeyHandler keyHandler, GamePanel gp) {
         this.player = player;
+        this.enemies = enemies;
+        this.keyHandler = keyHandler;
         this.encodedWorld = new int[MAX_WORLD_ROW][MAX_WORLD_COL];
         this.tile = new Tile[6];
+        this.gamePaused = false;
+        this.encounteredEnemyIndex = 999;
+        this.gp = gp;
+        // load world from file
         loadEncodedWorld();
+        // load tile image from file
         loadTile();
+        // set solid tile
         setCollisionForTile();
     }
 
     public void update() {
-        movePlayer();
+        if (!(this.gamePaused)) {
+            moveEnemy();
+            movePlayer();
+        } else {
+            this.gp.storeBattleIndex(this.encounteredEnemyIndex);
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -70,13 +91,21 @@ public class World {
     }
 
     public void movePlayer() {
+        // set the direction the player wants to go
         switch (this.keyHandler.direction()) {
             case 'U' -> this.player.setDirection('U');
             case 'D' -> this.player.setDirection('D');
             case 'L' -> this.player.setDirection('L');
             case 'R' -> this.player.setDirection('R');
         }
-        checkCollision(this.player);
+        // check the collision
+        checkCollisionTile(this.player);
+        int enemyIndex = checkAndGetEncounteredEnemyIndex(this.player, this.enemies);
+        if (enemyIndex != 999) {
+            this.gamePaused = true;
+            this.encounteredEnemyIndex = enemyIndex;
+        }
+        // if no collision happened
         if (!(this.player.isCollisionOn())) {
             switch (this.keyHandler.direction()) {
                 case 'U' -> this.player.moveUp();
@@ -84,11 +113,62 @@ public class World {
                 case 'L' -> this.player.moveLeft();
                 case 'R' -> this.player.moveRight();
             }
+            // increase the spriteCounter to makes the player looks like running
             this.player.incrementSpriteCounter();
-            if (this.player.getSpriteCounter() >= 20) {
-                this.player.toggleSpriteNum();
-                this.player.resetSpriteCounter();
+        }
+    }
+
+    public void moveEnemy() {
+        for (Enemy e: this.enemies) {
+            e.incrementActionCounter();
+            switch (e.getDirection()) {
+                case ('U'):
+                    checkCollisionTile(e);
+                    if (!(e.isCollisionOn())) {
+                        e.incrementSpriteCounter();
+                        e.moveUp();
+                    }
+                case ('D'):
+                    checkCollisionTile(e);
+                    if (!(e.isCollisionOn())) {
+                        e.incrementSpriteCounter();
+                        e.moveDown();
+                    }
+                case ('L'):
+                    checkCollisionTile(e);
+                    if (!(e.isCollisionOn())) {
+                        e.incrementSpriteCounter();
+                        e.moveLeft();
+                    }
+                case ('R'):
+                    checkCollisionTile(e);
+                    if (!(e.isCollisionOn())) {
+                        e.incrementSpriteCounter();
+                        e.moveRight();
+                    }
             }
+            if (e.getActionCounter() == 120) {
+                Random random = new Random();
+                int i = random.nextInt(100) + 1;
+                if (i <= 25) {
+                    e.setDirection('U');
+                }
+                if (i > 25 && i <= 50) {
+                    e.setDirection('D');
+                }
+                if (i > 50 && i <= 75) {
+                    e.setDirection('L');
+                }
+                if (i > 75 && i < 100) {
+                    e.setDirection('R');
+                }
+                e.resetActionCounter();
+            }
+
+            int leftWorldX = e.getWorldX() + e.getSolidArea().x;
+            int rightWorldX = leftWorldX + e.getSolidArea().width;
+            int topWorldY = e.getWorldY() + e.getSolidArea().y;
+            int bottomWorldY = topWorldY + e.getSolidArea().height;
         }
     }
 
@@ -169,7 +249,7 @@ public class World {
         tile[5].setCollision(true);
     }
 
-    public void checkCollision(GameEntity entity) {
+    public void checkCollisionTile(GameEntity entity) {
         entity.setCollisionOn(false);
 
         int leftWorldX = entity.getWorldX() + entity.getSolidArea().x;
@@ -186,7 +266,7 @@ public class World {
         boolean isCollisionCheck2;
         switch (entity.getDirection()) {
             case 'U' -> {
-                topRow -= entity.getSize() / UNIT_SIZE;
+                topRow -= entity.getSize() / UNIT_SIZE - 1;
                 isCollisionCheck1 = this.tile[this.encodedWorld[leftCol][topRow]].isCollision();
                 isCollisionCheck2 = this.tile[this.encodedWorld[rightCol][topRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -194,7 +274,7 @@ public class World {
                 }
             }
             case 'D' -> {
-                bottomRow += entity.getSize() / UNIT_SIZE;
+                bottomRow += entity.getSize() / UNIT_SIZE - 1;
                 isCollisionCheck1 = this.tile[this.encodedWorld[leftCol][bottomRow]].isCollision();
                 isCollisionCheck2 = this.tile[this.encodedWorld[rightCol][bottomRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -202,7 +282,7 @@ public class World {
                 }
             }
             case 'L' -> {
-                leftCol -= entity.getSize() / UNIT_SIZE;
+                leftCol -= entity.getSize() / UNIT_SIZE - 1;
                 isCollisionCheck1 = this.tile[this.encodedWorld[leftCol][topRow]].isCollision();
                 isCollisionCheck2 = this.tile[this.encodedWorld[leftCol][bottomRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -210,7 +290,7 @@ public class World {
                 }
             }
             case 'R' -> {
-                rightCol += entity.getSize() / UNIT_SIZE;
+                rightCol += entity.getSize() / UNIT_SIZE - 1;
                 isCollisionCheck1 = this.tile[this.encodedWorld[rightCol][topRow]].isCollision();
                 isCollisionCheck2 = this.tile[this.encodedWorld[rightCol][bottomRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -218,5 +298,56 @@ public class World {
                 }
             }
         }
+    }
+    public int checkAndGetEncounteredEnemyIndex(Player player, Enemy[] enemies) {
+        int index = 999;
+        for (int i=0; i<enemies.length; i++) {
+            player.getSolidArea().x += player.getWorldX();
+            player.getSolidArea().y += player.getWorldY();
+            enemies[i].getSolidArea().x += enemies[i].getWorldX();
+            enemies[i].getSolidArea().y += enemies[i].getWorldY();
+
+            switch (player.getDirection()) {
+                case 'U' -> {
+                    player.getSolidArea().y -= enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+                case 'D' -> {
+                    player.getSolidArea().y += enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+                case 'L' -> {
+                    player.getSolidArea().x -= enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+                case 'R' -> {
+                    player.getSolidArea().x += enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+            }
+            player.resetSolidArea();
+            enemies[i].resetSolidArea();
+        }
+        return index;
+    }
+
+    public void start() {
+        this.gamePaused = false;
     }
 }

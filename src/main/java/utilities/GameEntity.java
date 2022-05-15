@@ -8,6 +8,9 @@ public class GameEntity {
     private final int size;
     private int worldX;
     private int worldY;
+    private int screenX;
+    private int screenY;
+    private int actionCounter;
     // direction
     private char direction; // Up:'U' Down:'D' Left:'L' Right:'R'
     private int spriteNum; // used to toggle the image to make the entity looks like running
@@ -22,6 +25,10 @@ public class GameEntity {
     private BufferedImage right1; // right1 image
     private BufferedImage right2; // right2 image
     private Rectangle solidArea;
+    private static final int SOLID_AREA_DEFAULT_X = 8;
+    private static final int SOLID_AREA_DEFAULT_Y = 16;
+    private static final int SOLID_AREA_DEFAULT_WIDTH = 32;
+    private static final int SOLID_AREA_DEFAULT_HEIGHT = 32;
     private boolean collisionOn;
 
 
@@ -36,16 +43,25 @@ public class GameEntity {
     public GameEntity(int worldX, int worldY, int speed, int size) {
         this.worldX = worldX;
         this.worldY = worldY;
+        // default x and y
+        this.screenX = 100;
+        this.screenY = 100;
         this.speed = speed;
         this.size = size;
         this.direction = 'D';
         this.spriteNum = 1;
         this.spriteCounter = 0;
-        this.solidArea = new Rectangle(4, 19, 24, 10);
+        this.solidArea = new Rectangle(SOLID_AREA_DEFAULT_X, SOLID_AREA_DEFAULT_Y, SOLID_AREA_DEFAULT_WIDTH, SOLID_AREA_DEFAULT_HEIGHT);
         this.collisionOn = false;
+        this.actionCounter = 0;
     }
 
-
+    public void resetSolidArea() {
+        this.solidArea.x = SOLID_AREA_DEFAULT_X;
+        this.solidArea.y = SOLID_AREA_DEFAULT_Y;
+        this.solidArea.width = SOLID_AREA_DEFAULT_WIDTH;
+        this.solidArea.height = SOLID_AREA_DEFAULT_HEIGHT;
+    }
 
     public int getWorldY() {
         return this.worldY;
@@ -139,6 +155,10 @@ public class GameEntity {
 
     public void incrementSpriteCounter() {
         this.spriteCounter++;
+        if (this.spriteCounter >= 20) {
+            toggleSpriteNum();
+            resetSpriteCounter();
+        }
     }
     public void resetSpriteCounter() {
         this.spriteCounter = 0;
@@ -165,5 +185,67 @@ public class GameEntity {
 
     public void moveRight() {
         this.worldX += this.speed;
+    }
+
+    public int getScreenX() {
+        return this.screenX;
+    }
+
+    public int getScreenY() {
+        return this.screenY;
+    }
+
+    public void setScreenX(int val) {
+        this.screenX = val;
+    }
+
+    public void setScreenY(int val) {
+        this.screenY = val;
+    }
+
+    public void draw(Graphics2D g2) {
+        BufferedImage image = null;
+        switch (getDirection()) {
+            case 'U' -> {
+                if (getSpriteNum() == 1) {
+                    image = getImageUp1();
+                } else {
+                    image = getImageUp2();
+                }
+            }
+            case 'D' -> {
+                if (getSpriteNum() == 1) {
+                    image = getImageDown1();
+                } else {
+                    image = getImageDown2();
+                }
+            }
+            case 'L' -> {
+                if (getSpriteNum() == 1) {
+                    image = getImageLeft1();
+                } else {
+                    image = getImageLeft2();
+                }
+            }
+            case 'R' -> {
+                if (getSpriteNum() == 1) {
+                    image = getImageRight1();
+                } else {
+                    image = getImageRight2();
+                }
+            }
+        }
+        // stay in the middle of the screen
+        g2.drawImage(image, this.screenX, this.screenY, getSize(), getSize(), null);
+    }
+
+    public void incrementActionCounter() {
+        this.actionCounter++;
+    }
+    public int getActionCounter() {
+        return this.actionCounter;
+    }
+    public void resetActionCounter() {
+        this.actionCounter = 0;
     }
 }

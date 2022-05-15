@@ -24,6 +24,7 @@ public class GameController extends Observable {
     private int totalDay;
     private int gold;
     private int point;
+    private int battleIndex;
 
     /**
      * Constructor for the GameController.
@@ -232,5 +233,11 @@ public class GameController extends Observable {
 
     public Monster getMonsterFromTeamByIndex(int i) {
         return this.playerTeam.getMonsterByIndex(i);
+    }
+
+    public void storeBattleIndex(int battleIndex) {
+        if (this.battleIndex != battleIndex) {
+            this.battleIndex = battleIndex;
+        }
     }
 }

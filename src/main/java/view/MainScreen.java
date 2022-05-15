@@ -521,7 +521,7 @@ public class MainScreen implements Observer {
 	 */
 	private JPanel getCenterMainPanel() {
 		// centerMainPanel
-		JPanel centerMainPanel = new GamePanel(120,70);
+		JPanel centerMainPanel = new GamePanel(120,70 , this.gc);
 		centerMainPanel.requestFocus();
 		return centerMainPanel;
 //		JPanel centerMainPanel = getNewCenterPanel();

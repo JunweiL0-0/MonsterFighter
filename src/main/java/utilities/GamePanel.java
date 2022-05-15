@@ -1,5 +1,7 @@
 package main.java.utilities;
 
+import main.java.controller.GameController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,12 +14,15 @@ public class GamePanel extends JPanel implements Runnable {
     public static final double FPS = 80.0; // FPS
     public static final double DRAW_INTERVAL = 1000000000/FPS; // calculate the 80 fps time
     // variable
+    private final GameController gc;
     private final Player player;
+    private final Enemy[] enemies;
     private final World world;
     private final Thread gameThread;
 
 
-    public GamePanel(int x, int y) {
+    public GamePanel(int x, int y, GameController gc) {
+        this.gc = gc;
         // init the panel
         placePanel(x, y);
         // get the encodedMap
@@ -26,7 +31,9 @@ public class GamePanel extends JPanel implements Runnable {
         // 25*32: the middle of the game map
         this.player = new Player();
         // Creating the World map
-        this.world = new World(this.player, kHand);
+        this.enemies = new Enemy[1];
+        enemies[0] = new Enemy(World.PLAYER_DEFAULT_WORLD_X-300, World.PLAYER_DEFAULT_WORLD_Y-2, 1, World.UNIT_SIZE, 1, this.player);
+        this.world = new World(this.player, enemies, kHand, this);
         // listen key pressing event
         this.addKeyListener(kHand);
         // Threading
@@ -75,6 +82,14 @@ public class GamePanel extends JPanel implements Runnable {
         // tile should be displayed before player
         this.world.draw(g2); // draw the map
         this.player.draw(g2); // draw the player
+        this.enemies[0].draw(g2);
         g2.dispose(); // dispose of this g2 and release system resources
+    }
+
+    public void storeBattleIndex(int battleInt) {
+        this.gc.storeBattleIndex(battleInt);
+    }
+    public void startTheWorld() {
+        this.world.start();
     }
 }
