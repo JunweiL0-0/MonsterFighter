@@ -3,14 +3,14 @@ package main.java.utilities;
 import java.awt.image.BufferedImage;
 
 public class Tile {
-    private static final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
-    private static final int SCALE = 2;
-    private static final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 32x32
+
     private BufferedImage image;
     private boolean collision;
 
-    public Tile() {
+    public Tile(int tileSize) {
         this.collision = false;
+        // default image
+        this.image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_RGB);
     }
 
     public void setImage(BufferedImage image) {
@@ -23,10 +23,6 @@ public class Tile {
 
     public void setCollision(boolean collision) {
         this.collision = collision;
-    }
-
-    public int getSize() {
-        return TILE_SIZE;
     }
 
     public boolean isCollision() {

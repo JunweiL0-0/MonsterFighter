@@ -10,7 +10,7 @@ public class GameEntity {
     private int worldY;
     // direction
     private char direction; // Up:'U' Down:'D' Left:'L' Right:'R'
-    private int spriteNum; // used to toggle the image to make the character looks like running
+    private int spriteNum; // used to toggle the image to make the entity looks like running
     private int spriteCounter; // changing the speed of toggling image. This will change how fast the player running. Note: Visually
     // toggle these images to visualize the running of the user.
     private BufferedImage up1; // up1 image
@@ -26,12 +26,12 @@ public class GameEntity {
 
 
     /**
-     * Constructor of the character.
+     * Constructor of the entity.
      *
      * @param worldX x-axis in the world
      * @param worldY y-axis in the world
-     * @param speed moving speed of the character
-     * @param size the size of the character displaying on the screen
+     * @param speed moving speed of the entity
+     * @param size the size of the entity displaying on the screen
      */
     public GameEntity(int worldX, int worldY, int speed, int size) {
         this.worldX = worldX;
@@ -45,19 +45,10 @@ public class GameEntity {
         this.collisionOn = false;
     }
 
-    public void setWorldX(int x) {
-        this.worldX = x;
-    }
 
-    public void setWorldY(int y) {
-        this.worldY = y;
-    }
 
     public int getWorldY() {
         return this.worldY;
-    }
-    public void toggleSpriteNum() {
-        this.spriteNum = (this.spriteNum + 1) % 2;
     }
 
     public int getWorldX() {
@@ -100,7 +91,16 @@ public class GameEntity {
     public void setImageRight2(BufferedImage image) {
         this.right2 = image;
     }
-    public void setCharacterDirection(char direction) {
+    public void setWorldX(int x) {
+        this.worldX = x;
+    }
+    public void setWorldY(int y) {
+        this.worldY = y;
+    }
+    public void setCollisionOn(boolean val) {
+        this.collisionOn = val;
+    }
+    public void setDirection(char direction) {
         this.direction = direction;
     }
     public BufferedImage getImageUp1() {
@@ -109,35 +109,30 @@ public class GameEntity {
     public BufferedImage getImageUp2() {
         return this.up2;
     }
-
     public BufferedImage getImageDown1() {
         return this.down1;
     }
-
     public BufferedImage getImageDown2() {
         return this.down2;
     }
-
     public BufferedImage getImageLeft1() {
         return this.left1;
     }
-
     public BufferedImage getImageLeft2() {
         return this.left2;
     }
-
     public BufferedImage getImageRight1() {
         return this.right1;
     }
-
     public BufferedImage getImageRight2() {
         return this.right2;
     }
-
+    public Rectangle getSolidArea() {
+        return this.solidArea;
+    }
     public int getSpriteNum() {
         return spriteNum;
     }
-
     public int getSpriteCounter() {
         return this.spriteCounter;
     }
@@ -148,17 +143,12 @@ public class GameEntity {
     public void resetSpriteCounter() {
         this.spriteCounter = 0;
     }
-
-    public void setCollisionOn(boolean val) {
-        this.collisionOn = val;
+    public void toggleSpriteNum() {
+        this.spriteNum = (this.spriteNum + 1) % 2;
     }
 
     public boolean isCollisionOn() {
         return this.collisionOn;
-    }
-
-    public Rectangle getSolidArea() {
-        return this.solidArea;
     }
 
     public void moveUp() {

@@ -7,57 +7,21 @@ import java.io.File;
 import java.io.IOException;
 
 public class Player extends GameEntity {
-    private static final int SCALE = 2;
-    private static final int PLAYER_SPEED = 4;
-    private static final int ORIGINAL_PLAYER_SIZE = 16; // 16x16 tile
-    private static final int PLAYER_SIZE = ORIGINAL_PLAYER_SIZE * SCALE; // 16x16 tile
     private static final String PLAYER_IMAGE_PATH = "src/main/java/image/player/";
-    private final MyKeyHandler kHand;
-    private final CollisionChecker collisionChecker;
+    public static final int ORIGINAL_UNIT_SIZE = 16; // 16x16 tile
+    public static final int SCALE = 2;
+    public static final int PLAYER_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 16x16 tile
+    public static final int PLAYER_SPEED = 4;
+
     private final int screenX;
     private final int screenY;
 
 
-    public Player(MyKeyHandler kHand, CollisionChecker collisionChecker, int worldX, int worldY, int screenWidth, int screenHeight) {
-        super(worldX, worldY, PLAYER_SPEED, PLAYER_SIZE);
-        this.screenX = ((screenWidth/2) - (PLAYER_SIZE/2));
-        this.screenY = ((screenHeight/2) - (PLAYER_SIZE/2));
-        this.kHand = kHand;
-        this.collisionChecker = collisionChecker;
+    public Player() {
+        super(World.PLAYER_DEFAULT_WORLD_X, World.PLAYER_DEFAULT_WORLD_Y, PLAYER_SPEED, World.UNIT_SIZE);
+        this.screenX = GamePanel.PLAYER_SCREEN_X;
+        this.screenY = GamePanel.PLAYER_SCREEN_Y;
         getPlayerImage();
-    }
-
-    public void update() {
-        switch (this.kHand.direction()) {
-            case 'U' -> {
-                setCharacterDirection('U');
-            }
-            case 'D' -> {
-                setCharacterDirection('D');
-            }
-            case 'L' -> {
-                setCharacterDirection('L');
-            }
-            case 'R' -> {
-                setCharacterDirection('R');
-            }
-        }
-        setCollisionOn(false);
-        this.collisionChecker.checkCollision(this);
-        if (!(this.isCollisionOn())) {
-            switch (this.kHand.direction()) {
-                case 'U' -> moveUp();
-                case 'D' -> moveDown();
-                case 'L' -> moveLeft();
-                case 'R' -> moveRight();
-            }
-
-        }
-        incrementSpriteCounter();
-        if (getSpriteCounter() >= 20) {
-            toggleSpriteNum();
-            resetSpriteCounter();
-        }
     }
 
     public int getScreenX() {
@@ -118,5 +82,4 @@ public class Player extends GameEntity {
             e.printStackTrace();
         }
     }
-
 }

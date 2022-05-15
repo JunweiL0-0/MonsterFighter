@@ -1,36 +1,32 @@
 package main.java.utilities;
 
-import main.java.utilities.*;
-import main.java.utilities.map.MapLoader;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     // constant value
-    private static final double FPS = 80.0; // FPS
-    private static final double DRAW_INTERVAL = 1000000000/FPS; // calculate the 80 fps time
-    private static final int MAX_MAP_COL = 50;
-    private static final int MAX_MAP_ROW = 50;
+    public static final int SCREEN_WIDTH = 560;
+    public static final int SCREEN_HEIGHT = 280;
+    public static final int PLAYER_SCREEN_X = ((SCREEN_WIDTH/2) - (Player.PLAYER_SIZE/2));
+    public static final int PLAYER_SCREEN_Y = ((SCREEN_HEIGHT/2) - (Player.PLAYER_SIZE/2));
+    public static final double FPS = 80.0; // FPS
+    public static final double DRAW_INTERVAL = 1000000000/FPS; // calculate the 80 fps time
     // variable
     private final Player player;
-    private final MapDrawer mapDrawer;
+    private final World world;
     private final Thread gameThread;
 
 
-    public GamePanel(int x, int y, int screenWidth, int screenHeight) {
+    public GamePanel(int x, int y) {
         // init the panel
-        initPanel(x, y, screenWidth, screenHeight);
+        placePanel(x, y);
         // get the encodedMap
-        int[][] encodedMap = new MapLoader().getEncodedMap();
-        MapDecoder mapDecoder = new MapDecoder();
         // Monitor the player movement
         MyKeyHandler kHand = new MyKeyHandler();
-        CollisionChecker collisionChecker = new CollisionChecker(encodedMap, mapDecoder);
         // 25*32: the middle of the game map
-        this.player = new Player(kHand, collisionChecker, 25*32, 25*32, screenWidth, screenHeight);
+        this.player = new Player();
         // Creating the World map
-        this.mapDrawer = new MapDrawer(this.player, encodedMap, mapDecoder);
+        this.world = new World(this.player, kHand);
         // listen key pressing event
         this.addKeyListener(kHand);
         // Threading
@@ -38,9 +34,9 @@ public class GamePanel extends JPanel implements Runnable {
         this.gameThread.start(); // this will auto call the run function in this class
     }
 
-    private void initPanel(int x, int y, int screenWidth, int screenHeight) {
+    private void placePanel(int x, int y) {
         // create the panel
-        this.setBounds(x, y, screenWidth, screenHeight);
+        this.setBounds(x, y, SCREEN_WIDTH, SCREEN_HEIGHT);
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
@@ -68,8 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        // update player
-        this.player.update();
+        // update world
+        this.world.update();
     }
 
     public void paintComponent(Graphics g) {
@@ -77,7 +73,7 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g; // cast it
         // tile should be displayed before player
-        this.mapDrawer.draw(g2); // draw the map
+        this.world.draw(g2); // draw the map
         this.player.draw(g2); // draw the player
         g2.dispose(); // dispose of this g2 and release system resources
     }
