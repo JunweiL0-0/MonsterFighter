@@ -7,6 +7,7 @@ import main.java.view.LandingScreen;
 import main.java.view.MainScreen;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,9 @@ public class GameController extends Observable {
     private int gold;
     private int point;
     private int battleIndex;
+    private ArrayList<Team> battles;
+    // used for observers
+    private boolean isEncounteredBattle;
 
     /**
      * Constructor for the GameController.
@@ -33,6 +37,9 @@ public class GameController extends Observable {
         this.monsterGenerator = new MonsterGenerator();
         this.shop = new Shop(this.monsterGenerator);
         this.playerTeam = new Team(4);
+        this.battles = new ArrayList<>();
+        this.battleIndex = 999;
+        this.isEncounteredBattle = false;
     }
 
     /**
@@ -63,6 +70,7 @@ public class GameController extends Observable {
         initCurrAndTotalDay();
         initGold();
         initPoint();
+        initBattles(this.currentDay);
         new MainScreen(this);
     }
 
@@ -88,6 +96,32 @@ public class GameController extends Observable {
             this.point = 500;
         } else if (isHardMode()) {
             this.point = 600;
+        }
+    }
+
+    public Team getEnemyTeam() {
+        return this.battles.get(this.battleIndex);
+    }
+
+    private void initBattles(int currentDay) {
+        int totalBattle = 0;
+        int monsterPerTeam = 0;
+        if (currentDay < 5) {
+            totalBattle = 2;
+            monsterPerTeam = 2;
+        } else if (currentDay < 10) {
+            totalBattle = 3;
+            monsterPerTeam = 3;
+        } else {
+            totalBattle = 4;
+            monsterPerTeam = 4;
+        }
+        for (int i=0; i<totalBattle; i++) {
+            Team enemyTeam = new Team(monsterPerTeam);
+            for (Monster m : this.monsterGenerator.generateMonster(monsterPerTeam)) {
+                enemyTeam.addMonsterToTeam(m);
+            }
+            this.battles.add(enemyTeam);
         }
     }
 
@@ -150,7 +184,6 @@ public class GameController extends Observable {
     /*
     setters go here
      */
-
     /**
      * Store the playerName in the gameController.
      *
@@ -238,6 +271,15 @@ public class GameController extends Observable {
     public void storeBattleIndex(int battleIndex) {
         if (this.battleIndex != battleIndex) {
             this.battleIndex = battleIndex;
+            this.isEncounteredBattle = true;
+            setChanged();
+            notifyObservers();
         }
+    }
+
+    public boolean isEncounteredBattle() {
+        boolean prevVal = this.isEncounteredBattle;
+        this.isEncounteredBattle = false;
+        return prevVal;
     }
 }
