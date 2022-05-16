@@ -15,6 +15,9 @@ import java.util.Objects;
 public class GameController extends Observable {
     // classes
     private final MonsterGenerator monsterGenerator;
+    private final MedicineGenerator medicineGenerator;
+    private final WeaponGenerator weaponGenerator;
+    private final ShieldGenerator shieldGenerator;
     private Shop shop;
     private final Team playerTeam;
     // variables
@@ -30,6 +33,9 @@ public class GameController extends Observable {
      */
     public GameController() {
         this.monsterGenerator = new MonsterGenerator();
+        this.medicineGenerator = new MedicineGenerator();
+        this.weaponGenerator = new WeaponGenerator();
+        this.shieldGenerator = new ShieldGenerator();
         this.shop = new Shop(this.monsterGenerator);
         this.playerTeam = new Team(4);
     }
@@ -232,5 +238,25 @@ public class GameController extends Observable {
 
     public Monster getMonsterFromTeamByIndex(int i) {
         return this.playerTeam.getMonsterByIndex(i);
+    }
+    
+    public Monster generateMonster() {
+    	Monster monster = monsterGenerator.generateMonster();
+    	return monster;
+    }
+    
+    public Medicine generateMedicine() {
+    	Medicine med = medicineGenerator.generateMedicine();
+    	return med;
+    }
+    
+    public Weapon generateWeapon() {
+    	Weapon weapon = weaponGenerator.generateWeapon();
+    	return weapon;
+    }
+    
+    public Shield generateShield() {
+    	Shield shield = shieldGenerator.generateShield();
+    	return shield;
     }
 }

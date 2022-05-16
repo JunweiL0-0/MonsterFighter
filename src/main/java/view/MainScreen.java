@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import main.java.controller.GameController;
+import main.java.model.Medicine;
 import main.java.model.Monster;
+import main.java.model.Shield;
+import main.java.model.Weapon;
 import main.java.utilities.Observable;
 import main.java.utilities.Observer;
 
@@ -21,6 +24,7 @@ public class MainScreen implements Observer {
 	private final JPanel[] enemyMonsterPanel = new JPanel[4];
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
+	private ButtonGroup shopButtonGroup;
 	// PanelMap (Toggle visibility)
 	// centerPanel
 	private final Map<CenterPanel, JPanel> centerPanelMap;
@@ -28,13 +32,17 @@ public class MainScreen implements Observer {
 	private final Map<BottomPanel, JPanel> bottomPanelMap;
 	// enum
 	private enum CenterPanel {
-		MAIN, BAG, SHOP, SETTINGS
+		MAIN, BAG, SHOP, SETTINGS, BUY, SELL
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS
+		MAIN, BAG, SHOP, SETTINGS, BUY, SELL
 	}
-
+	
+	private Monster[] monstersForShop = new Monster[5];
+	private Medicine[] medForShop = new Medicine[5];
+	private Shield[] shieldForShop = new Shield[5];
+	private Weapon[] weaponForShop = new Weapon[5];
 
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
@@ -42,9 +50,11 @@ public class MainScreen implements Observer {
 	 * @param gc gameController.
 	 */
 	public MainScreen(GameController gc) {
+		
 		centerPanelMap = new HashMap<>();
 		bottomPanelMap = new HashMap<>();
 		this.gc = gc;
+		generateItemsForShop();
 		initialize();
 		// show mainScreen
 		show(true);
@@ -75,6 +85,8 @@ public class MainScreen implements Observer {
 		// Center and bottom panel
 		addCenterPanelToFrame(this.mainFrame);
 		addBottomPanelToFrame(this.mainFrame);
+		
+		
 	}
 
 	/**
@@ -88,12 +100,16 @@ public class MainScreen implements Observer {
 		JPanel centerBagPanel = getCenterBagPanel();
 		JPanel centerShopPanel = getCenterShopPanel();
 		JPanel centerSettingsPanel = getCenterSettingsPanel();
+		JPanel centerBuyPanel = getBuyPanel();
+		JPanel centerSellPanel = getSellPanel();
 		// store them to map
 		// center
 		this.centerPanelMap.put(CenterPanel.MAIN, centerMainPanel);
 		this.centerPanelMap.put(CenterPanel.BAG, centerBagPanel);
 		this.centerPanelMap.put(CenterPanel.SHOP, centerShopPanel);
 		this.centerPanelMap.put(CenterPanel.SETTINGS, centerSettingsPanel);
+		this.centerPanelMap.put(CenterPanel.BUY, centerBuyPanel);
+		this.centerPanelMap.put(CenterPanel.SELL,centerSellPanel);
 		// add center panel to frame
 		for (JPanel panel : centerPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -112,12 +128,16 @@ public class MainScreen implements Observer {
 		JPanel bottomBagPanel = getBottomBagPanel();
 		JPanel bottomShopPanel = getBottomShopPanel();
 		JPanel bottomSettingsPanel = getBottomSettingsPanel();
+		JPanel bottomBuyPanel = getBottomBuyPanel();
+		JPanel bottomSellPanel = getBottomSellPanel();
 		// store them to map
 		// bottom
 		this.bottomPanelMap.put(BottomPanel.MAIN, bottomMainPanel);
 		this.bottomPanelMap.put(BottomPanel.BAG, bottomBagPanel);
 		this.bottomPanelMap.put(BottomPanel.SHOP, bottomShopPanel);
 		this.bottomPanelMap.put(BottomPanel.SETTINGS, bottomSettingsPanel);
+		this.bottomPanelMap.put(BottomPanel.BUY, bottomBuyPanel);
+		this.bottomPanelMap.put(BottomPanel.SELL, bottomSellPanel);
 		// add bottom panel to frame
 		for (JPanel panel : bottomPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -324,6 +344,13 @@ public class MainScreen implements Observer {
 				JProgressBar expBar = getExpBar(monster);
 				
 				
+				JLabel hpLabel = new JLabel(monster.getCurrentHealth()+"/"+monster.getMaxHealth(),SwingConstants.CENTER);
+				hpLabel.setBounds(20,45,90,10);
+				hpLabel.setFont(new Font("Arial", Font.BOLD, 9));
+				hpLabel.setForeground(Color.white);
+//				JLabel expLabel = new JLabel();
+				
+				
 				JLabel order = new JLabel(""+Integer.toString(i+1));
 				order.setForeground(Color.white);
 				order.setBounds(105, 2, 10, 10);
@@ -336,6 +363,7 @@ public class MainScreen implements Observer {
 				panel.add(autoResizeFont(damageAndShield));
 				panel.add(autoResizeFont(exp));
 				
+				panel.add(hpLabel);
 				panel.add(healthBar);
 				panel.add(expBar);
 			}
@@ -493,8 +521,26 @@ public class MainScreen implements Observer {
 		// bottomShopPanel
 		JPanel bottomShopPanel = getNewBottomPanel();
 		// add components to panel
-		bottomShopPanel.add(getBuyBtn());
-		bottomShopPanel.add(getSellBtn());
+		
+		JTextPane text = new JTextPane();
+		text.setText("Would you like to buy or sell your items?");
+		text.setForeground(Color.white);
+		text.setBackground(Color.black);
+		text.setFont(new Font("Serif",Font.PLAIN,20));
+		text.setBounds(20,15,400,40);
+		text.setEditable(false);
+		
+		JToggleButton buyButton = getBuyBtn();
+		JToggleButton sellButton = getSellBtn();
+		
+		shopButtonGroup = new ButtonGroup(); 
+		
+		shopButtonGroup.add(buyButton);
+		shopButtonGroup.add(sellButton);
+		
+		bottomShopPanel.add(text);
+		bottomShopPanel.add(buyButton);
+		bottomShopPanel.add(sellButton);
 		// set it to not visible (Default)
 		bottomShopPanel.setVisible(false);
 		return bottomShopPanel;
@@ -533,7 +579,10 @@ public class MainScreen implements Observer {
 		JPanel centerBagPanel = getNewCenterPanel();
 		// add component
 		centerBagPanel.add(getCenterPanelTitle("Bag"));
-		centerBagPanel.add(getBackButton());
+		JButton backButton = getBackButton();
+		backButton.setText("Close Bag");
+		backButton.setBounds(15,250,80,20);
+		centerBagPanel.add(backButton);
 		// set it to not visible (Default)
 		centerBagPanel.setVisible(false);
 		return centerBagPanel;
@@ -546,8 +595,20 @@ public class MainScreen implements Observer {
 		// create a shopPanel (This panel will be stored in a variable)
 		JPanel centerShopPanel = getNewCenterPanel();
 		// add component
-		centerShopPanel.add(getCenterPanelTitle("Shop"));
-		centerShopPanel.add(getBackButton());
+		
+		JTextPane title = new JTextPane();
+		title.setText("Monster Fighter \n        Shop");
+		title.setFont(new Font("Serif",Font.PLAIN,30));
+		title.setForeground(Color.white);
+		title.setBackground(Color.black);
+		title.setBounds(175, 75, 210, 75);
+		title.setEditable(false);
+		
+		centerShopPanel.add(title);
+		JButton backButton = getBackButton();
+		backButton.setText("Exit Shop");
+		backButton.setBounds(15,250,80,20);
+		centerShopPanel.add(backButton);
 		// set it to not visible (Default)
 		centerShopPanel.setVisible(false);
 		return centerShopPanel;
@@ -736,7 +797,7 @@ public class MainScreen implements Observer {
 		// title (centerBagPanel/centerShopPanel/centerSettingsPanel component)
 		JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Serif", Font.PLAIN, 30));
-		titleLabel.setBounds(230, 0, 100, 35);
+		titleLabel.setBounds(205, 0, 150, 35);
 		titleLabel.setForeground(Color.WHITE);
 		titleLabel.setBackground(Color.BLACK);
 		titleLabel.setOpaque(true);
@@ -791,16 +852,18 @@ public class MainScreen implements Observer {
 	 *
 	 * @return a buyBtn
 	 */
-	private JButton getBuyBtn() {
+	private JToggleButton getBuyBtn() {
 		// create a buyBtn (BottomShopPanel component)
-		JButton buyBtn = new JButton();
+		JToggleButton buyBtn = new JToggleButton();
 		buyBtn.setText("Buy");
 		buyBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		buyBtn.setBounds(45, 50, 210, 50);
+		buyBtn.setBounds(45, 65, 210, 50);
 		buyBtn.setBackground(Color.BLACK);
 		buyBtn.setForeground(Color.WHITE);
 		buyBtn.setFocusable(false);
 		buyBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// event listener
+		bindToggleButtonToShopPanel(buyBtn, CenterPanel.BUY);
 		// return
 		return buyBtn;
 	}
@@ -810,16 +873,18 @@ public class MainScreen implements Observer {
 	 *
 	 * @return a sellBtn.
 	 */
-	private JButton getSellBtn() {
+	private JToggleButton getSellBtn() {
 		// create a sellBtn(BottomShopPanel component)
-		JButton sellBtn = new JButton();
+		JToggleButton sellBtn = new JToggleButton();
 		sellBtn.setText("Sell");
 		sellBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		sellBtn.setBounds(305, 50, 210, 50);
+		sellBtn.setBounds(305, 65, 210, 50);
 		sellBtn.setBackground(Color.BLACK);
 		sellBtn.setForeground(Color.WHITE);
 		sellBtn.setFocusable(false);
 		sellBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// event listener
+		bindToggleButtonToShopPanel(sellBtn, CenterPanel.SELL);
 		// return
 		return sellBtn;
 	}
@@ -932,7 +997,7 @@ public class MainScreen implements Observer {
 	private void addBackBtnListener(JButton b) {
 		b.addActionListener(e -> {
 			// unSelected all buttons
-			this.topGroup.clearSelection();
+			this.topGroup.clearSelection();;
 		});
 	}
 
@@ -946,15 +1011,134 @@ public class MainScreen implements Observer {
 			if(e.getStateChange() == ItemEvent.SELECTED) {
 				showCenterPanel(cP);
 				showBottomPanel(bp);
-			} else if (e.getStateChange() == ItemEvent.DESELECTED) {
+			}else if (e.getStateChange() == ItemEvent.DESELECTED) {
 				showCenterPanel(CenterPanel.MAIN);
 				showBottomPanel(BottomPanel.MAIN);
 			}
 		});
 	}
+	/**
+	 *Shop's buy and sell toggle button listener. Shows the buy or sell area when button is selected and show the shop panel when deselected. 
+	 *
+	 * @param b a JtoggleBtn from one of the Shops buttons
+	 */
+	private void bindToggleButtonToShopPanel(JToggleButton b, CenterPanel cP) {
+		b.addItemListener(e -> {
+			if(e.getStateChange() == ItemEvent.SELECTED) {
+				showCenterPanel(cP);
+			}else if (e.getStateChange() == ItemEvent.DESELECTED) {
+				showCenterPanel(CenterPanel.SHOP);
+				showBottomPanel(BottomPanel.SHOP);
+			}
+		});
+	}
 	
+	
+	
+	private JPanel getBuyPanel() {
+		// Template
+		// This panel will be shown in the middle of the mainFrame
+		JPanel buyPanel = getPanelForShop();
+		// add component
+		
+		
+		
+		buyPanel.add(getCenterPanelTitle("Buy Area"));
+		buyPanel.add(getBackToShopBtn());
+		
+		// set it to not visible (Default)
+		buyPanel.setVisible(false);
+		return buyPanel;	
+		
+	}
+	private JPanel getBottomBuyPanel() {
+		// bottomBuyPanel
+		JPanel bottomBuyPanel = getNewBottomPanel();
+		// set it to not visible (Default)
+		bottomBuyPanel.setVisible(false);
+		return bottomBuyPanel;
+	}
+	
+	
+	private JPanel getSellPanel() {
+		JPanel sellPanel = getPanelForShop();
+		// add component
+		sellPanel.add(getCenterPanelTitle("Sell Area"));
+		sellPanel.add(getBackToShopBtn());
+		// set it to not visible (Default)
+		sellPanel.setVisible(false);
+		return sellPanel;	
+	}
+	
+	private JPanel getBottomSellPanel() {
+		// bottomSellPanel
+		JPanel bottomSellPanel = getNewBottomPanel();
+		// add Component
+		// set it to not visible
+		bottomSellPanel.setVisible(false);
+		return bottomSellPanel;
+		
+	}
+	
+	private JButton getBackToShopBtn() {
+		// create a backBtn (BagPanel/ShopPanel/settingsPanel component)
+		JButton backToShopBtn = new JButton();
+		backToShopBtn.setText("Back");
+		backToShopBtn.setFont(new Font("Serif", Font.PLAIN, 15));
+		backToShopBtn.setForeground(Color.WHITE);
+		backToShopBtn.setBackground(Color.BLACK);
+		backToShopBtn.setBounds(15,395,50,20);
+		backToShopBtn.setFocusable(false);
+		backToShopBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		
+		addBackBtnListenerForShop(backToShopBtn);
+		
+		return backToShopBtn;
+		
+	}
+	
+	/**
+	 * 
+	 * @return JPanel for shop's buy and sell area.
+	 */
+	private JPanel getPanelForShop() {
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
+		panel.setBackground(Color.black);
+		panel.setBounds(120,70,560,429);
+		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
+		
+		return panel;
+	}
+	
+	/**
+	 * Listener for the back button in buy and sell area.
+	 * it deselects all the buttons in shopButtonGroup.
+	 */
+	private void addBackBtnListenerForShop(JButton b) {
+		b.addActionListener(e -> {
+			// unSelected all buttons
+			this.shopButtonGroup.clearSelection();;
+		});
+	}
+	
+	private void generateItemsForShop() {
+		for (int i = 0;i<5;i++) {
+			monstersForShop[i] = gc.generateMonster();
+			medForShop[i] = gc.generateMedicine();
+			weaponForShop[i] = gc.generateWeapon();
+			shieldForShop[i] = gc.generateShield();
+			System.out.println(shieldForShop[i]);
+		}
+	}
 //	private void changeOrderOfMonsters() {
 //		
 //	}
 	
 }
+
+
+
+
+
+

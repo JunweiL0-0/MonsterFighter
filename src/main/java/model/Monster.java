@@ -131,7 +131,7 @@ public class Monster extends GameItem {
         this.actionCounter += 1;
     }
     
-    public void receiveDamage() {
-    	this.currentHealth = this.currentHealth - 10; //example
+    public void healBy(Medicine med) {
+    	this.currentHealth = Math.min(this.maxHealth, this.currentHealth + med.getEffect());
     }
 }

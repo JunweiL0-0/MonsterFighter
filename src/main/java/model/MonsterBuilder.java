@@ -15,3 +15,4 @@ public interface MonsterBuilder {
     MonsterBuilder imageIcon(ImageIcon imageIcon);
     Monster build();
 }
+	
