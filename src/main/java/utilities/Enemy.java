@@ -10,17 +10,10 @@ import java.util.Random;
 
 public class Enemy extends GameEntity {
     private static final String ENEMY_IMAGE_PATH = "src/main/java/image/enemy/";
-    public static final int ORIGINAL_UNIT_SIZE = 16; // 16x16
-    public static final int SCALE = 3;
-    public static final int ENEMY_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 32x32
-    public static final int ENEMY_SPEED = 4;
+    private final GameEntity player;
 
-    private final int monsterTeamIndex;
-    private final Player player;
-
-    public Enemy(int worldX, int worldY, int speed, int size, int monsterTeamIndex, Player player) {
+    public Enemy(int worldX, int worldY, int speed, int size, GameEntity player) {
         super(worldX, worldY, speed, size);
-        this.monsterTeamIndex = monsterTeamIndex;
         this.player = player;
         getEnemyImage();
     }

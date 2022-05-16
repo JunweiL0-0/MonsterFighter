@@ -1,6 +1,7 @@
 package main.java.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A class represent a team of monster.
@@ -130,5 +131,9 @@ public class Team {
             }
         }
         return index;
+    }
+
+    public void swapMonster(int monsterIndex1, int monsterIndex2) {
+        Collections.swap(this.teamMember, monsterIndex1, monsterIndex2);
     }
 }
