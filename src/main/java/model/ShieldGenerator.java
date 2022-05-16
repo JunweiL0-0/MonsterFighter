@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class ShieldGenerator {
-private static final String IMAGEPATH = "src/main/java/image/Shields/";
+private static final String IMAGEPATH = "src/main/java/image/shieds/";
 	
 	private String shieldName;
 	private String rarityStr;

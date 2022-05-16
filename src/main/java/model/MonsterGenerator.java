@@ -31,6 +31,14 @@ public class MonsterGenerator {
         this.monsterName = "DefaultMonsterName";
     }
 
+    public ArrayList<Monster> generateMonster(int numOfMonster) {
+        ArrayList<Monster> monsters = new ArrayList<>();
+        for (int i=0; i<numOfMonster; i++) {
+            monsters.add(generateMonster());
+        }
+        return monsters;
+    }
+
     /**
      * Randomly generate a monster.
      * This function will construct a monster randomly.

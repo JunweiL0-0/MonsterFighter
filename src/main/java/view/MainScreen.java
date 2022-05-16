@@ -10,8 +10,10 @@ import main.java.model.Medicine;
 import main.java.model.Monster;
 import main.java.model.Shield;
 import main.java.model.Weapon;
+import main.java.model.Team;
 import main.java.utilities.Observable;
 import main.java.utilities.Observer;
+import main.java.utilities.GamePanel;
 
 /**
  * MainScreen. This is where we play the game.
@@ -30,13 +32,17 @@ public class MainScreen implements Observer {
 	private final Map<CenterPanel, JPanel> centerPanelMap;
 	// bottomPanel
 	private final Map<BottomPanel, JPanel> bottomPanelMap;
+	// leftPanel, rightPanel
+	private JPanel leftPanel;
+	private JPanel rightPanel;
 	// enum
 	private enum CenterPanel {
-		MAIN, BAG, SHOP, SETTINGS, BUY, SELL
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS, BUY, SELL
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL
+
 	}
 	
 	private Monster[] monstersForShop = new Monster[5];
@@ -56,6 +62,8 @@ public class MainScreen implements Observer {
 		this.gc = gc;
 		generateItemsForShop();
 		initialize();
+		// subscribe the gameController
+		this.gc.addObserver(this);
 		// show mainScreen
 		show(true);
 	}
@@ -79,69 +87,16 @@ public class MainScreen implements Observer {
 		// *******************************************************************
 		this.mainFrame = getMainFrame();
 		// Top, Left, Right
+		this.leftPanel = getLeftPanel();
+		this.rightPanel = getRightPanel();
 		this.mainFrame.getContentPane().add(getTopPanel());
-		this.mainFrame.getContentPane().add(getLeftPanel());
-		this.mainFrame.getContentPane().add(getRightPanel());
+		this.mainFrame.getContentPane().add(this.leftPanel);
+		this.mainFrame.getContentPane().add(this.rightPanel);
 		// Center and bottom panel
 		addCenterPanelToFrame(this.mainFrame);
 		addBottomPanelToFrame(this.mainFrame);
 		
 		
-	}
-
-	/**
-	 * Store centerPanel into this.CenterPanelMap and add the panel to the frame.
-	 *
-	 * @param frame a JFrame. (mainScreen in this case)
-	 */
-	private void addCenterPanelToFrame(JFrame frame) {
-		// center
-		JPanel centerMainPanel = getCenterMainPanel();
-		JPanel centerBagPanel = getCenterBagPanel();
-		JPanel centerShopPanel = getCenterShopPanel();
-		JPanel centerSettingsPanel = getCenterSettingsPanel();
-		JPanel centerBuyPanel = getBuyPanel();
-		JPanel centerSellPanel = getSellPanel();
-		// store them to map
-		// center
-		this.centerPanelMap.put(CenterPanel.MAIN, centerMainPanel);
-		this.centerPanelMap.put(CenterPanel.BAG, centerBagPanel);
-		this.centerPanelMap.put(CenterPanel.SHOP, centerShopPanel);
-		this.centerPanelMap.put(CenterPanel.SETTINGS, centerSettingsPanel);
-		this.centerPanelMap.put(CenterPanel.BUY, centerBuyPanel);
-		this.centerPanelMap.put(CenterPanel.SELL,centerSellPanel);
-		// add center panel to frame
-		for (JPanel panel : centerPanelMap.values()) {
-			frame.getContentPane().add(panel);
-		}
-
-	}
-
-	/**
-	 * Store bottomPale into this.BottomPanel and add the panel to the frame.
-	 *
-	 * @param frame a JFrame. (mainScreen in this case)
-	 */
-	private void addBottomPanelToFrame(JFrame frame) {
-		// bottom
-		JPanel bottomMainPanel = getBottomMainPanel();
-		JPanel bottomBagPanel = getBottomBagPanel();
-		JPanel bottomShopPanel = getBottomShopPanel();
-		JPanel bottomSettingsPanel = getBottomSettingsPanel();
-		JPanel bottomBuyPanel = getBottomBuyPanel();
-		JPanel bottomSellPanel = getBottomSellPanel();
-		// store them to map
-		// bottom
-		this.bottomPanelMap.put(BottomPanel.MAIN, bottomMainPanel);
-		this.bottomPanelMap.put(BottomPanel.BAG, bottomBagPanel);
-		this.bottomPanelMap.put(BottomPanel.SHOP, bottomShopPanel);
-		this.bottomPanelMap.put(BottomPanel.SETTINGS, bottomSettingsPanel);
-		this.bottomPanelMap.put(BottomPanel.BUY, bottomBuyPanel);
-		this.bottomPanelMap.put(BottomPanel.SELL, bottomSellPanel);
-		// add bottom panel to frame
-		for (JPanel panel : bottomPanelMap.values()) {
-			frame.getContentPane().add(panel);
-		}
 	}
 
 	/**
@@ -156,6 +111,7 @@ public class MainScreen implements Observer {
 		}
 		// show one panel
 		centerPanelMap.get(cP).setVisible(true);
+		centerPanelMap.get(cP).requestFocus();
 	}
 
 	/**
@@ -184,7 +140,105 @@ public class MainScreen implements Observer {
 	// observer
 	@Override
 	public void update(Observable o, Object arg) {
+		if (((GameController)o).isEncounteredBattle()) {
+			updateBottomMainPanel();
+			updateRightPanel();
+		}
+		if (((GameController)o).isUpdateTeam()) {
+			updateLeftPanel();
+		}
 		System.out.println("Receive new update");
+	}
+
+	public void updateBottomMainPanel() {
+		JPanel bottomMainPanel = bottomPanelMap.get(BottomPanel.MAIN);
+		bottomMainPanel.removeAll();
+		JButton reorderBtn = getReorderBtn();
+		JButton runBtn = getRunBtn();
+		JButton fightBtn = getFightBtn();
+		reorderBtn.setEnabled(this.gc.isAbleToReorderTeam());
+		runBtn.setEnabled(this.gc.isAbleToStartFight());
+		fightBtn.setEnabled(this.gc.isAbleToStartFight());
+		// add components
+		bottomMainPanel.add(reorderBtn);
+		bottomMainPanel.add(runBtn);
+		bottomMainPanel.add(fightBtn);
+		// repaint
+		bottomMainPanel.revalidate();
+		bottomMainPanel.repaint();
+	}
+
+	private void updateRightPanel() {
+		this.rightPanel.removeAll();
+		Team enemyTeam = this.gc.getEnemyTeam();
+		// add enemyMonsterPanel
+		for (int i=0; i < enemyTeam.size(); i++) {
+			Monster monster = enemyTeam.getMonsterByIndex(i);
+			JPanel panel = getNewEnemyMonsterPanel();
+			// add label
+			panel.add(getMonsterOrderLabel(i));
+			panel.add(autoResizeFont(getMonsterNameLabel(monster)));
+			panel.add(getMonsterLevelLabel(monster));
+			panel.add(getLabelWithMonsterImage(monster));
+			panel.add(autoResizeFont(getMonsterHealthLabel()));
+			panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
+			panel.add(autoResizeFont(getExpLabel()));
+			panel.add(getMonsterHealthBar(monster));
+			panel.add(getMonsterExpBar(monster));
+			// store reference in to a list
+			this.enemyMonsterPanel[i] = panel;
+			// add enemyMonsterPanel into the rightPanel
+			this.rightPanel.add(this.enemyMonsterPanel[i]);
+		}
+		this.rightPanel.revalidate();
+		this.rightPanel.repaint();
+	}
+
+	private void updateLeftPanel() {
+
+	}
+
+	/**
+	 * Store centerPanel into this.CenterPanelMap and add the panel to the frame.
+	 *
+	 * @param frame a JFrame. (mainScreen in this case)
+	 */
+	private void addCenterPanelToFrame(JFrame frame) {
+		// center
+		// store them to map
+		// center
+		this.centerPanelMap.put(CenterPanel.MAIN, getCenterMainPanel());
+		this.centerPanelMap.put(CenterPanel.BAG, getCenterBagPanel());
+		this.centerPanelMap.put(CenterPanel.SHOP, getCenterShopPanel());
+		this.centerPanelMap.put(CenterPanel.SETTINGS, getCenterSettingsPanel());
+		this.centerPanelMap.put(CenterPanel.BATTLE, getCenterBattlePanel());
+		this.centerPanelMap.put(CenterPanel.BUY, getCenterBuyPanel());
+		this.centerPanelMap.put(CenterPanel.SELL, getCenterSellPanel());
+		
+		// add center panel to frame
+		for (JPanel panel : centerPanelMap.values()) {
+			frame.getContentPane().add(panel);
+		}
+	}
+
+	/**
+	 * Store bottomPale into this.BottomPanel and add the panel to the frame.
+	 *
+	 * @param frame a JFrame. (mainScreen in this case)
+	 */
+	private void addBottomPanelToFrame(JFrame frame) {
+		// bottom
+		// store them to map
+		// bottom
+		this.bottomPanelMap.put(BottomPanel.MAIN, getBottomMainPanel());
+		this.bottomPanelMap.put(BottomPanel.BAG, getBottomBagPanel());
+		this.bottomPanelMap.put(BottomPanel.SHOP, getBottomShopPanel());
+		this.bottomPanelMap.put(BottomPanel.SETTINGS, getBottomSettingsPanel());
+		this.bottomPanelMap.put(BottomPanel.BATTLE, getBottomBattlePanel());
+		// add bottom panel to frame
+		for (JPanel panel : bottomPanelMap.values()) {
+			frame.getContentPane().add(panel);
+		}
 	}
 
 	//***************************************************************************************************************
@@ -243,10 +297,10 @@ public class MainScreen implements Observer {
 		JToggleButton shopButton = getShopButton();
 		JToggleButton settingsButton = getSettingsButton();
 		// add them into a buttonGroup. Once selection at a time.
-		topGroup = new ButtonGroup();
-		topGroup.add(bagButton);
-		topGroup.add(shopButton);
-		topGroup.add(settingsButton);
+		this.topGroup = new ButtonGroup();
+		this.topGroup.add(bagButton);
+		this.topGroup.add(shopButton);
+		this.topGroup.add(settingsButton);
 		// add components to the panel
 		newTopPanel.add(getTopLeftPanel());
 		newTopPanel.add(bagButton);
@@ -309,63 +363,17 @@ public class MainScreen implements Observer {
 			// add name label if we have monster in the team
 			if (i < this.gc.getMonsterTeamMember().size()) {
 				Monster monster = this.gc.getMonsterFromTeamByIndex(i);
-				
-				// resize the image
-				Image image = monster.getImageIcon().getImage().getScaledInstance(50, 40, java.awt.Image.SCALE_SMOOTH);
-				ImageIcon monsterImage = new ImageIcon(image);
-				JLabel labelWithMonsterImg = new JLabel(monsterImage);
-				//set bounds for label with monster Image
-				labelWithMonsterImg.setBounds(0, 0, 50, 40);
-				
-				//add the monster name
-				JLabel monsterName = getNameLabelForMonster(monster);
-				monsterName.setBounds(53, 14, 57, 15);
-				
-				//add the level on leftPanel
-				JLabel levelLabel = new JLabel("LVL: "+monster.getLevel());
-				levelLabel.setBounds(53, 30, 50, 10);
-				levelLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-				levelLabel.setForeground(Color.white);
-				
-				JLabel health = new JLabel("HP");
-				JLabel damageAndShield = new JLabel("DMG: " + monster.getDamage() + "    SHD: N");
-				JLabel exp = new JLabel("EXP");
-				
-				health.setBounds(6, 45, 40, 10);
-				exp.setBounds(2, 65, 40, 10);
-				damageAndShield.setBounds(2, 85, 128, 10);
-				
-				health.setForeground(Color.white);
-				damageAndShield.setForeground(Color.white);
-				exp.setForeground(Color.white);
-				
-				
-				JProgressBar healthBar  = getHealthBar(monster);
-				JProgressBar expBar = getExpBar(monster);
-				
-				
-				JLabel hpLabel = new JLabel(monster.getCurrentHealth()+"/"+monster.getMaxHealth(),SwingConstants.CENTER);
-				hpLabel.setBounds(20,45,90,10);
-				hpLabel.setFont(new Font("Arial", Font.BOLD, 9));
-				hpLabel.setForeground(Color.white);
-//				JLabel expLabel = new JLabel();
-				
-				
-				JLabel order = new JLabel(""+Integer.toString(i+1));
-				order.setForeground(Color.white);
-				order.setBounds(105, 2, 10, 10);
-				
-				panel.add(autoResizeFont(monsterName));
-				panel.add(order);
-				panel.add(levelLabel);
-				panel.add(labelWithMonsterImg);
-				panel.add(autoResizeFont(health));
-				panel.add(autoResizeFont(damageAndShield));
-				panel.add(autoResizeFont(exp));
-				
-				panel.add(hpLabel);
-				panel.add(healthBar);
-				panel.add(expBar);
+
+				panel.add(getMonsterOrderLabel(i));
+				panel.add(autoResizeFont(getMonsterNameLabel(monster)));
+				panel.add(getMonsterLevelLabel(monster));
+				panel.add(getLabelWithMonsterImage(monster));
+				panel.add(autoResizeFont(getMonsterHealthLabel()));
+				panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
+				panel.add(autoResizeFont(getExpLabel()));
+				panel.add(getMonsterHealthBar(monster));
+				panel.add(getMonsterExpBar(monster));
+
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -373,6 +381,60 @@ public class MainScreen implements Observer {
 			leftPanel.add(this.playerTeamPanel[i]);
 		}
 		return leftPanel;
+	}
+
+	private JLabel getMonsterOrderLabel(int orderNum) {
+		JLabel order = new JLabel(""+Integer.toString(orderNum+1));
+		order.setForeground(Color.white);
+		order.setBounds(105, 2, 10, 10);
+		return order;
+	}
+
+	private JLabel getLabelWithMonsterImage(Monster monster) {
+		// resize the image
+		Image image = monster.getImageIcon().getImage().getScaledInstance(50, 40, java.awt.Image.SCALE_SMOOTH);
+		ImageIcon monsterImage = new ImageIcon(image);
+		JLabel labelWithMonsterImg = new JLabel(monsterImage);
+		//set bounds for label with monster Image
+		labelWithMonsterImg.setBounds(0, 0, 50, 40);
+		return labelWithMonsterImg;
+	}
+
+	private JLabel getMonsterNameLabel(Monster monster) {
+		//add the monster name
+		JLabel monsterName = getNameLabelForMonster(monster);
+		monsterName.setBounds(53, 14, 57, 15);
+		return monsterName;
+	}
+
+	private JLabel getMonsterLevelLabel(Monster monster) {
+		//add the level on leftPanel
+		JLabel levelLabel = new JLabel("LVL: "+monster.getLevel());
+		levelLabel.setBounds(53, 30, 50, 10);
+		levelLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+		levelLabel.setForeground(Color.white);
+		return levelLabel;
+	}
+
+	private JLabel getMonsterHealthLabel() {
+		JLabel health = new JLabel("HP");
+		health.setBounds(6, 45, 40, 10);
+		health.setForeground(Color.white);
+		return health;
+	}
+
+	private JLabel getMonsterDamageAndShieldLabel(Monster monster) {
+		JLabel damageAndShield = new JLabel("DMG: " + monster.getDamage() + "    SHD: N");
+		damageAndShield.setBounds(2, 85, 128, 10);
+		damageAndShield.setForeground(Color.white);
+		return damageAndShield;
+	}
+
+	private JLabel getExpLabel() {
+		JLabel exp = new JLabel("EXP");
+		exp.setBounds(2, 65, 40, 10);
+		exp.setForeground(Color.white);
+		return exp;
 	}
 
 	/**
@@ -399,16 +461,6 @@ public class MainScreen implements Observer {
 		rightPanel.setBackground(Color.BLACK);
 		rightPanel.setBounds(680,70,120,430);
 		rightPanel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 3, Color.WHITE));
-		// add enemyMonsterPanel
-		for (int i=0; i < 4; i++) {
-			JPanel panel = getNewEnemyMonsterPanel();
-			// add label
-			panel.add(getEnemyMonsterPanelLabel());
-			// store reference in to a list
-			this.enemyMonsterPanel[i] = panel;
-			// add enemyMonsterPanel into the rightPanel
-			rightPanel.add(this.enemyMonsterPanel[i]);
-		}
 		return rightPanel;
 	}
 
@@ -439,7 +491,7 @@ public class MainScreen implements Observer {
 		// Template
 		// (rightPanel component)
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
+		panel.setLayout(null);
 		panel.setBackground(Color.BLACK);
 		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, Color.WHITE));
 		return panel;
@@ -497,8 +549,9 @@ public class MainScreen implements Observer {
 		// create a bottomPanel
 		JPanel bottomMainPanel = getNewBottomPanel();
 		// add components to the startingPanel
-		bottomMainPanel.add(getBottomMainTextPane());
-		bottomMainPanel.add(getContinueButton());
+		bottomMainPanel.add(getReorderBtn());
+		bottomMainPanel.add(getRunBtn());
+		bottomMainPanel.add(getFightBtn());
 		return bottomMainPanel;
 	}
 
@@ -560,15 +613,38 @@ public class MainScreen implements Observer {
 		return bottomSettingsPanel;
 	}
 
+	private JPanel getBottomFightConfirmPanel() {
+		// bottomFightConfirmPanel
+		JPanel bottomFightConfirmPanel = getNewBottomPanel();
+		// add components to panel
+		bottomFightConfirmPanel.add(getFightBtn());
+		// set it to not visible (Default)
+		bottomFightConfirmPanel.setVisible(false);
+		return bottomFightConfirmPanel;
+	}
+
+	private JPanel getBottomBattlePanel() {
+		// bottom
+		JPanel bottomBattlePanel = getNewBottomPanel();
+		// add components to panel
+		bottomBattlePanel.add(getAttackBtn());
+		// set it to not visible (Default)
+		bottomBattlePanel.setVisible(false);
+		return bottomBattlePanel;
+	}
+
 	/**
 	 * Create a centerMainPanel. This function is using the bottom panel template function(getNewCenterPanel).
 	 */
 	private JPanel getCenterMainPanel() {
 		// centerMainPanel
-		JPanel centerMainPanel = getNewCenterPanel();
-		// add components to panel
-		centerMainPanel.add(getCenterPanelTitle("Main"));
+		JPanel centerMainPanel = new GamePanel(120,70 , this.gc);
+		centerMainPanel.requestFocus();
 		return centerMainPanel;
+//		JPanel centerMainPanel = getNewCenterPanel();
+//		// add components to panel
+//		centerMainPanel.add(getCenterPanelTitle("Main"));
+//		return centerMainPanel;
 	}
 
 	/**
@@ -628,6 +704,16 @@ public class MainScreen implements Observer {
 		return centerSettingsPanel;
 	}
 
+	private JPanel getCenterBattlePanel() {
+		// create a centerBattlePanel
+		JPanel centerBattlePanel = getNewCenterPanel();
+		// add component
+		centerBattlePanel.add(getCenterPanelTitle("Battle"));
+		// set it to not visible (Default)
+		centerBattlePanel.setVisible(false);
+		return centerBattlePanel;
+	}
+
 	/* JTextPane */
 	/**
 	 * This function will create and return a textPane so that we can display information on the bottomMainPanel.
@@ -673,7 +759,7 @@ public class MainScreen implements Observer {
 	 * @param monster a Monster instance
 	 * @return a JProgressBar with the monsters max health
 	 */
-	private JProgressBar getHealthBar(Monster monster) {
+	private JProgressBar getMonsterHealthBar(Monster monster) {
 		JProgressBar healthBar = new JProgressBar(0,monster.getMaxHealth());
 		healthBar.setBounds(20,45,90,10);
 		healthBar.setValue(monster.getMaxHealth());
@@ -692,7 +778,7 @@ public class MainScreen implements Observer {
 	 * @param monster a Monster instance
 	 * @return a JProgressBar with the monsters experience bar
 	 */
-	private JProgressBar getExpBar(Monster monster) {
+	private JProgressBar getMonsterExpBar(Monster monster) {
 		JProgressBar expBar = new JProgressBar(0,100);
 		expBar.setBounds(20,65,90,10);
 		expBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
@@ -736,8 +822,8 @@ public class MainScreen implements Observer {
 	 *
 	 * @return a JLabel with the text on it.
 	 */
-	private JLabel getEnemyMonsterPanelLabel() {
-		JLabel label = new JLabel("Gen Monster here");
+	private JLabel getEnemyMonsterPanelLabel(String monsterName) {
+		JLabel label = new JLabel(monsterName);
 		label.setForeground(Color.WHITE);
 		return label;
 	}
@@ -927,6 +1013,69 @@ public class MainScreen implements Observer {
 		return restartBtn;
 	}
 
+	private JButton getFightBtn() {
+		// create a fightBtn
+		JButton fightBtn = new JButton();
+		fightBtn.setText("Fight");
+		fightBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		fightBtn.setBounds(373, 50, 186, 50);
+		fightBtn.setBackground(Color.BLACK);
+		fightBtn.setForeground(Color.WHITE);
+		fightBtn.setFocusable(false);
+		fightBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		fightBtn.setEnabled(false);
+		// listener
+		addFightBtnListener(fightBtn);
+		return fightBtn;
+	}
+
+	private JButton getRunBtn() {
+		// create a runBtn
+		JButton runBtn = new JButton();
+		runBtn.setText("Run");
+		runBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		runBtn.setBounds(187, 50, 186, 50);
+		runBtn.setBackground(Color.BLACK);
+		runBtn.setForeground(Color.WHITE);
+		runBtn.setFocusable(false);
+		runBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		runBtn.setEnabled(false);
+		// listener
+//		addRunBtnListener(runBtn);
+		return runBtn;
+	}
+
+	private JButton getReorderBtn() {
+		// create a reorderBtn
+		JButton reorderBtn = new JButton();
+		reorderBtn.setText("Reorder");
+		reorderBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		reorderBtn.setBounds(1, 50, 186, 50);
+		reorderBtn.setBackground(Color.BLACK);
+		reorderBtn.setForeground(Color.WHITE);
+		reorderBtn.setFocusable(false);
+		if (!(this.gc.isAbleToReorderTeam())) {
+			reorderBtn.setEnabled(false);
+		}
+		reorderBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		return reorderBtn;
+	}
+
+	private JButton getAttackBtn() {
+		JButton attackBtn = new JButton();
+		attackBtn.setText("Attack");
+		attackBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		attackBtn.setBounds(305, 50, 210, 50);
+		attackBtn.setBackground(Color.BLACK);
+		attackBtn.setForeground(Color.WHITE);
+		attackBtn.setFocusable(false);
+		attackBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addAttackBtnListener(attackBtn);
+		return attackBtn;
+	}
+
 	/* JToggleButton */
 	/**
 	 * Create and return the bagButton for the TopPanel
@@ -1035,7 +1184,7 @@ public class MainScreen implements Observer {
 	
 	
 	
-	private JPanel getBuyPanel() {
+	private JPanel getCenterBuyPanel() {
 		// Template
 		// This panel will be shown in the middle of the mainFrame
 		JPanel buyPanel = getPanelForShop();
@@ -1051,16 +1200,22 @@ public class MainScreen implements Observer {
 		return buyPanel;	
 		
 	}
-	private JPanel getBottomBuyPanel() {
-		// bottomBuyPanel
-		JPanel bottomBuyPanel = getNewBottomPanel();
-		// set it to not visible (Default)
-		bottomBuyPanel.setVisible(false);
-		return bottomBuyPanel;
+
+	private void addFightBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			showCenterPanel(CenterPanel.BATTLE);
+			showBottomPanel(BottomPanel.BATTLE);
+		});
+	}
+
+	private void addAttackBtnListener(JButton b) {
+		b.addActionListener(e -> {
+
+		});
 	}
 	
 	
-	private JPanel getSellPanel() {
+	private JPanel getCenterSellPanel() {
 		JPanel sellPanel = getPanelForShop();
 		// add component
 		sellPanel.add(getCenterPanelTitle("Sell Area"));
@@ -1068,16 +1223,6 @@ public class MainScreen implements Observer {
 		// set it to not visible (Default)
 		sellPanel.setVisible(false);
 		return sellPanel;	
-	}
-	
-	private JPanel getBottomSellPanel() {
-		// bottomSellPanel
-		JPanel bottomSellPanel = getNewBottomPanel();
-		// add Component
-		// set it to not visible
-		bottomSellPanel.setVisible(false);
-		return bottomSellPanel;
-		
 	}
 	
 	private JButton getBackToShopBtn() {
