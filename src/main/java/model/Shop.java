@@ -20,7 +20,7 @@ public class Shop {
      */
     public Shop(GameController gc) {
         this.gc = gc;
-        this.itemForSell = new ArrayList<>();
+        this.itemForSell = new ArrayList<ArrayList<GameItem>>(4);
         reloadMonsters();
     }
 
@@ -98,6 +98,7 @@ public class Shop {
         }
         itemForSell.add(3, meds);
     }
+    
     
     
 

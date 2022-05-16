@@ -36,7 +36,7 @@ public class GameController extends Observable {
         this.medicineGenerator = new MedicineGenerator();
         this.weaponGenerator = new WeaponGenerator();
         this.shieldGenerator = new ShieldGenerator();
-        this.shop = new Shop(this.monsterGenerator);
+        this.shop = new Shop(this);
         this.playerTeam = new Team(4);
     }
 

@@ -1122,13 +1122,13 @@ public class MainScreen implements Observer {
 		});
 	}
 	
+	//Should be called on a brand new day or when the refresh button is clicked
 	private void generateItemsForShop() {
 		for (int i = 0;i<5;i++) {
 			monstersForShop[i] = gc.generateMonster();
 			medForShop[i] = gc.generateMedicine();
 			weaponForShop[i] = gc.generateWeapon();
 			shieldForShop[i] = gc.generateShield();
-			System.out.println(shieldForShop[i]);
 		}
 	}
 //	private void changeOrderOfMonsters() {
