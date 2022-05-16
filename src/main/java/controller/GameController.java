@@ -29,6 +29,9 @@ public class GameController extends Observable {
     private ArrayList<Team> battles;
     // used for observers
     private boolean isEncounteredBattle;
+    private boolean isUpdateTeam;
+    private boolean isAbleToStartFight;
+    private boolean isAbleToReorderTeam;
 
     /**
      * Constructor for the GameController.
@@ -40,6 +43,7 @@ public class GameController extends Observable {
         this.battles = new ArrayList<>();
         this.battleIndex = 999;
         this.isEncounteredBattle = false;
+        this.isUpdateTeam = false;
     }
 
     /**
@@ -277,9 +281,23 @@ public class GameController extends Observable {
         }
     }
 
+    public boolean isAbleToStartFight() {
+        return this.battleIndex != 999 && this.playerTeam.size() != 0;
+    }
+
+    public boolean isAbleToReorderTeam() {
+        return this.playerTeam.size() != 0;
+    }
+
     public boolean isEncounteredBattle() {
         boolean prevVal = this.isEncounteredBattle;
         this.isEncounteredBattle = false;
+        return prevVal;
+    }
+
+    public boolean isUpdateTeam() {
+        boolean prevVal = this.isUpdateTeam;
+        this.isUpdateTeam = false;
         return prevVal;
     }
 }

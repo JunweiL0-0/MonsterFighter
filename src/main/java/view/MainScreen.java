@@ -37,7 +37,7 @@ public class MainScreen implements Observer {
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS, FIGHT_CONFIRM, BATTLE
+		MAIN, BAG, SHOP, SETTINGS, BATTLE
 	}
 
 
@@ -128,13 +128,35 @@ public class MainScreen implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (((GameController)o).isEncounteredBattle()) {
-			showBottomPanel(BottomPanel.FIGHT_CONFIRM);
+			updateBottomMainPanel();
 			updateRightPanel();
+		}
+		if (((GameController)o).isUpdateTeam()) {
+			updateLeftPanel();
 		}
 		System.out.println("Receive new update");
 	}
 
+	public void updateBottomMainPanel() {
+		JPanel bottomMainPanel = bottomPanelMap.get(BottomPanel.MAIN);
+		bottomMainPanel.removeAll();
+		JButton reorderBtn = getReorderBtn();
+		JButton runBtn = getRunBtn();
+		JButton fightBtn = getFightBtn();
+		reorderBtn.setEnabled(this.gc.isAbleToReorderTeam());
+		runBtn.setEnabled(this.gc.isAbleToStartFight());
+		fightBtn.setEnabled(this.gc.isAbleToStartFight());
+		// add components
+		bottomMainPanel.add(reorderBtn);
+		bottomMainPanel.add(runBtn);
+		bottomMainPanel.add(fightBtn);
+		// repaint
+		bottomMainPanel.revalidate();
+		bottomMainPanel.repaint();
+	}
+
 	private void updateRightPanel() {
+		this.rightPanel.removeAll();
 		Team enemyTeam = this.gc.getEnemyTeam();
 		// add enemyMonsterPanel
 		for (int i=0; i < enemyTeam.size(); i++) {
@@ -157,6 +179,10 @@ public class MainScreen implements Observer {
 		}
 		this.rightPanel.revalidate();
 		this.rightPanel.repaint();
+	}
+
+	private void updateLeftPanel() {
+
 	}
 
 	/**
@@ -192,7 +218,6 @@ public class MainScreen implements Observer {
 		this.bottomPanelMap.put(BottomPanel.BAG, getBottomBagPanel());
 		this.bottomPanelMap.put(BottomPanel.SHOP, getBottomShopPanel());
 		this.bottomPanelMap.put(BottomPanel.SETTINGS, getBottomSettingsPanel());
-		this.bottomPanelMap.put(BottomPanel.FIGHT_CONFIRM, getBottomFightConfirmPanel());
 		this.bottomPanelMap.put(BottomPanel.BATTLE, getBottomBattlePanel());
 		// add bottom panel to frame
 		for (JPanel panel : bottomPanelMap.values()) {
@@ -506,8 +531,9 @@ public class MainScreen implements Observer {
 		// create a bottomPanel
 		JPanel bottomMainPanel = getNewBottomPanel();
 		// add components to the startingPanel
-		bottomMainPanel.add(getBottomMainTextPane());
-		bottomMainPanel.add(getContinueButton());
+		bottomMainPanel.add(getReorderBtn());
+		bottomMainPanel.add(getRunBtn());
+		bottomMainPanel.add(getFightBtn());
 		return bottomMainPanel;
 	}
 
@@ -933,18 +959,52 @@ public class MainScreen implements Observer {
 	}
 
 	private JButton getFightBtn() {
-		// create a restartBtn (BottomSettingsPanel component)
+		// create a fightBtn
 		JButton fightBtn = new JButton();
 		fightBtn.setText("Fight");
 		fightBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		fightBtn.setBounds(305, 50, 210, 50);
+		fightBtn.setBounds(373, 50, 186, 50);
 		fightBtn.setBackground(Color.BLACK);
 		fightBtn.setForeground(Color.WHITE);
 		fightBtn.setFocusable(false);
 		fightBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		fightBtn.setEnabled(false);
 		// listener
 		addFightBtnListener(fightBtn);
 		return fightBtn;
+	}
+
+	private JButton getRunBtn() {
+		// create a runBtn
+		JButton runBtn = new JButton();
+		runBtn.setText("Run");
+		runBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		runBtn.setBounds(187, 50, 186, 50);
+		runBtn.setBackground(Color.BLACK);
+		runBtn.setForeground(Color.WHITE);
+		runBtn.setFocusable(false);
+		runBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		runBtn.setEnabled(false);
+		// listener
+//		addRunBtnListener(runBtn);
+		return runBtn;
+	}
+
+	private JButton getReorderBtn() {
+		// create a reorderBtn
+		JButton reorderBtn = new JButton();
+		reorderBtn.setText("Reorder");
+		reorderBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		reorderBtn.setBounds(1, 50, 186, 50);
+		reorderBtn.setBackground(Color.BLACK);
+		reorderBtn.setForeground(Color.WHITE);
+		reorderBtn.setFocusable(false);
+		if (!(this.gc.isAbleToReorderTeam())) {
+			reorderBtn.setEnabled(false);
+		}
+		reorderBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		return reorderBtn;
 	}
 
 	private JButton getAttackBtn() {
