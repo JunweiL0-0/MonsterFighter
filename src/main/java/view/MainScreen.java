@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import main.java.controller.GameController;
 import main.java.model.GameItem;
@@ -43,23 +45,29 @@ public class MainScreen implements Observer {
 	// leftPanel, rightPanel
 	private JPanel leftPanel;
 	private JPanel rightPanel;
+	private JButton reorderConfirmBtn;
 	// enum
 	private enum CenterPanel {
 		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS, BATTLE
-
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, REORDER
 	}
 	
 	private ArrayList<JButton> monsterButtons;
 	private ArrayList<JButton> weaponButtons;
 	private ArrayList<JButton> shieldButtons;
 	private ArrayList<JButton> medButtons;
-	
-	private JButton refreshAll;
 
+
+	private Monster[] monstersForShop = new Monster[5];
+	private Medicine[] medForShop = new Medicine[5];
+	private Shield[] shieldForShop = new Shield[5];
+	private Weapon[] weaponForShop = new Weapon[5];
+	// values
+	private int reorderingMonsterIndex1;
+	private int reorderingMonsterIndex2;
 
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
@@ -67,7 +75,8 @@ public class MainScreen implements Observer {
 	 * @param gc gameController.
 	 */
 	public MainScreen(GameController gc) {
-		
+		reorderingMonsterIndex1 = 999;
+		reorderingMonsterIndex2 = 999;
 		centerPanelMap = new HashMap<>();
 		bottomPanelMap = new HashMap<>();
 		this.gc = gc;
@@ -110,8 +119,6 @@ public class MainScreen implements Observer {
 		// Center and bottom panel
 		addCenterPanelToFrame(this.mainFrame);
 		addBottomPanelToFrame(this.mainFrame);
-		
-		
 	}
 
 	/**
@@ -183,14 +190,11 @@ public class MainScreen implements Observer {
 		JPanel bottomMainPanel = bottomPanelMap.get(BottomPanel.MAIN);
 		bottomMainPanel.removeAll();
 		JButton reorderBtn = getReorderBtn();
-		JButton runBtn = getRunBtn();
 		JButton fightBtn = getFightBtn();
 		reorderBtn.setEnabled(this.gc.isAbleToReorderTeam());
-		runBtn.setEnabled(this.gc.isAbleToStartFight());
 		fightBtn.setEnabled(this.gc.isAbleToStartFight());
 		// add components
 		bottomMainPanel.add(reorderBtn);
-		bottomMainPanel.add(runBtn);
 		bottomMainPanel.add(fightBtn);
 		// repaint
 		bottomMainPanel.revalidate();
@@ -224,7 +228,30 @@ public class MainScreen implements Observer {
 	}
 
 	private void updateLeftPanel() {
-
+		this.leftPanel.removeAll();
+		// add playerTeamPanel
+		for (int i=0; i < this.playerTeamPanel.length; i++) {
+			JPanel panel = getNewPlayerTeamPanel();
+			// add name label if we have monster in the team
+			if (i < this.gc.getMonsterTeamMember().size()) {
+				Monster monster = this.gc.getMonsterFromTeamByIndex(i);
+				panel.add(getMonsterOrderLabel(i));
+				panel.add(autoResizeFont(getMonsterNameLabel(monster)));
+				panel.add(getMonsterLevelLabel(monster));
+				panel.add(getLabelWithMonsterImage(monster));
+				panel.add(autoResizeFont(getMonsterHealthLabel()));
+				panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
+				panel.add(autoResizeFont(getExpLabel()));
+				panel.add(getMonsterHealthBar(monster));
+				panel.add(getMonsterExpBar(monster));
+			}
+			// store the reference of the panel into a list.
+			this.playerTeamPanel[i] = panel;
+			// add playerTeamPanel into leftPanel
+			this.leftPanel.add(this.playerTeamPanel[i]);
+		}
+		this.leftPanel.revalidate();
+		this.leftPanel.repaint();
 	}
 
 	/**
@@ -243,7 +270,7 @@ public class MainScreen implements Observer {
 		this.centerPanelMap.put(CenterPanel.BATTLE, getCenterBattlePanel());
 		this.centerPanelMap.put(CenterPanel.BUY, getCenterBuyPanel());
 		this.centerPanelMap.put(CenterPanel.SELL, getCenterSellPanel());
-		
+
 		// add center panel to frame
 		for (JPanel panel : centerPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -264,6 +291,7 @@ public class MainScreen implements Observer {
 		this.bottomPanelMap.put(BottomPanel.SHOP, getBottomShopPanel());
 		this.bottomPanelMap.put(BottomPanel.SETTINGS, getBottomSettingsPanel());
 		this.bottomPanelMap.put(BottomPanel.BATTLE, getBottomBattlePanel());
+		this.bottomPanelMap.put(BottomPanel.REORDER, getBottomReorderPanel());
 		// add bottom panel to frame
 		for (JPanel panel : bottomPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -392,7 +420,6 @@ public class MainScreen implements Observer {
 			// add name label if we have monster in the team
 			if (i < this.gc.getMonsterTeamMember().size()) {
 				Monster monster = this.gc.getMonsterFromTeamByIndex(i);
-
 				panel.add(getMonsterOrderLabel(i));
 				panel.add(autoResizeFont(getMonsterNameLabel(monster)));
 				panel.add(getMonsterLevelLabel(monster));
@@ -403,7 +430,6 @@ public class MainScreen implements Observer {
 				panel.add(autoResizeFont(getExpLabel()));
 				panel.add(getMonsterHealthBar(monster));
 				panel.add(getMonsterExpBar(monster));
-
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -580,7 +606,6 @@ public class MainScreen implements Observer {
 		JPanel bottomMainPanel = getNewBottomPanel();
 		// add components to the startingPanel
 		bottomMainPanel.add(getReorderBtn());
-		bottomMainPanel.add(getRunBtn());
 		bottomMainPanel.add(getFightBtn());
 		return bottomMainPanel;
 	}
@@ -663,6 +688,122 @@ public class MainScreen implements Observer {
 		return bottomBattlePanel;
 	}
 
+	private JPanel getBottomReorderPanel() {
+		// bottom
+		JPanel bottomReorderPanel = getNewBottomPanel();
+		// add components to panel
+		// store the confirmBtn to toggle the status of the btn
+		this.reorderConfirmBtn = getReorderConfirmBtn();
+		bottomReorderPanel.add(getReorderMonster1TextField());
+		bottomReorderPanel.add(getReorderSymbol());
+		bottomReorderPanel.add(getReorderMonster2TextField());
+		bottomReorderPanel.add(this.reorderConfirmBtn);
+		bottomReorderPanel.add(getReorderCancelBtn());
+		bottomReorderPanel.setVisible(false);
+		return bottomReorderPanel;
+	}
+
+	private JTextPane getReorderSymbol() {
+		JTextPane symbol = new JTextPane();
+		symbol.setText("<   >");
+		symbol.setFont(new Font("Serif",Font.PLAIN,20));
+		symbol.setForeground(Color.white);
+		symbol.setBackground(Color.black);
+		symbol.setBounds(70, 60, 50, 75);
+		symbol.setEditable(false);
+		return symbol;
+	}
+
+	private JTextField getReorderMonster1TextField() {
+		// create a textField
+		JTextField textField = new JTextField();
+		// remove border
+		textField.setBorder(BorderFactory.createEmptyBorder());
+		textField.setBounds(20, 50, 50, 50);
+		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setColumns(1);
+		textField.setBorder(null);
+		// add listeners
+		addReorderMonsterTextFieldKeyListener(textField);
+		addReorderMonsterTextField1DocumentListener(textField);
+		return textField;
+	}
+	private JTextField getReorderMonster2TextField() {
+		// create a textField
+		JTextField textField = new JTextField();
+		// remove border
+		textField.setBorder(BorderFactory.createEmptyBorder());
+		textField.setBounds(120, 50, 50, 50);
+		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setColumns(1);
+		textField.setBorder(null);
+		// add listeners
+		addReorderMonsterTextFieldKeyListener(textField);
+		addReorderMonsterTextField2DocumentListener(textField);
+		return textField;
+	}
+	private void addReorderMonsterTextFieldKeyListener(JTextField textField) {
+		textField.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!(Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || c == KeyEvent.VK_DELETE)) {
+					e.consume();
+				}
+				if (Character.getNumericValue(c) <= 0|| Character.getNumericValue(c) > gc.getMonsterTeamMember().size()) {
+					e.consume();
+				}
+				if (textField.getText().length() >= 1) {
+					e.consume();
+				}
+			}
+		});
+	}
+
+	// listener for right textField
+	private void addReorderMonsterTextField2DocumentListener(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+			}
+			public void removeUpdate(DocumentEvent e) {
+				reorderingMonsterIndex2 = 999;
+				reorderConfirmBtn.setEnabled(false);
+			}
+			public void insertUpdate(DocumentEvent e) {
+				int val = (Integer.parseInt(textField.getText()) - 1);
+				if (reorderingMonsterIndex1 == 999) {
+					reorderingMonsterIndex2 = val;
+				}
+				if ((reorderingMonsterIndex1 != 999) && (reorderingMonsterIndex1 != val)) {
+					reorderingMonsterIndex2 = val;
+					reorderConfirmBtn.setEnabled(true);
+				}
+			}
+		});
+	}
+
+	// listener for left textField
+	private void addReorderMonsterTextField1DocumentListener(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+			}
+			public void removeUpdate(DocumentEvent e) {
+				reorderingMonsterIndex1 = 999;
+				reorderConfirmBtn.setEnabled(false);
+			}
+			public void insertUpdate(DocumentEvent e) {
+				int val = (Integer.parseInt(textField.getText()) - 1);
+				if (reorderingMonsterIndex2 == 999) {
+					reorderingMonsterIndex1 = val;
+				}
+				if ((reorderingMonsterIndex2 != 999) && (reorderingMonsterIndex2 != val)) {
+					reorderingMonsterIndex1 = val;
+					reorderConfirmBtn.setEnabled(true);
+				}
+			}
+		});
+	}
+
+
 	/**
 	 * Create a centerMainPanel. This function is using the bottom panel template function(getNewCenterPanel).
 	 */
@@ -710,7 +851,6 @@ public class MainScreen implements Observer {
 		// create a shopPanel (This panel will be stored in a variable)
 		JPanel centerShopPanel = getNewCenterPanel();
 		// add component
-		
 		JTextPane title = new JTextPane();
 		title.setText("Monster Fighter \n        Shop");
 		title.setFont(new Font("Serif",Font.PLAIN,30));
@@ -1067,7 +1207,7 @@ public class MainScreen implements Observer {
 		JButton fightBtn = new JButton();
 		fightBtn.setText("Fight");
 		fightBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		fightBtn.setBounds(373, 50, 186, 50);
+		fightBtn.setBounds(305, 50, 210, 50);
 		fightBtn.setBackground(Color.BLACK);
 		fightBtn.setForeground(Color.WHITE);
 		fightBtn.setFocusable(false);
@@ -1078,28 +1218,12 @@ public class MainScreen implements Observer {
 		return fightBtn;
 	}
 
-	private JButton getRunBtn() {
-		// create a runBtn
-		JButton runBtn = new JButton();
-		runBtn.setText("Run");
-		runBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		runBtn.setBounds(187, 50, 186, 50);
-		runBtn.setBackground(Color.BLACK);
-		runBtn.setForeground(Color.WHITE);
-		runBtn.setFocusable(false);
-		runBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		runBtn.setEnabled(false);
-		// listener
-//		addRunBtnListener(runBtn);
-		return runBtn;
-	}
-
 	private JButton getReorderBtn() {
 		// create a reorderBtn
 		JButton reorderBtn = new JButton();
 		reorderBtn.setText("Reorder");
 		reorderBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		reorderBtn.setBounds(1, 50, 186, 50);
+		reorderBtn.setBounds(45, 50, 210, 50);
 		reorderBtn.setBackground(Color.BLACK);
 		reorderBtn.setForeground(Color.WHITE);
 		reorderBtn.setFocusable(false);
@@ -1108,6 +1232,7 @@ public class MainScreen implements Observer {
 		}
 		reorderBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
 		// listener
+		addReorderBtnListener(reorderBtn);
 		return reorderBtn;
 	}
 
@@ -1123,6 +1248,34 @@ public class MainScreen implements Observer {
 		// listener
 		addAttackBtnListener(attackBtn);
 		return attackBtn;
+	}
+
+	private JButton getReorderConfirmBtn() {
+		JButton reorderBtn = new JButton();
+		reorderBtn.setText("Confirm");
+		reorderBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		reorderBtn.setBounds(390, 50, 100, 50);
+		reorderBtn.setBackground(Color.BLACK);
+		reorderBtn.setForeground(Color.WHITE);
+		reorderBtn.setFocusable(false);
+		reorderBtn.setEnabled(false);
+		reorderBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addReorderConfirmBtnListener(reorderBtn);
+		return reorderBtn;
+	}
+	private JButton getReorderCancelBtn() {
+		JButton cancelBtn = new JButton();
+		cancelBtn.setText("Cancel");
+		cancelBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		cancelBtn.setBounds(280, 50, 100, 50);
+		cancelBtn.setBackground(Color.BLACK);
+		cancelBtn.setForeground(Color.WHITE);
+		cancelBtn.setFocusable(false);
+		cancelBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addReorderCancelBtnListener(cancelBtn);
+		return cancelBtn;
 	}
 
 	/* JToggleButton */
@@ -1244,6 +1397,7 @@ public class MainScreen implements Observer {
 		// This panel will be shown in the middle of the mainFrame
 		JPanel buyPanel = getPanelForShop();
 		// add component
+
 		buyPanel.add(getBuyTitle());
 		
 		//panel to add to the JScrollPane
@@ -1383,6 +1537,8 @@ public class MainScreen implements Observer {
 		buyPanel.add(buyScrollPane);
 		
 		
+		buyPanel.add(getCenterPanelTitle("Buy Area"));
+		buyPanel.add(getBackToShopBtn());
 		
 		// set it to not visible (Default)
 		buyPanel.setVisible(false);
@@ -1399,8 +1555,15 @@ public class MainScreen implements Observer {
 
 	private void addAttackBtnListener(JButton b) {
 		b.addActionListener(e -> {
-			
 		});
+	}
+
+	private void addReorderConfirmBtnListener(JButton b) {
+		b.addActionListener(e -> this.gc.swapMonsterInPlayerTeam(this.reorderingMonsterIndex1, this.reorderingMonsterIndex2));
+	}
+
+	private void addReorderCancelBtnListener(JButton b) {
+		b.addActionListener(e -> showBottomPanel(BottomPanel.MAIN));
 	}
 	
 	
@@ -1453,6 +1616,15 @@ public class MainScreen implements Observer {
 		b.addActionListener(e -> {
 			// unSelected all buttons
 			this.shopButtonGroup.clearSelection();;
+		});
+	}
+
+	/**
+	 *
+	 */
+	private void addReorderBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			showBottomPanel(BottomPanel.REORDER);
 		});
 	}
 	

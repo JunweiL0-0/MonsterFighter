@@ -328,12 +328,10 @@ public class GameController extends Observable {
         this.isUpdateTeam = false;
         return prevVal;
     }
-    
-//    public boolean isUpdateBuyArea() {
-//    	boolean val = this.isUpdateBuyArea;
-//    	if (this.gold - 100 >= 0) {
-//    		
-//    	}
-//    	return ;
-//    }
+    public void swapMonsterInPlayerTeam(int monsterIndex1, int monsterIndex2) {
+        this.playerTeam.swapMonster(monsterIndex1, monsterIndex2);
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
 }
