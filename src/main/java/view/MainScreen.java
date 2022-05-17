@@ -7,11 +7,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import main.java.controller.GameController;
 import main.java.model.GameItem;
 import main.java.model.Medicine;
@@ -169,9 +166,13 @@ public class MainScreen implements Observer {
 		if (((GameController)o).isUpdateTeam()) {
 			updateLeftPanel();
 		}
-//		} (((GameCOntroller)o).isUpdateMonstersShop(){
-//			updateMonstersShop();
-//		}
+
+		if (((GameController)o).isUpdateEnemyTeam()) {
+			updateRightPanel();
+		}
+		if (((GameController)o).isBattleOccur()) {
+			updateCenterBattlePanel();
+		}
 		System.out.println("Receive new update");
 	}
 	
@@ -252,6 +253,58 @@ public class MainScreen implements Observer {
 		}
 		this.leftPanel.revalidate();
 		this.leftPanel.repaint();
+	}
+
+	// update centerBattlePanel and show which monster is doing the fight
+	private void updateCenterBattlePanel() {
+		JPanel centerBattlePanel = centerPanelMap.get(CenterPanel.BATTLE);
+		centerBattlePanel.removeAll();
+		Monster playerMonster = this.gc.getPlayerTeamReadyMonster();
+		Monster enemyMonster = this.gc.getEnemyTeamReadyMonster();
+		// player's monster
+		JPanel playerPanel = new JPanel();
+		playerPanel.setLayout(null);
+		playerPanel.setBounds(120,100,120,100);
+		playerPanel.setBackground(Color.BLACK);
+		playerPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.WHITE));
+		playerPanel.add(autoResizeFont(getMonsterNameLabel(playerMonster)));
+		playerPanel.add(getMonsterLevelLabel(playerMonster));
+		playerPanel.add(getLabelWithMonsterImage(playerMonster));
+		playerPanel.add(autoResizeFont(getMonsterHealthLabel()));
+		playerPanel.add(autoResizeFont(getMonsterDamageAndShieldLabel(playerMonster)));
+		playerPanel.add(autoResizeFont(getExpLabel()));
+		playerPanel.add(getMonsterHealthBar(playerMonster));
+		playerPanel.add(getMonsterExpBar(playerMonster));
+		JLabel attackLabel = new JLabel();
+		if (this.gc.isPlayerTurnBattle()) {
+			attackLabel.setText("Attack ->");
+		} else {
+			attackLabel.setText("<- Attack");
+		}
+		attackLabel.setForeground(Color.white);
+		attackLabel.setBounds(240, 120, 80, 30);
+
+		// enemy's monster
+		JPanel enemyPanel = new JPanel();
+		enemyPanel.setLayout(null);
+		enemyPanel.setBounds(320,100,120,100);
+		enemyPanel.setBackground(Color.BLACK);
+		enemyPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.WHITE));
+		enemyPanel.add(autoResizeFont(getMonsterNameLabel(enemyMonster)));
+		enemyPanel.add(getMonsterLevelLabel(enemyMonster));
+		enemyPanel.add(getLabelWithMonsterImage(enemyMonster));
+		enemyPanel.add(autoResizeFont(getMonsterHealthLabel()));
+		enemyPanel.add(autoResizeFont(getMonsterDamageAndShieldLabel(enemyMonster)));
+		enemyPanel.add(autoResizeFont(getExpLabel()));
+		enemyPanel.add(getMonsterHealthBar(enemyMonster));
+		enemyPanel.add(getMonsterExpBar(enemyMonster));
+		// add panel to centerBattlePanel
+		centerBattlePanel.add(enemyPanel);
+		centerBattlePanel.add(attackLabel);
+		centerBattlePanel.add(playerPanel);
+		// revalidate and repaint the panel
+		centerBattlePanel.revalidate();
+		centerBattlePanel.repaint();
 	}
 
 	/**
@@ -941,11 +994,14 @@ public class MainScreen implements Observer {
 	private JProgressBar getMonsterHealthBar(Monster monster) {
 		JProgressBar healthBar = new JProgressBar(0,monster.getMaxHealth());
 		healthBar.setBounds(20,45,90,10);
-		healthBar.setValue(monster.getMaxHealth());
+		healthBar.setValue(monster.getCurrentHealth());
 		healthBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
+		healthBar.setFont(new Font("Serif", Font.PLAIN, 10));
 		healthBar.setForeground(Color.red);
 		healthBar.setBackground(Color.black);
-		healthBar.setString(Integer.toString(monster.getCurrentHealth()));
+		// auto converting... Nice work Java..
+		healthBar.setString(monster.getCurrentHealth() + "/" + monster.getMaxHealth());
+		healthBar.setStringPainted(true);
 		
 		return healthBar;
 	}
@@ -1550,12 +1606,12 @@ public class MainScreen implements Observer {
 		b.addActionListener(e -> {
 			showCenterPanel(CenterPanel.BATTLE);
 			showBottomPanel(BottomPanel.BATTLE);
+			this.gc.enterBattle();
 		});
 	}
 
 	private void addAttackBtnListener(JButton b) {
-		b.addActionListener(e -> {
-		});
+		b.addActionListener(e -> this.gc.battle());
 	}
 
 	private void addReorderConfirmBtnListener(JButton b) {
@@ -1783,9 +1839,3 @@ public class MainScreen implements Observer {
 	
 	
 }
-
-
-
-
-
-

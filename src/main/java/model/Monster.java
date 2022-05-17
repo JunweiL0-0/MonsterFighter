@@ -11,6 +11,7 @@ public class Monster extends GameItem {
     private int damage;
     private int level;
     private int rarity;
+    private int exp;
     private int actionCounter;
     private ImageIcon imageIcon;
 
@@ -35,6 +36,7 @@ public class Monster extends GameItem {
         this.rarity = rarity;
         this.imageIcon = icon;
         this.actionCounter = 0;
+        this.exp = 0;
     }
 
     /**
@@ -133,5 +135,20 @@ public class Monster extends GameItem {
     
     public void healBy(Medicine med) {
     	this.currentHealth = Math.min(this.maxHealth, this.currentHealth + med.getEffect());
+    }
+
+    public void incrementExpBy(int exp) {
+        this.exp += exp;
+        if (this.exp == 100) {
+            this.exp = 0;
+            levelUp();
+        }
+    }
+
+    public void levelUp() {
+        this.level++;
+        this.damage += 50;
+        this.maxHealth += 100;
+        this.currentHealth += 100;
     }
 }

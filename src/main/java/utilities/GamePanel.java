@@ -23,8 +23,8 @@ public class GamePanel extends JPanel implements Runnable {
     private static final int MAX_WORLD_ROW = 50;
     public static final int ORIGINAL_UNIT_SIZE = 16; // 16x16
     public static final int SCALE = 3;
-    public static final int PLAYER_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 32x32
-    public static final int UNIT_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 32x32
+    public static final int PLAYER_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 48
+    public static final int UNIT_SIZE = ORIGINAL_UNIT_SIZE * SCALE; // 48
     public static final int PLAYER_SPEED = 4;
     public static final int SCREEN_WIDTH = 560;
     public static final int SCREEN_HEIGHT = 280;
