@@ -38,6 +38,8 @@ public class GameController extends Observable {
     private boolean isAbleToReorderTeam;
     private boolean isUpdateEnemyTeam;
     private boolean isBattleOccur;
+    private boolean isPlayerWon;
+    private boolean isEnemyWon;
 
     /**
      * Constructor for the GameController.
@@ -315,6 +317,55 @@ public class GameController extends Observable {
         }
     }
 
+    public void swapMonsterInPlayerTeam(int monsterIndex1, int monsterIndex2) {
+        this.playerTeam.swapMonster(monsterIndex1, monsterIndex2);
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    // the player will enter battle when the Fight btn being pressed on the MainScreen
+    // the validation will be done by other functions
+    public void enterBattle() {
+        if (!(this.playerTeam.isAllFainted()) && this.playerTeam.size() > 0 && battleIndex != -1) {
+            this.battleField.setBattle(this.playerTeam, this.battles.get(this.battleIndex));
+            this.isUpdateTeam = true;
+            this.isUpdateEnemyTeam = true;
+            this.isBattleOccur = true;
+            setChanged();
+            notifyObservers();
+        }
+    }
+
+    public void battle() {
+        // 1: player won, -1: enemy Won, 0: nobody won yet
+        int result = this.battleField.battle();
+        if (result == 1) {
+            this.isPlayerWon = true;
+        } else if (result == (-1)) {
+            this.isEnemyWon = true;
+        } else {
+            this.isBattleOccur = true;
+        }
+
+        this.isUpdateTeam = true;
+        this.isUpdateEnemyTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public Monster getPlayerTeamReadyMonster() {
+        return this.battleField.getPlayerTeamReadyMonster();
+    }
+
+    public Monster getEnemyTeamReadyMonster() {
+        return this.battleField.getEnemyTeamReadyMonster();
+    }
+
+    public boolean isPlayerTurnBattle() {
+        return this.battleField.isPlayerTurn();
+    }
+
     public boolean isAbleToStartFight() {
         return this.battleIndex != -1 && this.playerTeam.size() != 0;
     }
@@ -347,44 +398,15 @@ public class GameController extends Observable {
         return prevVal;
     }
 
-    public void swapMonsterInPlayerTeam(int monsterIndex1, int monsterIndex2) {
-        this.playerTeam.swapMonster(monsterIndex1, monsterIndex2);
-        this.isUpdateTeam = true;
-        setChanged();
-        notifyObservers();
+    public boolean isPlayerWon() {
+        boolean prevVal = this.isPlayerWon;
+        this.isPlayerWon = false;
+        return prevVal;
     }
 
-    // the player will enter battle when the Fight btn being pressed on the MainScreen
-    // the validation will be done by other functions
-    public void enterBattle() {
-        if (!(this.playerTeam.isAllFainted()) && this.playerTeam.size() > 0 && battleIndex != -1) {
-            this.battleField.setBattle(this.playerTeam, this.battles.get(this.battleIndex));
-            this.isUpdateTeam = true;
-            this.isUpdateEnemyTeam = true;
-            this.isBattleOccur = true;
-            setChanged();
-            notifyObservers();
-        }
-    }
-
-    public void battle() {
-        this.battleField.battle();
-        this.isUpdateTeam = true;
-        this.isUpdateEnemyTeam = true;
-        this.isBattleOccur = true;
-        setChanged();
-        notifyObservers();
-    }
-
-    public Monster getPlayerTeamReadyMonster() {
-        return this.battleField.getPlayerTeamReadyMonster();
-    }
-
-    public Monster getEnemyTeamReadyMonster() {
-        return this.battleField.getEnemyTeamReadyMonster();
-    }
-
-    public boolean isPlayerTurnBattle() {
-        return this.battleField.isPlayerTurn();
+    public boolean isEnemyWon() {
+        boolean prevVal = this.isEnemyWon;
+        this.isEnemyWon = false;
+        return prevVal;
     }
 }

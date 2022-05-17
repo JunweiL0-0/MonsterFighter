@@ -41,11 +41,11 @@ public class MainScreen implements Observer {
 	private JButton reorderConfirmBtn;
 	// enum
 	private enum CenterPanel {
-		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, WASTE, WIN
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, REORDER
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, REORDER, EXIST_BATTLE
 	}
 	
 	private Monster[] monstersForShop = new Monster[5];
@@ -62,8 +62,8 @@ public class MainScreen implements Observer {
 	 * @param gc gameController.
 	 */
 	public MainScreen(GameController gc) {
-		reorderingMonsterIndex1 = 999;
-		reorderingMonsterIndex2 = 999;
+		reorderingMonsterIndex1 = -1;
+		reorderingMonsterIndex2 = -1;
 		centerPanelMap = new HashMap<>();
 		bottomPanelMap = new HashMap<>();
 		this.gc = gc;
@@ -157,6 +157,14 @@ public class MainScreen implements Observer {
 		}
 		if (((GameController)o).isBattleOccur()) {
 			updateCenterBattlePanel();
+		}
+		if (((GameController)o).isPlayerWon()) {
+			showCenterPanel(CenterPanel.WIN);
+			showBottomPanel(BottomPanel.EXIST_BATTLE);
+		}
+		if (((GameController)o).isEnemyWon()) {
+			showCenterPanel(CenterPanel.WASTE);
+			showBottomPanel(BottomPanel.EXIST_BATTLE);
 		}
 		System.out.println("Receive new update");
 	}
@@ -256,7 +264,7 @@ public class MainScreen implements Observer {
 			attackLabel.setText("<- Attack");
 		}
 		attackLabel.setForeground(Color.white);
-		attackLabel.setBounds(240, 120, 80, 30);
+		attackLabel.setBounds(250, 120, 70, 30);
 
 		// enemy's monster
 		JPanel enemyPanel = new JPanel();
@@ -297,6 +305,8 @@ public class MainScreen implements Observer {
 		this.centerPanelMap.put(CenterPanel.BATTLE, getCenterBattlePanel());
 		this.centerPanelMap.put(CenterPanel.BUY, getCenterBuyPanel());
 		this.centerPanelMap.put(CenterPanel.SELL, getCenterSellPanel());
+		this.centerPanelMap.put(CenterPanel.WASTE, getCenterWastePanel());
+		this.centerPanelMap.put(CenterPanel.WIN, getCenterWinPanel());
 
 		// add center panel to frame
 		for (JPanel panel : centerPanelMap.values()) {
@@ -319,6 +329,7 @@ public class MainScreen implements Observer {
 		this.bottomPanelMap.put(BottomPanel.SETTINGS, getBottomSettingsPanel());
 		this.bottomPanelMap.put(BottomPanel.BATTLE, getBottomBattlePanel());
 		this.bottomPanelMap.put(BottomPanel.REORDER, getBottomReorderPanel());
+		this.bottomPanelMap.put(BottomPanel.EXIST_BATTLE, getBottomExistBattlePanel());
 		// add bottom panel to frame
 		for (JPanel panel : bottomPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -729,6 +740,13 @@ public class MainScreen implements Observer {
 		return bottomReorderPanel;
 	}
 
+	private JPanel getBottomExistBattlePanel() {
+		// bottom
+		JPanel bottomReorderPanel = getNewBottomPanel();
+
+		return bottomReorderPanel;
+	}
+
 	private JTextPane getReorderSymbol() {
 		JTextPane symbol = new JTextPane();
 		symbol.setText("<   >");
@@ -791,15 +809,15 @@ public class MainScreen implements Observer {
 			public void changedUpdate(DocumentEvent e) {
 			}
 			public void removeUpdate(DocumentEvent e) {
-				reorderingMonsterIndex2 = 999;
+				reorderingMonsterIndex2 = -1;
 				reorderConfirmBtn.setEnabled(false);
 			}
 			public void insertUpdate(DocumentEvent e) {
 				int val = (Integer.parseInt(textField.getText()) - 1);
-				if (reorderingMonsterIndex1 == 999) {
+				if (reorderingMonsterIndex1 == -1) {
 					reorderingMonsterIndex2 = val;
 				}
-				if ((reorderingMonsterIndex1 != 999) && (reorderingMonsterIndex1 != val)) {
+				if ((reorderingMonsterIndex1 != -1) && (reorderingMonsterIndex1 != val)) {
 					reorderingMonsterIndex2 = val;
 					reorderConfirmBtn.setEnabled(true);
 				}
@@ -813,15 +831,15 @@ public class MainScreen implements Observer {
 			public void changedUpdate(DocumentEvent e) {
 			}
 			public void removeUpdate(DocumentEvent e) {
-				reorderingMonsterIndex1 = 999;
+				reorderingMonsterIndex1 = -1;
 				reorderConfirmBtn.setEnabled(false);
 			}
 			public void insertUpdate(DocumentEvent e) {
 				int val = (Integer.parseInt(textField.getText()) - 1);
-				if (reorderingMonsterIndex2 == 999) {
+				if (reorderingMonsterIndex2 == -1) {
 					reorderingMonsterIndex1 = val;
 				}
-				if ((reorderingMonsterIndex2 != 999) && (reorderingMonsterIndex2 != val)) {
+				if ((reorderingMonsterIndex2 != -1) && (reorderingMonsterIndex2 != val)) {
 					reorderingMonsterIndex1 = val;
 					reorderConfirmBtn.setEnabled(true);
 				}
@@ -1440,6 +1458,18 @@ public class MainScreen implements Observer {
 		sellPanel.setVisible(false);
 		return sellPanel;	
 	}
+
+	private JPanel getCenterWastePanel() {
+		JPanel wastePanel = getNewCenterPanel();
+		wastePanel.add(getCenterPanelTitle("Waste"));
+		return wastePanel;
+	}
+	private JPanel getCenterWinPanel() {
+		JPanel winPanel = getNewCenterPanel();
+		winPanel.add(getCenterPanelTitle("Win"));
+		return winPanel;
+	}
+
 	
 	private JButton getBackToShopBtn() {
 		// create a backBtn (BagPanel/ShopPanel/settingsPanel component)
