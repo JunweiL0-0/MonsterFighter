@@ -43,28 +43,6 @@ public class Team {
     }
 
     /**
-     * Fight with another team. Return true if making a fight successfully, return false otherwise.
-     * <br>
-     * The damage will be made by the monster of the turn (Monster with the lowest action counter value).
-     *
-     * @param enemyTeam another team
-     * @return a boolean value.
-     */
-    public boolean fight(Team enemyTeam) {
-        if (!isAllFainted()) {
-            // Monster with the lowest action counter value
-            Monster turnMonster = teamMember.get(turnMonsterIndex());
-            // Attack enemyTeam
-            enemyTeam.receiveDamage(turnMonster.getDamage());
-            // Increment actionCounter
-            turnMonster.incrementActionCounter();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Receive the incoming damage from monster.
      * The first not fainted monster in this team will receive the damage.
      *
@@ -72,7 +50,7 @@ public class Team {
      */
     public void receiveDamage(int incomingDamage) {
         // The first not fainted monster
-        Monster firstNotFaintedMonster = teamMember.get(firstNotFaintedMonsterIndex());
+        Monster firstNotFaintedMonster = teamMember.get(getFirstHealthMonsterIndex());
         // Receive damage
         firstNotFaintedMonster.harmBy(incomingDamage);
     }
@@ -83,7 +61,7 @@ public class Team {
      * @return a boolean value. True: AllFainted. False: Not allFainted
      */
     public boolean isAllFainted() {
-        return firstNotFaintedMonsterIndex() == -1;
+        return getFirstHealthMonsterIndex() == -1;
     }
 
     public Monster getMonsterByIndex(int i) {
@@ -94,12 +72,11 @@ public class Team {
         return this.teamMember.size();
     }
 
-    /**
-     * Loop through the teamMember and trying to find a not fainted monster and return the index of that monster.
-     *
-     * @return an integer value which represent the index of the first not fainted monster in the team.
-     */
-    private int firstNotFaintedMonsterIndex() {
+    public void swapMonster(int monsterIndex1, int monsterIndex2) {
+        Collections.swap(this.teamMember, monsterIndex1, monsterIndex2);
+    }
+
+    public int getFirstHealthMonsterIndex() {
         for (int i=0; i<teamMember.size(); i++) {
             // return the index value if monster is not fainted
             if (!(teamMember.get(i).isFainted())) {
@@ -110,19 +87,19 @@ public class Team {
     }
 
     /**
-     * Loop through the team and trying to find a monster with the lowest action counter value and return the index of that monster.
+     * Loop through the teamMember and trying to find a not fainted monster and return the index of that monster.
      *
-     * @return an integer value which represent the index of the monster which has the lowest action counter value in the team.
+     * @return an integer value which represent the index of the first not fainted monster in the team.
      */
-    private int turnMonsterIndex() {
+    public int getLeastActionCounterMonsterIndex() {
         // maximum integer value
         int minAction = Integer.MAX_VALUE;
         // set default index to -1
         int index = -1;
         // loop through the team and calculate the minimum action counter value.
-        for (int i=0; i<teamMember.size(); i++) {
+        for (int i=0; i<this.teamMember.size(); i++) {
             // current selected monster
-            Monster m = teamMember.get(i);
+            Monster m = this.teamMember.get(i);
             // if not fainted and has lower action counter value
             if (!(m.isFainted()) && m.getActionCounter() < minAction) {
                 minAction = m.getActionCounter();
@@ -130,10 +107,9 @@ public class Team {
                 index = i;
             }
         }
+        if (index != -1) {
+            this.teamMember.get(index).incrementActionCounter();
+        }
         return index;
-    }
-
-    public void swapMonster(int monsterIndex1, int monsterIndex2) {
-        Collections.swap(this.teamMember, monsterIndex1, monsterIndex2);
     }
 }
