@@ -8,9 +8,12 @@ import main.java.controller.GameController;
  * A class representing the shop.
  */
 public class Shop {
-    private ArrayList<ArrayList<GameItem>> itemForSell;
+//    private ArrayList<ArrayList<Monster>> itemForSell;
     private GameController gc;
-
+    private ArrayList<Monster> monstersForSell;
+    private ArrayList<Weapon> weaponsForSell;
+    private ArrayList<Shield> shieldsForSell;
+    private ArrayList<Medicine> medsForSell;
 
     /**
      * Constructor for Shop
@@ -20,8 +23,11 @@ public class Shop {
      */
     public Shop(GameController gc) {
         this.gc = gc;
-        this.itemForSell = new ArrayList<ArrayList<GameItem>>(4);
-        reloadMonsters();
+        this.monstersForSell = new ArrayList<>();
+        this.weaponsForSell = new ArrayList<>();
+        this.shieldsForSell = new ArrayList<>();
+        this.medsForSell = new ArrayList<>();
+        refreshShop();
     }
 
     /**
@@ -52,60 +58,96 @@ public class Shop {
      * @return a GameItem instance
      * @see GameItem
      */
-    public GameItem sellItem(int index) {
-        GameItem purchasedItem = this.itemForSell.get(index).get(index);
-        this.itemForSell.remove(index).remove(index);
-        return purchasedItem;
-    }
+//    public GameItem sellItem(int index) {
+//        GameItem purchasedItem = this.itemForSell.get(index).get(index);
+//        this.itemForSell.remove(index).remove(index);
+//        return purchasedItem;
+//    }
 
     /* getters go here */
-    public ArrayList<ArrayList<GameItem>> getItemForSell() {
-        return this.itemForSell;
-    }
+//    public ArrayList<GameItem> getItemForSell() {
+//        return this.itemsForSell;
+//    }
 
     /* private functions */
     /**
      * Use Generator to generate monsters and add them to the shop.
      */
     private void reloadMonsters() {
-    	ArrayList<GameItem> monsters = new ArrayList<GameItem>(4);
-        for(int i=0; i<=3; i++) {
-            monsters.add(this.gc.generateMonster());
+    	
+        for(int i=0; i<=4; i++) {
+            this.monstersForSell.add(this.gc.generateMonster());
         }
-        itemForSell.add(0,monsters);
     }
     
     private void reloadWeapons() {
-    	ArrayList<GameItem> weapons = new ArrayList<GameItem>(4);
-        for(int i=0; i<=3; i++) {
-            weapons.add(this.gc.generateMonster());
+        for(int i=0; i<=4; i++) {
+            this.weaponsForSell.add(this.gc.generateWeapon());
         }
-        itemForSell.add(1,weapons);
     }
     
     private void reloadShields() {
-    	ArrayList<GameItem> shields = new ArrayList<GameItem>(4);
-        for(int i=0; i<=3; i++) {
-            shields.add(this.gc.generateMonster());
+        for(int i=0; i<=4; i++) {
+            this.shieldsForSell.add(this.gc.generateShield());
         }
-        itemForSell.add(2,shields);
+        
     }
     
     private void reloadMeds() {
-    	ArrayList<GameItem> meds = new ArrayList<GameItem>(4);
-        for(int i=0; i<=3; i++) {
-        	meds.add(this.gc.generateMonster());
+        for(int i=0; i<=4; i++) {
+        	this.medsForSell.add(gc.generateMedicine());
         }
-        itemForSell.add(3, meds);
     }
     
     
+    public ArrayList<Monster> getMonstersForSell(){
+    	return this.monstersForSell;
+    }
     
+    public ArrayList<Weapon> getWeaponsForSell(){
+    	return this.weaponsForSell;
+    }
+    
+    public ArrayList<Shield> getShieldsForSell(){
+    	return this.shieldsForSell;
+    	
+    }
+    
+    public ArrayList<Medicine> getMedsForSell(){
+    	return this.medsForSell;
+    	
+    }
+    
+    public void removeMonster(int i) {
+    	this.monstersForSell.remove(i);
+    	
+    }
 
+    public void removeWeapon(int i) {
+    	this.weaponsForSell.remove(i);
+    	
+    }
+    
+    public void removeShield(int i) {
+    	this.shieldsForSell.remove(i);
+    	
+    }
+    
+    public void removeMed(int i) {
+    	this.medsForSell.remove(i);
+    	
+    }
+    
     /**
      * Remove all items in the shop.
      */
     private void clearShop() {
-        this.itemForSell.clear();
+        this.monstersForSell.clear();
+        this.weaponsForSell.clear();
+        this.shieldsForSell.clear();
+        this.medsForSell.clear();
     }
+ 
 }
+
+

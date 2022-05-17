@@ -35,6 +35,7 @@ public class GameController extends Observable {
     private boolean isUpdateTeam;
     private boolean isAbleToStartFight;
     private boolean isAbleToReorderTeam;
+    private boolean isUpdateBuyArea;
 
     /**
      * Constructor for the GameController.
@@ -50,6 +51,7 @@ public class GameController extends Observable {
         this.battleIndex = 999;
         this.isEncounteredBattle = false;
         this.isUpdateTeam = false;
+        this.isUpdateBuyArea = false;
     }
 
     /**
@@ -326,4 +328,12 @@ public class GameController extends Observable {
         this.isUpdateTeam = false;
         return prevVal;
     }
+    
+//    public boolean isUpdateBuyArea() {
+//    	boolean val = this.isUpdateBuyArea;
+//    	if (this.gold - 100 >= 0) {
+//    		
+//    	}
+//    	return ;
+//    }
 }
