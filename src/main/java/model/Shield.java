@@ -29,7 +29,7 @@ public class Shield extends GameItem{
 		return this.rarity;
 	}
 	
-	private int getShield() {
+	public int getShield() {
 		return this.shield;
 	}
 	

@@ -30,7 +30,7 @@ public class Weapon extends GameItem {
 		return this.rarity;
 	}
 	
-	private int getDmg() {
+	public int getDmg() {
 		return this.dmg;
 	}
 	
