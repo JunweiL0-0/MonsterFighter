@@ -2,31 +2,47 @@ package main.java.model;
 
 import java.util.Random;
 
+/**
+ * This is a medicineGenerator. It can randomly generate the price and the rarity for the medicine.
+ */
 public class MedicineGenerator {
-	
 	private String medicineName;
 	private int effect;
-	
-	
-	public MedicineGenerator() {
+
+
+    /**
+     * This is the constructor of the medicineGenerator.
+     */
+    public MedicineGenerator() {
 		this.medicineName = "";
 	}
-	
+
+    /**
+     * Generate a new Medicine instance with randomly generated price and rarity value
+     *
+     * @return a newly created medicine instance.
+     */
 	public Medicine generateMedicine() {
+        // medicine builder
 		MedicineBuilderImpl m = new MedicineBuilderImpl();
+        // randomly get at rarity
 		int rarity = getRarity();
-		
+		// create and return a new medicine instance
 		return m.name(this.medicineName)
 				.price(getPrice(rarity))
 				.effect(this.effect)
 				.rarity(rarity)
 				.build();
-		
-		
 	}
-	
+
+    /**
+     *
+     *
+     * @param rarity
+     * @return
+     */
 	private int getPrice(int rarity) {
-        return (int)(rarity * 50);
+        return (rarity * 50);
     }
 	
 	

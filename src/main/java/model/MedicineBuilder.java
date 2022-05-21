@@ -1,7 +1,9 @@
 package main.java.model;
 
-import javax.swing.ImageIcon;
 
+/**
+ * An interface to specifics the functions needed to be implemented when you are creating a new MedicineBuilder class.
+ */
 public interface MedicineBuilder {
 	MedicineBuilder name(String name);
 	MedicineBuilder price(int price);

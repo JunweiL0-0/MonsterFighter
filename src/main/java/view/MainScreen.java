@@ -35,9 +35,8 @@ public class MainScreen implements Observer {
 	private ButtonGroup shopButtonGroup;
 	private Shop shop;
 	// PanelMap (Toggle visibility)
-	// centerPanel
+	// centerPanel, bottomPanel
 	private final Map<CenterPanel, JPanel> centerPanelMap;
-	// bottomPanel
 	private final Map<BottomPanel, JPanel> bottomPanelMap;
 	// leftPanel, rightPanel
 	private JPanel leftPanel;
