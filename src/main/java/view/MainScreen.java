@@ -163,19 +163,17 @@ public class MainScreen implements Observer {
 		}
 		if (((GameController)o).isUpdateTeam()) {
 			updateLeftPanel();
+			updateBottomMainPanel();
 		}
-
 		if (((GameController)o).isUpdateEnemyTeam()) {
 			updateRightPanel();
 		}
 		if (((GameController)o).isBattleOccur()) {
 			updateCenterBattlePanel();
-		}
-		if (((GameController)o).isPlayerWon()) {
+		} else if (((GameController)o).isPlayerWon()) {
 			showCenterPanel(CenterPanel.WIN);
 			showBottomPanel(BottomPanel.EXIST_BATTLE);
-		}
-		if (((GameController)o).isEnemyWon()) {
+		} else if (((GameController)o).isEnemyWon()) {
 			showCenterPanel(CenterPanel.WASTE);
 			showBottomPanel(BottomPanel.EXIST_BATTLE);
 		}
@@ -767,9 +765,11 @@ public class MainScreen implements Observer {
 
 	private JPanel getBottomExistBattlePanel() {
 		// bottom
-		JPanel bottomReorderPanel = getNewBottomPanel();
-
-		return bottomReorderPanel;
+		JPanel bottomExistBattlePanel = getNewBottomPanel();
+		JButton btn = getExistBattleBtn();
+		bottomExistBattlePanel.add(btn);
+		bottomExistBattlePanel.setVisible(false);
+		return bottomExistBattlePanel;
 	}
 
 	private JTextPane getReorderSymbol() {
@@ -1336,6 +1336,21 @@ public class MainScreen implements Observer {
 		addReorderConfirmBtnListener(reorderBtn);
 		return reorderBtn;
 	}
+
+	private JButton getExistBattleBtn() {
+		JButton existBattleBtn = new JButton();
+		existBattleBtn.setText("Exist");
+		existBattleBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		existBattleBtn.setBounds(230, 50, 100, 50);
+		existBattleBtn.setBackground(Color.BLACK);
+		existBattleBtn.setForeground(Color.WHITE);
+		existBattleBtn.setFocusable(false);
+		existBattleBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addExistBattleBtnListener(existBattleBtn);
+		return existBattleBtn;
+	}
+
 	private JButton getReorderCancelBtn() {
 		JButton cancelBtn = new JButton();
 		cancelBtn.setText("Cancel");
@@ -1632,6 +1647,14 @@ public class MainScreen implements Observer {
 
 	private void addReorderConfirmBtnListener(JButton b) {
 		b.addActionListener(e -> this.gc.swapMonsterInPlayerTeam(this.reorderingMonsterIndex1, this.reorderingMonsterIndex2));
+	}
+
+	private void addExistBattleBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			showCenterPanel(CenterPanel.MAIN);
+			showBottomPanel(BottomPanel.MAIN);
+			this.gc.existBattle();
+		});
 	}
 
 	private void addReorderCancelBtnListener(JButton b) {

@@ -7,6 +7,7 @@ package main.java.model;
  */
 public class BattleField {
     private int round;
+    private int battleResult;
     private Team playerTeam;
     private Team enemyTeam;
 
@@ -16,6 +17,7 @@ public class BattleField {
      */
     public BattleField() {
         this.round = 1;
+        this.battleResult = -1;
         // empty team
         this.playerTeam = new Team(1);
         this.enemyTeam = new Team(1);
@@ -30,6 +32,7 @@ public class BattleField {
      */
     public void setBattle(Team playerTeam, Team enemyTeam) {
         this.round = 1;
+        this.battleResult = -1;
         this.playerTeam = playerTeam;
         this.enemyTeam = enemyTeam;
     }
@@ -66,12 +69,31 @@ public class BattleField {
         }
         this.round++;
         if (this.playerTeam.isAllFainted()) {
-            return -1;
+            this.battleResult = -1;
         } else if (this.enemyTeam.isAllFainted()) {
-            return 1;
+            this.battleResult = 1;
         } else {
-            return 0;
+            this.battleResult = 0;
         }
+        System.out.println(this.battleResult);
+        return this.battleResult;
+    }
+
+    public int getBattleResult() {
+        return this.battleResult;
+    }
+
+    public void endBattle() {
+        for (Monster m: this.playerTeam.getTeamMember()) {
+            m.resetActionCounter();
+        }
+        for (Monster m: this.enemyTeam.getTeamMember()) {
+            m.resetActionCounter();
+        }
+        this.round = 1;
+        this.battleResult = -1;
+        this.playerTeam = new Team(1);
+        this.enemyTeam = new Team(1);
     }
 
     /**
