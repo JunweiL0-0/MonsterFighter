@@ -200,9 +200,6 @@ public class MainScreen implements Observer {
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-		// refresh button for monsters
-		JButton refreshMonsters = getRefreshButton();
-		refreshMonsters.setBounds(110, 10 ,60,20);
 				
 		JPanel monsterPanel = getMonsterBuyPanel();
 				
@@ -211,9 +208,6 @@ public class MainScreen implements Observer {
 		JLabel weaponLabel = getItemLabel();
 		weaponLabel.setBounds(10, 180, 100, 40);
 		weaponLabel.setText("Weapon");
-		//refresh button for weapon
-		JButton refreshWeapons = getRefreshButton();
-		refreshWeapons.setBounds(110, 190 ,60,20);
 		
 		JPanel weaponPanel = getWeaponBuyPanel();
 				
@@ -222,9 +216,6 @@ public class MainScreen implements Observer {
 		JLabel shieldLabel = getItemLabel();
 		shieldLabel.setBounds(10, 360, 100, 40);
 		shieldLabel.setText("Shield");
-		//refresh button for shields
-		JButton refreshShields = getRefreshButton();
-		refreshShields.setBounds(110, 370 ,60,20);
 				
 		JPanel shieldPanel = getShieldBuyPanel();
 				
@@ -234,9 +225,6 @@ public class MainScreen implements Observer {
 		JLabel medLabel = getItemLabel();
 		medLabel.setBounds(10, 540, 100, 40);
 		medLabel.setText("Potions");
-		//refresh button for potions
-		JButton refreshMeds = getRefreshButton();
-		refreshMeds.setBounds(110, 550 ,60,20);
 				
 		JPanel medPanel = getMedBuyPanel();
 				
@@ -246,11 +234,6 @@ public class MainScreen implements Observer {
 		panel.add(weaponLabel);
 		panel.add(shieldLabel);
 		panel.add(medLabel);
-				
-		panel.add(refreshMonsters);
-		panel.add(refreshWeapons);
-		panel.add(refreshShields);
-		panel.add(refreshMeds);
 
 		panel.add(weaponPanel);
 		panel.add(monsterPanel);
@@ -1640,9 +1623,6 @@ public class MainScreen implements Observer {
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-		// refresh button for monsters
-		JButton refreshMonsters = getRefreshButton();
-		refreshMonsters.setBounds(110, 10 ,60,20);
 		
 		JPanel monsterPanel = getMonsterBuyPanel();
 		
@@ -1652,8 +1632,8 @@ public class MainScreen implements Observer {
 		weaponLabel.setBounds(10, 180, 100, 40);
 		weaponLabel.setText("Weapon");
 		//refresh button for weapon
-		JButton refreshWeapons = getRefreshButton();
-		refreshWeapons.setBounds(110, 190 ,60,20);
+//		JButton refreshWeapons = getRefreshButton();
+//		refreshWeapons.setBounds(110, 190 ,60,20);
 		
 		JPanel weaponPanel = getWeaponBuyPanel();
 		
@@ -1662,9 +1642,6 @@ public class MainScreen implements Observer {
 		JLabel shieldLabel = getItemLabel();
 		shieldLabel.setBounds(10, 360, 100, 40);
 		shieldLabel.setText("Shield");
-		//refresh button for shields
-		JButton refreshShields = getRefreshButton();
-		refreshShields.setBounds(110, 370 ,60,20);
 		
 		JPanel shieldPanel = getShieldBuyPanel();
 		
@@ -1674,9 +1651,6 @@ public class MainScreen implements Observer {
 		JLabel medLabel = getItemLabel();
 		medLabel.setBounds(10, 540, 100, 40);
 		medLabel.setText("Potions");
-		//refresh button for potions
-		JButton refreshMeds = getRefreshButton();
-		refreshMeds.setBounds(110, 550 ,60,20);
 		
 		JPanel medPanel = getMedBuyPanel();
 		
@@ -1686,11 +1660,6 @@ public class MainScreen implements Observer {
 		panel.add(weaponLabel);
 		panel.add(shieldLabel);
 		panel.add(medLabel);
-		
-		panel.add(refreshMonsters);
-		panel.add(refreshWeapons);
-		panel.add(refreshShields);
-		panel.add(refreshMeds);
 
 		panel.add(weaponPanel);
 		panel.add(monsterPanel);
@@ -1936,17 +1905,17 @@ public class MainScreen implements Observer {
 		return itemLabel;
 	}
 	
-	private JButton getRefreshButton() {
-		JButton refreshButtons = new JButton();
-		refreshButtons.setText("Refresh");
-		refreshButtons.setFont(new Font("Serif", Font.PLAIN, 15));
-		refreshButtons.setForeground(Color.WHITE);
-		refreshButtons.setBackground(Color.BLACK);
-		refreshButtons.setFocusable(false);
-		refreshButtons.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		
-		return refreshButtons;
-	}
+//	private JButton getRefreshButton() {
+//		JButton refreshButtons = new JButton();
+//		refreshButtons.setText("Refresh");
+//		refreshButtons.setFont(new Font("Serif", Font.PLAIN, 15));
+//		refreshButtons.setForeground(Color.WHITE);
+//		refreshButtons.setBackground(Color.BLACK);
+//		refreshButtons.setFocusable(false);
+//		refreshButtons.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+//		
+//		return refreshButtons;
+//	}
 	
 	private JPanel getItemPanel() {
 
