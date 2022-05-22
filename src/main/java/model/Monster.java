@@ -28,7 +28,7 @@ public class Monster extends GameItem {
      * @param rarity an integer representing the monster's rarity
      */
     public Monster(String name, int price, int maxHealth, int damage, int level, int rarity, ImageIcon icon) {
-        super(name, price);
+        super(name, price, rarity);
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.damage = damage;

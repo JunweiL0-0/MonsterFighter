@@ -40,6 +40,7 @@ public class GameController extends Observable {
     private boolean isBattleOccur;
     private boolean isPlayerWon;
     private boolean isEnemyWon;
+    private boolean isRefreshAllPressed;
 
     /**
      * Constructor for the GameController.
@@ -60,6 +61,7 @@ public class GameController extends Observable {
         this.isAbleToReorderTeam = false;
         this.isUpdateEnemyTeam = false;
         this.isBattleOccur = false;
+        this.isRefreshAllPressed = false;
     }
 
     /**
@@ -407,6 +409,18 @@ public class GameController extends Observable {
     public boolean isEnemyWon() {
         boolean prevVal = this.isEnemyWon;
         this.isEnemyWon = false;
+        return prevVal;
+    }
+    
+    public void isAbleToRefreshAll() {
+    	this.isRefreshAllPressed = true;
+    	setChanged();
+    	notifyObservers();
+    }
+    
+    public boolean isRefreshAllPressed() {
+    	boolean prevVal = this.isRefreshAllPressed;
+        this.isRefreshAllPressed = false;
         return prevVal;
     }
 }

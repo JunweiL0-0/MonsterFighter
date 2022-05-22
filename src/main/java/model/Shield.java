@@ -9,7 +9,7 @@ public class Shield extends GameItem{
 	private ImageIcon icon;
 
 	public Shield(String name, int price, int rarity, int shield, String rarityStr, ImageIcon icon) {
-		super(name, price);
+		super(name, price, shield);
 		this.rarity = rarity;
 		this.shield = shield;
 		this.rarityStr = rarityStr;

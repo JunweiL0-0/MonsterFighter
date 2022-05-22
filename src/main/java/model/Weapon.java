@@ -10,7 +10,7 @@ public class Weapon extends GameItem {
 	private ImageIcon icon;
 
 	public Weapon(String name, int price, int rarity, int dmg, String rarityStr, ImageIcon icon) {
-		super(name, price);
+		super(name, price, dmg);
 		this.rarity = rarity;
 		this.dmg = dmg;
 		this.rarityStr = rarityStr;
