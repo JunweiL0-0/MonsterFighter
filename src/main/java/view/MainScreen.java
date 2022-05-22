@@ -30,6 +30,10 @@ public class MainScreen implements Observer {
 	// components
 	private final JPanel[] playerTeamPanel = new JPanel[4];
 	private final JPanel[] enemyMonsterPanel = new JPanel[4];
+	private JLabel daysLeftLabel;
+	private JLabel battleLeftLabel;
+	private JLabel goldLabel;
+	private JLabel pointLabel;
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
 	private ButtonGroup shopButtonGroup;
@@ -41,14 +45,13 @@ public class MainScreen implements Observer {
 	// leftPanel, rightPanel
 	private JPanel leftPanel;
 	private JPanel rightPanel;
-	private JButton reorderConfirmBtn;
 	// enum
 	private enum CenterPanel {
-		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, WASTE, WIN
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, WASTE, WIN, GAME_OVER, RENAME
 	}
 	// enum
 	private enum BottomPanel {
-		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, REORDER, EXIST_BATTLE
+		MAIN, BAG, SHOP, SETTINGS, BATTLE, BUY, SELL, REORDER, EXIST_BATTLE, GAME_OVER, RENAME
 	}
 	// for the shop refresh
 	private ArrayList<JButton> monsterButtons;
@@ -56,8 +59,13 @@ public class MainScreen implements Observer {
 	private ArrayList<JButton> shieldButtons;
 	private ArrayList<JButton> medButtons;
 	// values
+	private String newMonsterName;
+	private int renameMonsterIndex;
 	private int reorderingMonsterIndex1;
 	private int reorderingMonsterIndex2;
+	
+	private JButton reorderConfirmBtn;
+	private JButton renameConfirmBtn;
 	private ArrayList<GameItem> bag;
 
 	/**
@@ -66,10 +74,12 @@ public class MainScreen implements Observer {
 	 * @param gc gameController.
 	 */
 	public MainScreen(GameController gc) {
-		reorderingMonsterIndex1 = -1;
-		reorderingMonsterIndex2 = -1;
-		centerPanelMap = new HashMap<>();
-		bottomPanelMap = new HashMap<>();
+		this.newMonsterName = "";
+		this.renameMonsterIndex = -1;
+		this.reorderingMonsterIndex1 = -1;
+		this.reorderingMonsterIndex2 = -1;
+		this.centerPanelMap = new HashMap<>();
+		this.bottomPanelMap = new HashMap<>();
 		this.gc = gc;
 		this.shop = new Shop(gc);
 		this.monsterButtons = new ArrayList<>();
@@ -151,9 +161,21 @@ public class MainScreen implements Observer {
 		this.mainFrame.setVisible(val);
 	}
 
+	private void closeAndDestroyCurrentScreen() {
+		show(false);
+		this.mainFrame.dispose();
+	}
 	// observer
 	@Override
 	public void update(Observable o, Object arg) {
+		if (((GameController)o).isNextDay()) {
+			updateBottomMainPanel();
+			updateLeftPanel();
+			updateRightPanel();
+			updateGoldLabel();
+			updatePointLabel();
+			updateDaysLeftLabel();
+		}
 		if (((GameController)o).isEncounteredBattle()) {
 			updateBottomMainPanel();
 			updateRightPanel();
@@ -170,14 +192,41 @@ public class MainScreen implements Observer {
 		} else if (((GameController)o).isPlayerWon()) {
 			showCenterPanel(CenterPanel.WIN);
 			showBottomPanel(BottomPanel.EXIST_BATTLE);
+			updateGoldLabel();
+			updatePointLabel();
+			updateBattleLeftLabel();
 		} else if (((GameController)o).isEnemyWon()) {
 			showCenterPanel(CenterPanel.WASTE);
 			showBottomPanel(BottomPanel.EXIST_BATTLE);
 		}
-		if(((GameController)o).isRefreshAllPressed()) {
+		if(((GameController)o).isRefreshAllPressed() || ((GameController)o).isNextDay()) {
 			updateBuyPanel();
 		}
+		if (((GameController)o).isGameOver()) {
+			showCenterPanel(CenterPanel.GAME_OVER);
+			showBottomPanel(BottomPanel.GAME_OVER);
+			for (Enumeration<AbstractButton> buttons = topGroup.getElements(); buttons.hasMoreElements();) {
+				AbstractButton button = buttons.nextElement();
+				button.setEnabled(false);
+			}
+		}
 		System.out.println("Receive new update");
+	}
+
+	private void updateBattleLeftLabel() {
+		this.battleLeftLabel.setText("Battles left: " + this.gc.getTotalBattle());
+	}
+
+	private void updateGoldLabel() {
+		this.goldLabel.setText("Gold: " + this.gc.getGold());
+	}
+
+	private void updatePointLabel() {
+		this.pointLabel.setText("Point: " + this.gc.getPoint());
+	}
+
+	private void updateDaysLeftLabel() {
+		this.daysLeftLabel.setText("Days left: " + this.gc.getCurrentDay() + "/" + this.gc.getTotalDay());
 	}
 	
 	public void updateBagPanel() {
@@ -269,7 +318,8 @@ public class MainScreen implements Observer {
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-				
+		
+		//get panel to put details
 		JPanel monsterPanel = getMonsterBuyPanel();
 				
 		//----------------------------------------------------------------------
@@ -304,8 +354,8 @@ public class MainScreen implements Observer {
 		panel.add(shieldLabel);
 		panel.add(medLabel);
 
-		panel.add(weaponPanel);
 		panel.add(monsterPanel);
+		panel.add(weaponPanel);
 		panel.add(shieldPanel);
 		panel.add(medPanel);
 				
@@ -329,11 +379,15 @@ public class MainScreen implements Observer {
 		bottomMainPanel.removeAll();
 		JButton reorderBtn = getReorderBtn();
 		JButton fightBtn = getFightBtn();
+		JButton renameBtn = getRenameMonsterBtn();
 		reorderBtn.setEnabled(this.gc.isAbleToReorderTeam());
 		fightBtn.setEnabled(this.gc.isAbleToStartFight());
+		renameBtn.setEnabled(this.gc.isAbleToReorderTeam());
 		// add components
 		bottomMainPanel.add(reorderBtn);
 		bottomMainPanel.add(fightBtn);
+		bottomMainPanel.add(getNextDayBtn());
+		bottomMainPanel.add(renameBtn);
 		// repaint
 		bottomMainPanel.revalidate();
 		bottomMainPanel.repaint();
@@ -341,25 +395,27 @@ public class MainScreen implements Observer {
 
 	private void updateRightPanel() {
 		this.rightPanel.removeAll();
-		Team enemyTeam = this.gc.getEnemyTeam();
-		// add enemyMonsterPanel
-		for (int i=0; i < enemyTeam.size(); i++) {
-			Monster monster = enemyTeam.getMonsterByIndex(i);
-			JPanel panel = getNewEnemyMonsterPanel();
-			// add label
-			panel.add(getMonsterOrderLabel(i));
-			panel.add(autoResizeFont(getMonsterNameLabel(monster)));
-			panel.add(getMonsterLevelLabel(monster));
-			panel.add(getLabelWithMonsterImage(monster));
-			panel.add(autoResizeFont(getMonsterHealthLabel()));
-			panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
-			panel.add(autoResizeFont(getExpLabel()));
-			panel.add(getMonsterHealthBar(monster));
-			panel.add(getMonsterExpBar(monster));
-			// store reference in to a list
-			this.enemyMonsterPanel[i] = panel;
-			// add enemyMonsterPanel into the rightPanel
-			this.rightPanel.add(this.enemyMonsterPanel[i]);
+		if (this.gc.getBattleIndex() != -1) {
+			Team enemyTeam = this.gc.getEnemyTeam();
+			// add enemyMonsterPanel
+			for (int i=0; i < enemyTeam.size(); i++) {
+				Monster monster = enemyTeam.getMonsterByIndex(i);
+				JPanel panel = getNewEnemyMonsterPanel();
+				// add label
+				panel.add(getMonsterOrderLabel(i));
+				panel.add(autoResizeFont(getMonsterNameLabel(monster)));
+				panel.add(getMonsterLevelLabel(monster));
+				panel.add(getLabelWithMonsterImage(monster));
+				panel.add(autoResizeFont(getMonsterHealthLabel()));
+				panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
+				panel.add(autoResizeFont(getExpLabel()));
+				panel.add(getMonsterHealthBar(monster));
+				panel.add(getMonsterExpBar(monster));
+				// store reference in to a list
+				this.enemyMonsterPanel[i] = panel;
+				// add enemyMonsterPanel into the rightPanel
+				this.rightPanel.add(this.enemyMonsterPanel[i]);
+			}
 		}
 		this.rightPanel.revalidate();
 		this.rightPanel.repaint();
@@ -462,7 +518,7 @@ public class MainScreen implements Observer {
 		this.centerPanelMap.put(CenterPanel.SELL, getCenterSellPanel());
 		this.centerPanelMap.put(CenterPanel.WASTE, getCenterWastePanel());
 		this.centerPanelMap.put(CenterPanel.WIN, getCenterWinPanel());
-
+		this.centerPanelMap.put(CenterPanel.GAME_OVER, getCenterGameOverPanel());
 		// add center panel to frame
 		for (JPanel panel : centerPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -485,6 +541,8 @@ public class MainScreen implements Observer {
 		this.bottomPanelMap.put(BottomPanel.BATTLE, getBottomBattlePanel());
 		this.bottomPanelMap.put(BottomPanel.REORDER, getBottomReorderPanel());
 		this.bottomPanelMap.put(BottomPanel.EXIST_BATTLE, getBottomExistBattlePanel());
+		this.bottomPanelMap.put(BottomPanel.GAME_OVER, getBottomGameOverPanel());
+		this.bottomPanelMap.put(BottomPanel.RENAME, getBottomRenamePanel());
 		// add bottom panel to frame
 		for (JPanel panel : bottomPanelMap.values()) {
 			frame.getContentPane().add(panel);
@@ -557,7 +615,7 @@ public class MainScreen implements Observer {
 		newTopPanel.add(bagButton);
 		newTopPanel.add(shopButton);
 		newTopPanel.add(settingsButton);
-		newTopPanel.add(getDaysLeftLabel());
+		newTopPanel.add(getTopRightPanel());
 		// return panel
 		return newTopPanel;
 	}
@@ -576,12 +634,28 @@ public class MainScreen implements Observer {
 		JPanel topLeftPanel = new JPanel();
 		topLeftPanel.setBackground(Color.BLACK);
 		topLeftPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.WHITE));
-		topLeftPanel.setLayout(new GridLayout(2,1));
+		topLeftPanel.setLayout(new GridLayout(3,1));
 		// add components to the panel
 		topLeftPanel.add(getPlayerNameLabel());
-		topLeftPanel.add(getGoldPointsLabel());
+		this.goldLabel = getGoldLabel();
+		topLeftPanel.add(this.getGoldLabel());
+		this.pointLabel = getPointLabel();
+		topLeftPanel.add(this.pointLabel);
 		// return panel
 		return topLeftPanel;
+	}
+
+	private JPanel getTopRightPanel() {
+		JPanel topRightPanel = new JPanel();
+		topRightPanel.setBackground(Color.BLACK);
+		topRightPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		topRightPanel.setLayout(new GridLayout(2, 1));
+		// add components to the panel
+		this.daysLeftLabel = getDaysLeftLabel();
+		topRightPanel.add(this.daysLeftLabel);
+		this.battleLeftLabel = getBattleLeftLabel();
+		topRightPanel.add(this.battleLeftLabel);
+		return topRightPanel;
 	}
 
 	/**
@@ -798,9 +872,13 @@ public class MainScreen implements Observer {
 		// *******************************************************************
 		// create a bottomPanel
 		JPanel bottomMainPanel = getNewBottomPanel();
+		// override the layout
+		bottomMainPanel.setLayout(new GridLayout(2, 2));
 		// add components to the startingPanel
 		bottomMainPanel.add(getReorderBtn());
 		bottomMainPanel.add(getFightBtn());
+		bottomMainPanel.add(getNextDayBtn());
+		bottomMainPanel.add(getRenameMonsterBtn());
 		return bottomMainPanel;
 	}
 
@@ -889,6 +967,7 @@ public class MainScreen implements Observer {
 		JPanel bottomBattlePanel = getNewBottomPanel();
 		// add components to panel
 		bottomBattlePanel.add(getAttackBtn());
+		bottomBattlePanel.add(getExistBattleBtn());
 		// set it to not visible (Default)
 		bottomBattlePanel.setVisible(false);
 		return bottomBattlePanel;
@@ -918,6 +997,25 @@ public class MainScreen implements Observer {
 		return bottomExistBattlePanel;
 	}
 
+	private JPanel getBottomGameOverPanel() {
+		JPanel bottomGameOverPanel = getNewBottomPanel();
+		bottomGameOverPanel.add(getReplayBtn());
+		bottomGameOverPanel.add(getCloseBtn());
+		bottomGameOverPanel.setVisible(false);
+		return bottomGameOverPanel;
+	}
+
+	private JPanel getBottomRenamePanel() {
+		JPanel bottomRenamePanel = getNewBottomPanel();
+		this.renameConfirmBtn = getRenameConfirmBtn();
+		bottomRenamePanel.add(this.renameConfirmBtn);
+		bottomRenamePanel.add(getRenameCancelBtn());
+		bottomRenamePanel.add(getRenameMonsterIndexTextField());
+		bottomRenamePanel.add(getNewMonsterNameTextField());
+		bottomRenamePanel.setVisible(false);
+		return bottomRenamePanel;
+	}
+
 	private JTextPane getReorderSymbol() {
 		JTextPane symbol = new JTextPane();
 		symbol.setText("<   >");
@@ -943,6 +1041,36 @@ public class MainScreen implements Observer {
 		addReorderMonsterTextField1DocumentListener(textField);
 		return textField;
 	}
+
+	private JTextField getNewMonsterNameTextField() {
+		// create a textField
+		JTextField textField = new JTextField();
+		// remove border
+		textField.setBorder(BorderFactory.createEmptyBorder());
+		textField.setBounds(120, 50, 50, 50);
+		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setColumns(1);
+		textField.setBorder(null);
+		// listener
+		addNewMonsterNameTextFieldListener(textField);
+		return textField;
+	}
+
+	private JTextField getRenameMonsterIndexTextField() {
+		// create a textField
+		JTextField textField = new JTextField();
+		// remove border
+		textField.setBorder(BorderFactory.createEmptyBorder());
+		textField.setBounds(20, 50, 50, 50);
+		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setColumns(1);
+		textField.setBorder(null);
+		// listener
+		addRenameMonsterIndexTextFieldKeyListener(textField);
+		addRenameMonsterIndexTextFieldDocumentListener(textField);
+		return textField;
+	}
+
 	private JTextField getReorderMonster2TextField() {
 		// create a textField
 		JTextField textField = new JTextField();
@@ -957,6 +1085,7 @@ public class MainScreen implements Observer {
 		addReorderMonsterTextField2DocumentListener(textField);
 		return textField;
 	}
+
 	private void addReorderMonsterTextFieldKeyListener(JTextField textField) {
 		textField.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
@@ -1018,6 +1147,85 @@ public class MainScreen implements Observer {
 		});
 	}
 
+	private void addNewMonsterNameTextFieldListener(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				newMonsterName = textField.getText();
+				renameConfirmBtn.setEnabled(renameMonsterIndex != -1);
+			}
+			public void removeUpdate(DocumentEvent e) {
+				newMonsterName = textField.getText();
+				renameConfirmBtn.setEnabled(renameMonsterIndex != -1);
+			}
+			public void insertUpdate(DocumentEvent e) {
+				newMonsterName = textField.getText();
+				renameConfirmBtn.setEnabled(renameMonsterIndex != -1);
+			}
+		});
+	}
+
+	private void addRenameMonsterIndexTextFieldKeyListener(JTextField textField) {
+		textField.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!(Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || c == KeyEvent.VK_DELETE)) {
+					e.consume();
+				}
+				if (Character.getNumericValue(c) <= 0|| Character.getNumericValue(c) > gc.getMonsterTeamMember().size()) {
+					e.consume();
+				}
+				if (textField.getText().length() >= 1) {
+					e.consume();
+				}
+			}
+		});
+	}
+
+	private void addRenameMonsterIndexTextFieldDocumentListener(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				if (textField.getText().equals("")) {
+					renameConfirmBtn.setEnabled(false);
+					renameMonsterIndex = -1;
+				} else {
+					renameMonsterIndex = Integer.parseInt(textField.getText());
+					renameConfirmBtn.setEnabled(!(newMonsterName.equals("")));
+				}
+			}
+			public void removeUpdate(DocumentEvent e) {
+				if (textField.getText().equals("")) {
+					renameConfirmBtn.setEnabled(false);
+					renameMonsterIndex = -1;
+				} else {
+					renameMonsterIndex = Integer.parseInt(textField.getText());
+					renameConfirmBtn.setEnabled(!(newMonsterName.equals("")));
+				}
+			}
+			public void insertUpdate(DocumentEvent e) {
+				if (textField.getText().equals("")) {
+					renameConfirmBtn.setEnabled(false);
+					renameMonsterIndex = -1;
+				} else {
+					renameMonsterIndex = Integer.parseInt(textField.getText());
+					renameConfirmBtn.setEnabled(!(newMonsterName.equals("")));
+				}
+			}
+		});
+	}
+
+	private JPanel getCenterGameOverPanel() {
+		JPanel gameOverPanel = new JPanel();
+		gameOverPanel.setLayout(new GridLayout(4,1));
+		gameOverPanel.setBackground(Color.BLACK);
+		gameOverPanel.setBounds(120,70,560,280);
+
+		gameOverPanel.add(getGameOverLabel());
+		gameOverPanel.add(getFinalGoldLabel());
+		gameOverPanel.add(getFinalPointLabel());
+
+		gameOverPanel.setVisible(false);
+		return gameOverPanel;
+	}
 
 	/**
 	 * Create a centerMainPanel. This function is using the bottom panel template function(getNewCenterPanel).
@@ -1274,15 +1482,20 @@ public class MainScreen implements Observer {
 		return monsterName;
 	}
 
-	/**
-	 * Create and return the Label for the enemy monster panel.
-	 *
-	 * @return a JLabel with the text on it.
-	 */
-	private JLabel getEnemyMonsterPanelLabel(String monsterName) {
-		JLabel label = new JLabel(monsterName);
-		label.setForeground(Color.WHITE);
-		return label;
+	private JLabel getRenameMonsterIndexLabel() {
+		JLabel renameMonsterIndexLabel = new JLabel("", SwingConstants.CENTER);
+		renameMonsterIndexLabel.setText("RenameMonsterIndex ");
+		renameMonsterIndexLabel.setFont(new Font("Serif", Font.PLAIN, 15));
+		renameMonsterIndexLabel.setForeground(Color.WHITE);
+		return renameMonsterIndexLabel;
+	}
+
+	private JLabel getNewNameLabel() {
+		JLabel newNameLabel = new JLabel("", SwingConstants.CENTER);
+		newNameLabel.setText("New Name");
+		newNameLabel.setFont(new Font("Serif", Font.PLAIN, 15));
+		newNameLabel.setForeground(Color.WHITE);
+		return newNameLabel;
 	}
 
 	/**
@@ -1300,18 +1513,34 @@ public class MainScreen implements Observer {
 	}
 
 	/**
-	 * Create and return a goldPointsLabel.
+	 * Create and return a goldLabel.
 	 *
-	 * @return a goldPointsLabel(JLabel)
+	 * @return a goldLabel(JLabel)
 	 */
-	private JLabel getGoldPointsLabel() {
-		// gold and point (TopLeftPanel/TopPanel component)
-		JLabel goldPoints = new JLabel("", SwingConstants.CENTER);
-		goldPoints.setFont(new Font("Serif", Font.PLAIN, 15));
-		goldPoints.setText("Gold: " + this.gc.getGold() + " Point: " + this.gc.getPoint());
-		goldPoints.setForeground(Color.WHITE);
+	private JLabel getGoldLabel() {
+		// gold label
+		JLabel goldLabel = new JLabel("", SwingConstants.CENTER);
+		// gold (TopLeftPanel/TopPanel component)
+		goldLabel.setFont(new Font("Serif", Font.PLAIN, 15));
+		goldLabel.setText("Gold: " + this.gc.getGold());
+		goldLabel.setForeground(Color.WHITE);
+		// return the goldLabel
+		return goldLabel;
+	}
+
+	/**
+	 * Create and return a pointLabel.
+	 *
+	 * @return a pointLabel(JLabel)
+	 */
+	private JLabel getPointLabel() {
+		JLabel pointLabel = new JLabel("", SwingConstants.CENTER);
+		// point (TopLeftPanel/TopPanel component)
+		pointLabel.setFont(new Font("Serif", Font.PLAIN, 15));
+		pointLabel.setText(" Point: " + this.gc.getPoint());
+		pointLabel.setForeground(Color.WHITE);
 		// return goldPoints label
-		return goldPoints;
+		return pointLabel;
 	}
 
 	/**
@@ -1329,6 +1558,53 @@ public class MainScreen implements Observer {
 		daysLeftLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
 		// return label
 		return daysLeftLabel;
+	}
+
+
+	private JLabel getGameOverLabel() {
+		// daysLeftLabel (TopPanel component)
+		JLabel gameOverLabel = new JLabel("",SwingConstants.CENTER);
+		gameOverLabel.setText("Game Over");
+		gameOverLabel.setFont(new Font("Serif",Font.PLAIN,30));
+		gameOverLabel.setForeground(Color.WHITE);
+		gameOverLabel.setBackground(Color.BLACK);
+		gameOverLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		// return label
+		return gameOverLabel;
+	}
+	private JLabel getFinalGoldLabel() {
+		// daysLeftLabel (TopPanel component)
+		JLabel finalGoldLabel = new JLabel("",SwingConstants.CENTER);
+		finalGoldLabel.setText("Player. Your final gold is: " + this.gc.getGold());
+		finalGoldLabel.setFont(new Font("Serif",Font.PLAIN,15));
+		finalGoldLabel.setForeground(Color.WHITE);
+		finalGoldLabel.setBackground(Color.BLACK);
+		finalGoldLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		// return label
+		return finalGoldLabel;
+	}
+	private JLabel getFinalPointLabel() {
+		// daysLeftLabel (TopPanel component)
+		JLabel finalPointLabel = new JLabel("",SwingConstants.CENTER);
+		finalPointLabel.setText("Player. Your final point is: " + this.gc.getPoint());
+		finalPointLabel.setFont(new Font("Serif",Font.PLAIN,15));
+		finalPointLabel.setForeground(Color.WHITE);
+		finalPointLabel.setBackground(Color.BLACK);
+		finalPointLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		// return label
+		return finalPointLabel;
+	}
+
+	private JLabel getBattleLeftLabel() {
+		// daysLeftLabel (TopPanel component)
+		JLabel battleLeftLabel = new JLabel("",SwingConstants.CENTER);
+		battleLeftLabel.setText(String.format("Battles left: %d", this.gc.getTotalBattle()));
+		battleLeftLabel.setFont(new Font("Serif",Font.PLAIN,15));
+		battleLeftLabel.setForeground(Color.WHITE);
+		battleLeftLabel.setBackground(Color.BLACK);
+		battleLeftLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+		// return label
+		return battleLeftLabel;
 	}
 
 	/**
@@ -1451,6 +1727,33 @@ public class MainScreen implements Observer {
 		return saveBtn;
 	}
 
+	private JButton getNextDayBtn() {
+		// create a nextDayBtn
+		JButton nextDayBtn = new JButton();
+		nextDayBtn.setText("NextDay");
+		nextDayBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		nextDayBtn.setBounds(373, 50, 186, 50);
+		nextDayBtn.setBackground(Color.BLACK);
+		nextDayBtn.setForeground(Color.WHITE);
+		nextDayBtn.setFocusable(false);
+		nextDayBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		addNextDayBtnListener(nextDayBtn);
+		return nextDayBtn;
+	}
+
+	private JButton getRenameMonsterBtn() {
+		JButton renameMonsterBtn = new JButton();
+		renameMonsterBtn.setText("RenameMonster");
+		renameMonsterBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		renameMonsterBtn.setBackground(Color.BLACK);
+		renameMonsterBtn.setForeground(Color.WHITE);
+		renameMonsterBtn.setFocusable(false);
+		renameMonsterBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addRenameMonsterBtnListener(renameMonsterBtn);
+		return renameMonsterBtn;
+	}
+
 	/**
 	 * Create and return a restartBtn for BottomSettingsPanel.
 	 *
@@ -1470,12 +1773,65 @@ public class MainScreen implements Observer {
 		return restartBtn;
 	}
 
+	private JButton getRenameConfirmBtn() {
+		// create a restartBtn (BottomSettingsPanel component)
+		JButton renameConfirmBtn = new JButton();
+		renameConfirmBtn.setText("Confirm");
+		renameConfirmBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		renameConfirmBtn.setBounds(390, 50, 100, 50);
+		renameConfirmBtn.setBackground(Color.BLACK);
+		renameConfirmBtn.setForeground(Color.WHITE);
+		renameConfirmBtn.setEnabled(false);
+		renameConfirmBtn.setFocusable(false);
+		renameConfirmBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		renameConfirmBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// -1 as the ui starts display the monster from one
+				gc.renameTeamMonsterByIndex(renameMonsterIndex-1, newMonsterName);
+			}
+		});
+		// return
+		return renameConfirmBtn;
+	}
+
+	private JButton getReplayBtn() {
+		JButton replayBtn = new JButton();
+		replayBtn.setText("Replay");
+		replayBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		replayBtn.setBounds(305, 50, 210, 50);
+		replayBtn.setBackground(Color.BLACK);
+		replayBtn.setForeground(Color.WHITE);
+		replayBtn.setFocusable(false);
+		replayBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addReplayBtnListener(replayBtn);
+		// return
+		return replayBtn;
+	}
+
+	private JButton getCloseBtn() {
+		JButton closeBtn = new JButton();
+		closeBtn.setText("Close");
+		closeBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		closeBtn.setBounds(45, 50, 210, 50);
+		closeBtn.setBackground(Color.BLACK);
+		closeBtn.setForeground(Color.WHITE);
+		closeBtn.setFocusable(false);
+		closeBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addCloseBtnListener(closeBtn);
+		// return
+		return closeBtn;
+	}
+
 	private JButton getFightBtn() {
 		// create a fightBtn
 		JButton fightBtn = new JButton();
 		fightBtn.setText("Fight");
 		fightBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		fightBtn.setBounds(305, 50, 210, 50);
+		fightBtn.setBounds(187, 50, 186, 50);
 		fightBtn.setBackground(Color.BLACK);
 		fightBtn.setForeground(Color.WHITE);
 		fightBtn.setFocusable(false);
@@ -1491,7 +1847,7 @@ public class MainScreen implements Observer {
 		JButton reorderBtn = new JButton();
 		reorderBtn.setText("Reorder");
 		reorderBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		reorderBtn.setBounds(45, 50, 210, 50);
+		reorderBtn.setBounds(1, 50, 186, 50);
 		reorderBtn.setBackground(Color.BLACK);
 		reorderBtn.setForeground(Color.WHITE);
 		reorderBtn.setFocusable(false);
@@ -1537,7 +1893,7 @@ public class MainScreen implements Observer {
 		JButton existBattleBtn = new JButton();
 		existBattleBtn.setText("Exist");
 		existBattleBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		existBattleBtn.setBounds(230, 50, 100, 50);
+		existBattleBtn.setBounds(45, 50, 210, 50);
 		existBattleBtn.setBackground(Color.BLACK);
 		existBattleBtn.setForeground(Color.WHITE);
 		existBattleBtn.setFocusable(false);
@@ -1548,6 +1904,20 @@ public class MainScreen implements Observer {
 	}
 
 	private JButton getReorderCancelBtn() {
+		JButton cancelBtn = new JButton();
+		cancelBtn.setText("Cancel");
+		cancelBtn.setFont(new Font("Arial", Font.PLAIN, 25));
+		cancelBtn.setBounds(280, 50, 100, 50);
+		cancelBtn.setBackground(Color.BLACK);
+		cancelBtn.setForeground(Color.WHITE);
+		cancelBtn.setFocusable(false);
+		cancelBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		addReorderCancelBtnListener(cancelBtn);
+		return cancelBtn;
+	}
+
+	private JButton getRenameCancelBtn() {
 		JButton cancelBtn = new JButton();
 		cancelBtn.setText("Cancel");
 		cancelBtn.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -1757,6 +2127,31 @@ public class MainScreen implements Observer {
 			showCenterPanel(CenterPanel.BATTLE);
 			showBottomPanel(BottomPanel.BATTLE);
 			this.gc.enterBattle();
+		});
+	}
+
+	private void addReplayBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			closeAndDestroyCurrentScreen();
+			this.gc.launchLandingScreen();
+		});
+	}
+
+	private void addCloseBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			closeAndDestroyCurrentScreen();
+		});
+	}
+
+	private void addNextDayBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			this.gc.nextDay();
+		});
+	}
+
+	private void addRenameMonsterBtnListener(JButton b) {
+		b.addActionListener(e -> {
+			showBottomPanel(BottomPanel.RENAME);
 		});
 	}
 
@@ -1999,9 +2394,7 @@ public class MainScreen implements Observer {
 		
 		return itemPanel;
 	}
-	
-	
-	
+
 	private JButton getBuyButtonsForBuyArea(int indexInList) {
 		JButton button = new JButton();
 		button.setText("BUY");

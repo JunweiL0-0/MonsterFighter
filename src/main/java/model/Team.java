@@ -134,4 +134,14 @@ public class Team {
         }
         return index;
     }
+
+    public void healAllMonster() {
+        for (Monster m: this.teamMember) {
+            m.recover();
+        }
+    }
+
+    public void renameMonsterByIndex(int monsterIndex, String newName) {
+        this.teamMember.get(monsterIndex).setName(newName);
+    }
 }

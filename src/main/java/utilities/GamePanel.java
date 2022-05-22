@@ -43,7 +43,6 @@ public class GamePanel extends JPanel implements Runnable {
     private Enemy[] enemies;
     private boolean encounterEnemy;
     private int encounteredEnemyIndex;
-    private int freezeTimer;
 
 
     public GamePanel(int x, int y, GameController gc) {
@@ -51,7 +50,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.gc = gc;
         this.encodedWorld = new int[MAX_WORLD_ROW][MAX_WORLD_COL];
         this.tiles = new Tile[6];
-        this.freezeTimer = 0;
         // init the panel
         placePanel(x, y);
         initPlayer();
@@ -74,10 +72,10 @@ public class GamePanel extends JPanel implements Runnable {
         // update world
         if (this.encounterEnemy) {
             this.gc.storeBattleIndex(this.encounteredEnemyIndex);
-
+            this.encounterEnemy = false;
         }
-        moveEnemy();
         movePlayer();
+        moveEnemy();
     }
 
     /**
@@ -336,52 +334,49 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public int checkAndGetEncounteredEnemyIndex(GameEntity player, Enemy[] enemies) {
         int index = -1;
-        if (this.freezeTimer > 0) {
-            this.freezeTimer--;
-        } else {
-            for (int i=0; i<enemies.length; i++) {
-                player.getSolidArea().x += player.getWorldX();
-                player.getSolidArea().y += player.getWorldY();
-                enemies[i].getSolidArea().x += enemies[i].getWorldX();
-                enemies[i].getSolidArea().y += enemies[i].getWorldY();
+        for (int i=0; i<enemies.length; i++) {
+            player.getSolidArea().x += player.getWorldX();
+            player.getSolidArea().y += player.getWorldY();
+            enemies[i].getSolidArea().x += enemies[i].getWorldX();
+            enemies[i].getSolidArea().y += enemies[i].getWorldY();
 
-                switch (player.getDirection()) {
-                    case 'U' -> {
-                        player.getSolidArea().y -= enemies[i].getSpeed();
-                        if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
-                            player.setCollisionOn(true);
-                            enemies[i].setCollisionOn(true);
-                            index = i;
-                        }
-                    }
-                    case 'D' -> {
-                        player.getSolidArea().y += enemies[i].getSpeed();
-                        if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
-                            player.setCollisionOn(true);
-                            enemies[i].setCollisionOn(true);
-                            index = i;
-                        }
-                    }
-                    case 'L' -> {
-                        player.getSolidArea().x -= enemies[i].getSpeed();
-                        if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
-                            player.setCollisionOn(true);
-                            enemies[i].setCollisionOn(true);
-                            index = i;
-                        }
-                    }
-                    case 'R' -> {
-                        player.getSolidArea().x += enemies[i].getSpeed();
-                        if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
-                            player.setCollisionOn(true);
-                            enemies[i].setCollisionOn(true);
-                            index = i;
-                        }
+            switch (player.getDirection()) {
+                case 'U' -> {
+                    player.getSolidArea().y -= enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
                     }
                 }
-                player.resetSolidArea();
-                enemies[i].resetSolidArea();
+                case 'D' -> {
+                    player.getSolidArea().y += enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+                case 'L' -> {
+                    player.getSolidArea().x -= enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
+                case 'R' -> {
+                    player.getSolidArea().x += enemies[i].getSpeed();
+                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                        player.setCollisionOn(true);
+                        enemies[i].setCollisionOn(true);
+                        index = i;
+                    }
+                }
             }
+            player.resetSolidArea();
+            enemies[i].resetSolidArea();
+
         }
         return index;
     }

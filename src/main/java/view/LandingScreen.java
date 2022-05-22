@@ -113,7 +113,7 @@ public class LandingScreen {
 		this.hintMessageLabel.setText(hint);
 	}
 
-	private void closeAndDestoryCurrentScreen() {
+	private void closeAndDestroyCurrentScreen() {
 		show(false);
 		this.landingFrame.dispose();
 	}
@@ -392,7 +392,7 @@ public class LandingScreen {
 	 */
 	private void switchToChooseMonsterScreen() {
 		gc.launchChooseMonsterScreen();
-		closeAndDestoryCurrentScreen();
+		closeAndDestroyCurrentScreen();
 	}
 
 	/**

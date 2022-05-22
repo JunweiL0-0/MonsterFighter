@@ -25,10 +25,10 @@ public class GameEntity {
     private BufferedImage right1; // right1 image
     private BufferedImage right2; // right2 image
     private Rectangle solidArea;
-    private static final int SOLID_AREA_DEFAULT_X = 9;
-    private static final int SOLID_AREA_DEFAULT_Y = 16;
-    private static final int SOLID_AREA_DEFAULT_WIDTH = 30;
-    private static final int SOLID_AREA_DEFAULT_HEIGHT = 30;
+    private static final int SOLID_AREA_DEFAULT_X = 8;
+    private static final int SOLID_AREA_DEFAULT_Y = 18;
+    private static final int SOLID_AREA_DEFAULT_WIDTH = 32;
+    private static final int SOLID_AREA_DEFAULT_HEIGHT = 32;
     private boolean collisionOn;
 
 
