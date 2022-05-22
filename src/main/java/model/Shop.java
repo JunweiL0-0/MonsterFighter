@@ -14,7 +14,7 @@ public class Shop {
     /**
      * Constructor for Shop
      *
-     * @param generator a Generator instance
+     * @param gc a Generator instance
      * @see MonsterGenerator
      */
     public Shop(GameController gc) {
@@ -149,7 +149,6 @@ public class Shop {
     private void clearShop() {
     	itemForSell.clear();
     }
- 
 }
 
 

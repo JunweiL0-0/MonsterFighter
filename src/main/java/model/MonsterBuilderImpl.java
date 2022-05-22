@@ -81,6 +81,12 @@ public class MonsterBuilderImpl implements MonsterBuilder {
         return this;
     }
 
+    /**
+     * Set the imageIcon for the monster
+     *
+     * @param icon an imageIcon which later will be added to the monster
+     * @return instance itself
+     */
     public MonsterBuilder imageIcon(ImageIcon icon) {
         this.imageIcon = icon;
         return this;

@@ -4,14 +4,12 @@ import javax.swing.ImageIcon;
 
 public class Weapon extends GameItem {
 	
-	private int rarity;
 	private int dmg;
 	private String rarityStr;
 	private ImageIcon icon;
 
 	public Weapon(String name, int price, int rarity, int dmg, String rarityStr, ImageIcon icon) {
-		super(name, price, dmg);
-		this.rarity = rarity;
+		super(name, price, rarity);
 		this.dmg = dmg;
 		this.rarityStr = rarityStr;
 		this.icon = icon;
@@ -25,11 +23,7 @@ public class Weapon extends GameItem {
         String weaponRefundPrice = String.format("RefundPrice: %s\n", this.getRefundPrice());
         return weaponName + weaponRarity +weaponDmg+ weaponPrice + weaponRefundPrice;
 	}
-	
-	public int getRarityNum() {
-		return this.rarity;
-	}
-	
+
 	public int getDmg() {
 		return this.dmg;
 	}

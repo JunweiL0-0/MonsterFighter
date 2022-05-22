@@ -339,6 +339,13 @@ public class GameController extends Observable {
         }
     }
 
+    public void existBattle() {
+        this.battleField.endBattle();
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+
     public void battle() {
         // 1: player won, -1: enemy Won, 0: nobody won yet
         int result = this.battleField.battle();
@@ -349,7 +356,6 @@ public class GameController extends Observable {
         } else {
             this.isBattleOccur = true;
         }
-
         this.isUpdateTeam = true;
         this.isUpdateEnemyTeam = true;
         setChanged();
@@ -369,7 +375,7 @@ public class GameController extends Observable {
     }
 
     public boolean isAbleToStartFight() {
-        return this.battleIndex != -1 && this.playerTeam.size() != 0;
+        return this.battleIndex != -1 && this.playerTeam.size() != 0 && !(this.playerTeam.isAllFainted());
     }
 
     public boolean isAbleToReorderTeam() {

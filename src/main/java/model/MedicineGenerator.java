@@ -36,16 +36,22 @@ public class MedicineGenerator {
 	}
 
     /**
+     * This function will generate a price base on the medicine's rarity.
      *
-     *
-     * @param rarity
-     * @return
+     * @param rarity an integer represent the rarity of the monster.
+     * @return the price of the medicine
      */
 	private int getPrice(int rarity) {
         return (rarity * 50);
     }
-	
-	
+
+
+    /**
+     * This function works basically like a spinning wheel. This function will generate the rarity of the medicine base
+     * on the preset probability.
+     *
+     * @return the randomly generated medicine's rarity.
+     */
 	private int getRarity() {
         // [0, 101)
         int num = (new Random()).nextInt(0, 101);

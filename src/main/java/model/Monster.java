@@ -10,7 +10,6 @@ public class Monster extends GameItem {
     private int currentHealth;
     private int damage;
     private int level;
-    private int rarity;
     private int exp;
     private int actionCounter;
     private ImageIcon imageIcon;
@@ -19,7 +18,7 @@ public class Monster extends GameItem {
     /**
      * GameItem's constructor.
      *
-     * @see GameItem#GameItem(String, int)
+     * @see GameItem#GameItem(String, int, int)
      * @param name a string representing the monster's name
      * @param price an integer representing the monster's price
      * @param maxHealth an integer representing the monster's maxHealth
@@ -33,7 +32,6 @@ public class Monster extends GameItem {
         this.currentHealth = maxHealth;
         this.damage = damage;
         this.level = level;
-        this.rarity = rarity;
         this.imageIcon = icon;
         this.actionCounter = 0;
         this.exp = 0;
@@ -105,38 +103,62 @@ public class Monster extends GameItem {
     }
 
     /**
-     * A getter function for the monster's property "rarity".
+     * This function will return a imageIcon the monster's has.
+     * The imageIcon will be given to a monster when the monster was being constructed.
      *
-     * @return an integer which representing current monster's rarity.
+     * @return the imageIcon of the monster.
      */
-    public int getRarity() {
-        return this.rarity;
-    }
-
     public ImageIcon getImageIcon() {
         return this.imageIcon;
     }
 
+    /**
+     * This method is used to get the actionCounter of the monster. Every time when the monster attack, the actionCounter
+     * will be increased one.
+     *
+     * @return the actionCounter of the monster
+     */
     public int getActionCounter() {
         return this.actionCounter;
     }
 
-    public void harmBy(int incomingDamage) {
-        this.currentHealth = Math.max(0, this.currentHealth - incomingDamage);
-    }
-
+    /**
+     * This method will reset the actionCounter of this monster to zero.
+     */
     public void resetActionCounter() {
         this.actionCounter = 0;
     }
 
+    /**
+     * Receive an incomingDamage and decrease the currentHealth of the monster.
+     *
+     * @param incomingDamage an integer represent the incomingDamage created by other monsters.
+     */
+    public void harmBy(int incomingDamage) {
+        this.currentHealth = Math.max(0, this.currentHealth - incomingDamage);
+    }
+
+    /**
+     * Increase the actionCounter by one.
+     */
     public void incrementActionCounter() {
         this.actionCounter += 1;
     }
-    
+
+    /**
+     * Take a medicine and apply the effect to the monster.
+     *
+     * @param med a medicine instance which will result some effect on the monster.
+     */
     public void healBy(Medicine med) {
     	this.currentHealth = Math.min(this.maxHealth, this.currentHealth + med.getEffect());
     }
 
+    /**
+     * Increase the Exp.
+     *
+     * @param exp an integer represents the amount of exp which will be added to the monster.
+     */
     public void incrementExpBy(int exp) {
         this.exp += exp;
         if (this.exp == 100) {
@@ -145,6 +167,9 @@ public class Monster extends GameItem {
         }
     }
 
+    /**
+     * Levelup the monster and increase damage/maxHealth/currentHealth of the monster.
+     */
     public void levelUp() {
         this.level++;
         this.damage += 50;

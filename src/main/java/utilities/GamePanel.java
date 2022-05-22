@@ -4,7 +4,6 @@ import main.java.controller.GameController;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -65,6 +64,12 @@ public class GamePanel extends JPanel implements Runnable {
         this.gameThread.start(); // this will auto call the run function in this class
     }
 
+    /**
+     * Update the gamePanel. Move Enemies/Player and check if a collision happened between the player and the enemy.
+     * If a player encounter an enemy, the gamePanel will store the index of the enemy back to the gameController.
+     *
+     * @see GameController::storeBattleIncex
+     */
     public void update() {
         // update world
         if (this.encounterEnemy) {
@@ -75,6 +80,11 @@ public class GamePanel extends JPanel implements Runnable {
         movePlayer();
     }
 
+    /**
+     *
+     *
+     * @param g
+     */
     public void paintComponent(Graphics g) {
         // this will be called by the rePaint()
         super.paintComponent(g);
@@ -84,10 +94,6 @@ public class GamePanel extends JPanel implements Runnable {
         drawPlayer(g2); // draw the player
         this.enemies[0].draw(g2);
         g2.dispose(); // dispose of this g2 and release system resources
-    }
-
-    public void unFreeze() {
-        this.encounterEnemy = false;
     }
 
     private void initPlayer() {
@@ -136,6 +142,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Load tile image from files and create Tile instances and store them into a list.
+     */
     private void loadTile() {
         try {
             tiles[0] = new Tile(UNIT_SIZE);
@@ -155,6 +164,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * If a tile is a solid type(the player/enemy can not go through, we set the tile's collision to true.
+     */
     private void setCollisionForTile() {
         // water, tree, wall
         tiles[2].setCollision(true);
@@ -162,6 +174,9 @@ public class GamePanel extends JPanel implements Runnable {
         tiles[5].setCollision(true);
     }
 
+    /**
+     * Load world/tileImage/ from file and set the collision for tiles.
+     */
     private void initWorld() {
         // load world from file
         loadEncodedWorld();
@@ -171,11 +186,21 @@ public class GamePanel extends JPanel implements Runnable {
         setCollisionForTile();
     }
 
+    /**
+     * Generate the enemies and place them into the world.
+     *
+     * @param numberOfEnemy the amount enemy we have in the world.
+     */
     private void initEnemies(int numberOfEnemy) {
         this.enemies = new Enemy[numberOfEnemy];
-        enemies[0] = new Enemy(PLAYER_DEFAULT_WORLD_X-300, PLAYER_DEFAULT_WORLD_Y-2, 1, UNIT_SIZE, this.player);
+        for (int i=0; i<this.enemies.length; i++) {
+            enemies[i] = new Enemy(PLAYER_DEFAULT_WORLD_X-300, PLAYER_DEFAULT_WORLD_Y-2, 1, UNIT_SIZE, this.player);
+        }
     }
 
+    /**
+     * Get and set the player's images. We can use these images to animate the running of player.
+     */
     public void getPlayerImage() {
         try {
             this.player.setImageUp1(ImageIO.read(new File(PLAYER_IMAGE_PATH + "up1.png")));
@@ -191,6 +216,12 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Place the panel to a position. The width and height of the gamePanel are fixed.
+     *
+     * @param x the x-axis
+     * @param y the y-axis
+     */
     private void placePanel(int x, int y) {
         // create the panel
         this.setBounds(x, y, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -199,6 +230,9 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
     }
 
+    /**
+     * This function will be triggered by the game thread.
+     */
     @Override
     public void run() {
         double delta = 0;
@@ -220,14 +254,27 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Draw player on the panel
+     *
+     * @param g2 you can think this like a drawing pencil
+     */
     public void drawPlayer(Graphics2D g2) {
         this.player.draw(g2);
     }
 
+    /**
+     *
+     */
     public void startTheWorld() {
         this.encounterEnemy = false;
     }
 
+    /**
+     * Check the collision. If the tile is solid(collision is true), then the player/enemy can not go through the tile.
+     *
+     * @param entity player or enemy
+     */
     public void checkCollisionTile(GameEntity entity) {
         entity.setCollisionOn(false);
 
@@ -279,8 +326,16 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Check and see if the player is encounter an enemy. If yes, the index of the enemy will be returned.
+     * If no, -1 will be returned.
+     *
+     * @param player a player instance
+     * @param enemies a list of enemy
+     * @return the index of the encounteredEnemy. Return -1 if we haven't encountered any.
+     */
     public int checkAndGetEncounteredEnemyIndex(GameEntity player, Enemy[] enemies) {
-        int index = 999;
+        int index = -1;
         if (this.freezeTimer > 0) {
             this.freezeTimer--;
         } else {
@@ -331,6 +386,9 @@ public class GamePanel extends JPanel implements Runnable {
         return index;
     }
 
+    /**
+     * Monitor the key by using the custom keyHandler and move player up/down/left/right in the world.
+     */
     public void movePlayer() {
         // set the direction the player wants to go
         switch (this.myKeyHandler.direction()) {
@@ -342,7 +400,7 @@ public class GamePanel extends JPanel implements Runnable {
         // check the collision
         checkCollisionTile(this.player);
         int enemyIndex = checkAndGetEncounteredEnemyIndex(this.player, this.enemies);
-        if (enemyIndex != 999) {
+        if (enemyIndex != -1) {
             this.encounterEnemy = true;
             this.encounteredEnemyIndex = enemyIndex;
         }
@@ -359,6 +417,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Randomly move the enemy up/down/left/right
+     */
     public void moveEnemy() {
         for (Enemy e: this.enemies) {
             e.incrementActionCounter();
@@ -405,14 +466,19 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 e.resetActionCounter();
             }
-
-            int leftWorldX = e.getWorldX() + e.getSolidArea().x;
-            int rightWorldX = leftWorldX + e.getSolidArea().width;
-            int topWorldY = e.getWorldY() + e.getSolidArea().y;
-            int bottomWorldY = topWorldY + e.getSolidArea().height;
         }
     }
 
+    /**
+     * This method is being used to ensure we only paint the panel when we need to. Otherwise, the computer will always
+     * paint the whole world even if it is outside the gamePanel. This method will improve the performance of our game.
+     * This method will check the position of the player in the world and paint the surrounding items.
+     *
+     * @param worldX an integer represent the world's x-axis
+     * @param worldY an integer represent the world's y-axis
+     * @param player a gameEntity represent the player
+     * @return a boolean which tells us whether we need to paint the panel.
+     */
     private boolean paintIsNeeded(int worldX, int worldY, GameEntity player) {
         // we add/subtract one tileSize to adjust our screen
         // check it withinScreenWidth
@@ -425,6 +491,11 @@ public class GamePanel extends JPanel implements Runnable {
         return condition1 && condition2 && condition3 && condition4;
     }
 
+    /**
+     * Draw the world by using the tiles.
+     *
+     * @param g2 a drawing pencil.
+     */
     public void drawWorld(Graphics2D g2) {
         // col and row in the map
         int col = 0;

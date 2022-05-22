@@ -64,18 +64,40 @@ public class Team {
         return getFirstHealthMonsterIndex() == -1;
     }
 
+    /**
+     * Get a monster from team by using the index.
+     *
+     * @param i index of the monster in team
+     * @return a monster instance
+     */
     public Monster getMonsterByIndex(int i) {
         return this.teamMember.get(i);
     }
 
+    /**
+     * Return how many monster do we have in the team.
+     *
+     * @return an integer represent the amount of monsters in the team
+     */
     public int size() {
         return this.teamMember.size();
     }
 
+    /**
+     * Swap two monsters' positions.
+     *
+     * @param monsterIndex1 the first index of the monster you want to swap
+     * @param monsterIndex2 the second index of the monster you want to swap
+     */
     public void swapMonster(int monsterIndex1, int monsterIndex2) {
         Collections.swap(this.teamMember, monsterIndex1, monsterIndex2);
     }
 
+    /**
+     * Loop through the team and return the first health(current!=0) monster's index.
+     * Return -1 if we can't find any health monster.
+     * @return an integer represent the index of the very first health monster. Return -1 if we can't find any health monster.
+     */
     public int getFirstHealthMonsterIndex() {
         for (int i=0; i<teamMember.size(); i++) {
             // return the index value if monster is not fainted

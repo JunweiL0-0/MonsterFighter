@@ -3,14 +3,12 @@ package main.java.model;
 import javax.swing.ImageIcon;
 
 public class Shield extends GameItem{
-	private int rarity;
 	private int shield;
 	private String rarityStr;
 	private ImageIcon icon;
 
 	public Shield(String name, int price, int rarity, int shield, String rarityStr, ImageIcon icon) {
-		super(name, price, shield);
-		this.rarity = rarity;
+		super(name, price, rarity);
 		this.shield = shield;
 		this.rarityStr = rarityStr;
 		this.icon = icon;
@@ -24,11 +22,7 @@ public class Shield extends GameItem{
         String shieldRefundPrice = String.format("RefundPrice: %s\n", this.getRefundPrice());
         return shieldName + shieldRarity +shieldDmg+ shieldPrice + shieldRefundPrice;
 	}
-	
-	public int getRarityNum() {
-		return this.rarity;
-	}
-	
+
 	public int getShield() {
 		return this.shield;
 	}
