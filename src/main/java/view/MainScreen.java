@@ -884,6 +884,7 @@ public class MainScreen implements Observer {
 		JPanel bottomBattlePanel = getNewBottomPanel();
 		// add components to panel
 		bottomBattlePanel.add(getAttackBtn());
+		bottomBattlePanel.add(getExistBattleBtn());
 		// set it to not visible (Default)
 		bottomBattlePanel.setVisible(false);
 		return bottomBattlePanel;
@@ -1482,7 +1483,7 @@ public class MainScreen implements Observer {
 		JButton existBattleBtn = new JButton();
 		existBattleBtn.setText("Exist");
 		existBattleBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		existBattleBtn.setBounds(230, 50, 100, 50);
+		existBattleBtn.setBounds(45, 50, 210, 50);
 		existBattleBtn.setBackground(Color.BLACK);
 		existBattleBtn.setForeground(Color.WHITE);
 		existBattleBtn.setFocusable(false);

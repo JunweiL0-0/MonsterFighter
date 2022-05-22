@@ -346,6 +346,14 @@ public class GameController extends Observable {
         notifyObservers();
     }
 
+    public void nextDay() {
+        if (this.currentDay < this.totalDay) {
+            this.currentDay++;
+        }
+        this.shop.refreshShop();
+
+    }
+
     public void battle() {
         // 1: player won, -1: enemy Won, 0: nobody won yet
         int result = this.battleField.battle();
