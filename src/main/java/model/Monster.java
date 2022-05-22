@@ -176,4 +176,8 @@ public class Monster extends GameItem {
         this.maxHealth += 100;
         this.currentHealth += 100;
     }
+
+    public void recover() {
+        this.currentHealth = this.maxHealth;
+    }
 }

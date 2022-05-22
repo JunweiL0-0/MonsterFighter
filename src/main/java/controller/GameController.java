@@ -41,6 +41,9 @@ public class GameController extends Observable {
     private boolean isPlayerWon;
     private boolean isEnemyWon;
     private boolean isRefreshAllPressed;
+    private boolean isNextDay;
+    private boolean isGameOver;
+
 
     /**
      * Constructor for the GameController.
@@ -62,6 +65,8 @@ public class GameController extends Observable {
         this.isUpdateEnemyTeam = false;
         this.isBattleOccur = false;
         this.isRefreshAllPressed = false;
+        this.isNextDay = false;
+        this.isGameOver = false;
     }
 
     /**
@@ -92,7 +97,7 @@ public class GameController extends Observable {
         initCurrAndTotalDay();
         initGold();
         initPoint();
-        initBattles(this.currentDay);
+        initBattles();
         new MainScreen(this);
     }
 
@@ -125,13 +130,13 @@ public class GameController extends Observable {
         return this.battles.get(this.battleIndex);
     }
 
-    private void initBattles(int currentDay) {
+    private void initBattles() {
         int totalBattle = 0;
         int monsterPerTeam = 0;
-        if (currentDay < 5) {
+        if (this.currentDay < 5) {
             totalBattle = 2;
             monsterPerTeam = 2;
-        } else if (currentDay < 10) {
+        } else if (this.currentDay < 10) {
             totalBattle = 3;
             monsterPerTeam = 3;
         } else {
@@ -264,6 +269,13 @@ public class GameController extends Observable {
         }
     }
 
+    public void renameTeamMonsterByIndex(int monsterIndex, String newName) {
+        this.playerTeam.renameMonsterByIndex(monsterIndex-1, newName);
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+
     public ArrayList<Monster> getMonsterTeamMember() {
         return this.playerTeam.getTeamMember();
     }
@@ -348,10 +360,18 @@ public class GameController extends Observable {
 
     public void nextDay() {
         if (this.currentDay < this.totalDay) {
+            this.battles.clear();
+            initBattles();
+            this.battleIndex = -1;
             this.currentDay++;
+            this.shop.refreshShop();
+            this.playerTeam.healAllMonster();
+            this.isNextDay = true;
+        } else {
+            this.isGameOver = true;
         }
-        this.shop.refreshShop();
-
+        setChanged();
+        notifyObservers();
     }
 
     public void battle() {
@@ -359,6 +379,10 @@ public class GameController extends Observable {
         int result = this.battleField.battle();
         if (result == 1) {
             this.isPlayerWon = true;
+            this.gold += 50;
+            this.point += 100;
+            this.battles.remove(this.battleIndex);
+            this.battleIndex = -1;
         } else if (result == (-1)) {
             this.isEnemyWon = true;
         } else {
@@ -368,6 +392,14 @@ public class GameController extends Observable {
         this.isUpdateEnemyTeam = true;
         setChanged();
         notifyObservers();
+    }
+
+    public int getTotalBattle() {
+        return this.battles.size();
+    }
+
+    public int getBattleIndex() {
+        return this.battleIndex;
     }
 
     public Monster getPlayerTeamReadyMonster() {
@@ -384,6 +416,12 @@ public class GameController extends Observable {
 
     public boolean isAbleToStartFight() {
         return this.battleIndex != -1 && this.playerTeam.size() != 0 && !(this.playerTeam.isAllFainted());
+    }
+
+    public boolean isNextDay() {
+        boolean prevVal = this.isNextDay;
+        this.isNextDay = false;
+        return prevVal;
     }
 
     public boolean isAbleToReorderTeam() {
@@ -435,6 +473,12 @@ public class GameController extends Observable {
     public boolean isRefreshAllPressed() {
     	boolean prevVal = this.isRefreshAllPressed;
         this.isRefreshAllPressed = false;
+        return prevVal;
+    }
+
+    public boolean isGameOver() {
+        boolean prevVal = this.isGameOver;
+        this.isGameOver = false;
         return prevVal;
     }
 }

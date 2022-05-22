@@ -75,7 +75,6 @@ public class BattleField {
         } else {
             this.battleResult = 0;
         }
-        System.out.println(this.battleResult);
         return this.battleResult;
     }
 
