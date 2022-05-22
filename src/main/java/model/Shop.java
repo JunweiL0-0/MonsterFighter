@@ -122,27 +122,6 @@ public class Shop {
     	
     }
     
-    public void removeMonster(int i) {
-    	this.itemForSell.get(0).remove(i);
-    	
-    }
-
-    public void removeWeapon(int i) {
-
-    	this.itemForSell.get(1).remove(i);
-    	
-    }
-    
-    public void removeShield(int i) {
-    	this.itemForSell.get(2).remove(i);
-    	
-    }
-    
-    public void removeMed(int i) {
-    	this.itemForSell.get(3).remove(i);
-    	
-    }
-    
     /**
      * Remove all items in the shop.
      */

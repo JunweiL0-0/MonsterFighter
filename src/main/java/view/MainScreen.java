@@ -221,12 +221,12 @@ public class MainScreen implements Observer {
 			
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					System.out.println("hello");
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
 				}
 				public void mousePressed(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(e.getButton());
-					}
+					
 				}
 				public void mouseReleased(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -1076,12 +1076,12 @@ public class MainScreen implements Observer {
 			
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					System.out.println("hello");
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
 				}
 				public void mousePressed(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(e.getButton());
-					}
+					
 				}
 				public void mouseReleased(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -2054,7 +2054,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
-							bag.add(shop.getWeaponsForSell().get(innerI));
+							bag.add(shop.getMonstersForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
@@ -2148,7 +2148,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
-							bag.add(shop.getWeaponsForSell().get(innerI));
+							bag.add(shop.getShieldsForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
@@ -2198,7 +2198,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
-							bag.add(shop.getWeaponsForSell().get(innerI));
+							bag.add(shop.getMedsForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
