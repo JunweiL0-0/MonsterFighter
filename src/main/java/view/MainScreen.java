@@ -76,6 +76,11 @@ public class MainScreen implements Observer {
 		this.weaponButtons = new ArrayList<>();
 		this.shieldButtons = new ArrayList<>();
 		this.medButtons = new ArrayList<>();
+		this.bag = new ArrayList<>();
+		bag.add(gc.generateMonster());
+		bag.add(gc.generateMonster());
+		bag.add(gc.generateMedicine());
+		bag.add(gc.generateWeapon());
 		initialize();
 		// subscribe the gameController
 		this.gc.addObserver(this);
@@ -126,7 +131,7 @@ public class MainScreen implements Observer {
 		centerPanelMap.get(cP).setVisible(true);
 		centerPanelMap.get(cP).requestFocus();
 	}
-
+	
 	/**
 	 * This function will hide all bottom panels first and show the selected panel.
 	 *
@@ -462,6 +467,7 @@ public class MainScreen implements Observer {
 		newMainFrame.setLocationRelativeTo(null);
 		// return frame
 		return newMainFrame;
+		
 	}
 
 	/*JPanel*/
@@ -752,9 +758,21 @@ public class MainScreen implements Observer {
 	private JPanel getBottomBagPanel() {
 		// bottomBagPanel
 		JPanel bottomBagPanel = getNewBottomPanel();
+		
+		JButton useButton = new JButton();
+		useButton.setText("Equip");
+		useButton.setFont(new Font("Arial", Font.PLAIN, 25));
+		useButton.setBounds(305, 50, 210, 50);
+		useButton.setBackground(Color.BLACK);
+		useButton.setForeground(Color.WHITE);
+		useButton.setFocusable(false);
+		useButton.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		
+		bottomBagPanel.add(useButton);
 		// set it to not visible (Default)
 		bottomBagPanel.setVisible(false);
 		return bottomBagPanel;
+		
 	}
 
 	/**
@@ -974,9 +992,59 @@ public class MainScreen implements Observer {
 		
 		//Add all players item here automatically
 		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		panel.setPreferredSize(new Dimension(560,1000));
-		panel.setBackground(Color.white);
+		panel.setBackground(Color.black);
 		
+		JPopupMenu popMenu = new JPopupMenu();
+		
+		JMenuItem[] menuItem = new JMenuItem[5];
+		menuItem[0] = new JMenuItem("Use");
+		
+		
+		popMenu.add(menuItem[0]);
+		
+		for (int i = 0; i< bag.size() ;i++ ) {
+			GameItem item = bag.get(i);
+			String type = item.getClass().getSimpleName();
+			JTextArea detail = getItemDetails();
+			if (type.equals("Monster")) {
+				detail.setText(constructMonsterDetail((Monster)item));
+				
+			} else if(type.equals("Weapon")) {
+				detail.setText(constructWeaponDetail((Weapon)item));
+				
+			} else if (type.equals("Shield")) {
+				detail.setText(constructShieldDetail((Shield)item));
+				
+			} else if (type.equals("Medicine")) {
+				detail.setText(constructMedicineDetail((Medicine)item));
+				
+			}
+			
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("hello");
+				}
+				public void mousePressed(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(e.getButton());
+					}
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				
+			});
+			panel.add(detail);
+			
+		}
 		
 		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		bagScrollPane.setBounds(0,41,560,240);
@@ -1558,6 +1626,7 @@ public class MainScreen implements Observer {
 	private JPanel getCenterBuyPanel() {
 		// Template
 		// This panel will be shown in the middle of the mainFrame
+		shop.refreshShop();
 		JPanel buyPanel = getPanelForShop();
 		// add component
 
@@ -1749,22 +1818,22 @@ public class MainScreen implements Observer {
 	
 	
 	private String constructMonsterDetail(Monster monster) {
-		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nPrice: "+monster.getPrice(),
+		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nPrice: "+monster.getPrice()+"\n       Monster",
 				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 	
 	private String constructWeaponDetail(Weapon weapon) {
-		return String.format("%s\nRarity: %s\nDamage: %s\nPrice: "+weapon.getPrice(),
+		return String.format("%s\nRarity: %s\nDamage: %s\nPrice: "+weapon.getPrice()+"\n\n      Weapon",
 				weapon.getName(), weapon.getRarityStr(), weapon.getDmg());
 	}
 	
 	private String constructShieldDetail(Shield shield) {
-		return String.format("%s\nRarity: %s\nShield: %s\nPrice: "+shield.getPrice(),
+		return String.format("%s\nRarity: %s\nShield: %s\nPrice: "+shield.getPrice()+"\n\n        Shield",
 				shield.getName(), shield.getRarityStr(), shield.getShield());
 	}
 
 	private String constructMedicineDetail(Medicine meds) {
-		return String.format("    %s\nEffect: +%s HP\nPrice: "+meds.getPrice(),
+		return String.format("     %s\nEffect: +%s HP\nPrice: "+meds.getPrice()+"\n\n\n       Potion",
 				meds.getName(), meds.getEffect());
 	}
 	
@@ -1915,6 +1984,7 @@ public class MainScreen implements Observer {
 		
 		//get panel to put details
 		JPanel monsterPanel = getItemPanel();
+		monsterPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		monsterPanel.setBounds(10,40,525,140);
 		
 		// add details to the panel one by one
@@ -1931,6 +2001,28 @@ public class MainScreen implements Observer {
 			monsterButtons.add(monsterButton);
 			monsterPanel.add(monsterButton);
 		}
+		for (int i = 0; i<shop.getMonstersForSell().size();i++) {
+			JButton button = monsterButtons.get(i);
+			
+			final Integer innerI = new Integer(i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
+							
+							button.setEnabled(false);
+							button.setText("SOLD");
+							System.out.println(gc.getGold());
+						}
+						System.out.println(gc.getGold());
+
+					}
+				}
+				
+			});
+		}
 		
 		return monsterPanel;
 	}
@@ -1938,6 +2030,7 @@ public class MainScreen implements Observer {
 	private JPanel getWeaponBuyPanel() {
 		//get panel to put details
 		JPanel weaponPanel = getItemPanel();
+		weaponPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		weaponPanel.setBounds(10,220,525,140);
 		// add detaindexInListls to the panel one by one
 		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
@@ -1953,12 +2046,35 @@ public class MainScreen implements Observer {
 			weaponButtons.add(weaponButton);
 			weaponPanel.add(weaponButton);
 		}	
+		for (int i = 0; i<shop.getWeaponsForSell().size();i++) {
+			JButton button = weaponButtons.get(i);
+			
+			final Integer innerI = new Integer(i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice());
+							button.setEnabled(false);
+							button.setText("SOLD");
+							System.out.println(gc.getGold());
+
+						}
+						System.out.println(gc.getGold());
+
+					}
+				}
+				
+			});
+		}
 		return weaponPanel;
 		
 	}
 	private JPanel getShieldBuyPanel() {
 		//get panel to put details
 		JPanel shieldPanel = getItemPanel();
+		shieldPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		shieldPanel.setBounds(10,400,525,140);
 		
 		// add detaindexInListls to the panel one by one
@@ -1975,13 +2091,36 @@ public class MainScreen implements Observer {
 			shieldButtons.add(shieldButton);
 			shieldPanel.add(shieldButton);
 		}	
+		
+		for (int i = 0; i<shop.getShieldsForSell().size();i++) {
+			JButton button = shieldButtons.get(i);
+			
+			final Integer innerI = new Integer(i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
+							button.setEnabled(false);
+							button.setText("SOLD");
+							System.out.println(gc.getGold());
+						}
+						System.out.println(gc.getGold());
+					}
+				}
+				
+			});
+		}
 		return shieldPanel;
 	}
 	
 	private JPanel getMedBuyPanel() {
 		//get panel to put details
 		JPanel medPanel = getItemPanel();
+		medPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		medPanel.setBounds(10,580,525,140);
+		
 		
 		// add detaindexInListls to the panel one by one
 		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
@@ -1994,29 +2133,38 @@ public class MainScreen implements Observer {
 						
 		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
 			JButton medButton= getBuyButtonsForBuyArea(indexInList);
-			int prevGold = gc.getGold();
-			int newGold = gc.getGold() - shop.getMedsForSell().get(indexInList).getPrice();
-			
-			medButton.addActionListener(new ActionListener() { 
-				public void actionPerformed(ActionEvent e) {
-					  if (e.getSource() == medButton) {
-						  if (newGold < 0) {
-							  System.out.println("Do Nothing");
-						  }else {
-							  gc.setGold(newGold);
-							  shop.removeMed(indexInList);
-						  }
-						  
-					  }
-
-				  } 
-			} );
 			medButtons.add(medButton);
 			medPanel.add(medButton);
 			
 		}	
+		
+		
+		for (int i = 0; i<shop.getMedsForSell().size();i++) {
+			JButton button = medButtons.get(i);
+			
+			final Integer innerI = new Integer(i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
+							button.setEnabled(false);
+							button.setText("SOLD");
+							System.out.println(gc.getGold());
+
+						}
+						System.out.println(gc.getGold());
+
+					}
+				}
+				
+			});
+			
+		}
 		return medPanel;
 	}
+
 	
 
 	

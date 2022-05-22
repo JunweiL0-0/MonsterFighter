@@ -20,7 +20,6 @@ public class Shop {
     public Shop(GameController gc) {
     	this.itemForSell = new ArrayList<>();
         this.gc = gc;
-        refreshShop();
     }
 
     /**
@@ -33,6 +32,7 @@ public class Shop {
         reloadShields();
         reloadMeds();
     }
+    
     
 
     /**
