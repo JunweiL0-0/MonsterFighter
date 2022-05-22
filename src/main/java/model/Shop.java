@@ -33,6 +33,7 @@ public class Shop {
         reloadShields();
         reloadMeds();
     }
+    
 
     /**
      * Add item(GameItem) to the shop
@@ -91,7 +92,6 @@ public class Shop {
     	}
 
     	this.itemForSell.add(shields);
-    	
         
     }
     
