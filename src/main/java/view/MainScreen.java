@@ -63,9 +63,10 @@ public class MainScreen implements Observer {
 	private int renameMonsterIndex;
 	private int reorderingMonsterIndex1;
 	private int reorderingMonsterIndex2;
+	
 	private JButton reorderConfirmBtn;
 	private JButton renameConfirmBtn;
-	private ArrayList<ArrayList<GameItem>> bag;
+	private ArrayList<GameItem> bag;
 
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
@@ -85,6 +86,7 @@ public class MainScreen implements Observer {
 		this.weaponButtons = new ArrayList<>();
 		this.shieldButtons = new ArrayList<>();
 		this.medButtons = new ArrayList<>();
+		this.bag = new ArrayList<>();
 		initialize();
 		// subscribe the gameController
 		this.gc.addObserver(this);
@@ -135,7 +137,7 @@ public class MainScreen implements Observer {
 		centerPanelMap.get(cP).setVisible(true);
 		centerPanelMap.get(cP).requestFocus();
 	}
-
+	
 	/**
 	 * This function will hide all bottom panels first and show the selected panel.
 	 *
@@ -228,149 +230,143 @@ public class MainScreen implements Observer {
 		this.daysLeftLabel.setText("Days left: " + this.gc.getCurrentDay() + "/" + this.gc.getTotalDay());
 	}
 	
+	public void updateBagPanel() {
+		JPanel bagPanel = centerPanelMap.get(CenterPanel.BAG);
+		bagPanel.removeAll();
+		
+		// add component
+		bagPanel.add(getBagTitle());
+		
+		//Add all players item here automatically
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		panel.setPreferredSize(new Dimension(560,1000));
+		panel.setBackground(Color.black);
+		
+		JPopupMenu popMenu = new JPopupMenu();
+		
+		JMenuItem[] menuItem = new JMenuItem[5];
+		menuItem[0] = new JMenuItem("Use");
+		
+		
+		popMenu.add(menuItem[0]);
+		
+		for (int i = 0; i< bag.size() ;i++ ) {
+			GameItem item = bag.get(i);
+			String type = item.getClass().getSimpleName();
+			JTextArea detail = getItemDetails();
+			if (type.equals("Monster")) {
+				detail.setText(constructMonsterDetail((Monster)item));
+				
+			} else if(type.equals("Weapon")) {
+				detail.setText(constructWeaponDetail((Weapon)item));
+				
+			} else if (type.equals("Shield")) {
+				detail.setText(constructShieldDetail((Shield)item));
+				
+			} else if (type.equals("Medicine")) {
+				detail.setText(constructMedicineDetail((Medicine)item));
+				
+			}
+			
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+					
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				
+			});
+			panel.add(detail);
+			
+		}
+		
+		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		bagScrollPane.setBounds(0,41,560,240);
+		
+		
+		bagPanel.add(bagScrollPane);
+		
+		bagPanel.revalidate();
+		bagPanel.repaint();
+		
+		
+	}
 	
 	public void updateBuyPanel() {
 		JPanel buyPanel = centerPanelMap.get(CenterPanel.BUY);
 		buyPanel.removeAll();
 		buyPanel.add(getBuyTitle());
 		
+		
 		//panel to add to the JScrollPane
 		JPanel panel = getBigCenterPanel();
-		
-//----------------------------------------------------------------------
-	
+				
+		//---------------------------------------------------------------------
 		//monster label
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-		// refresh button for monsters
-		JButton refreshMonsters = getRefreshButton();
-		refreshMonsters.setBounds(110, 10 ,60,20);
+		
 		//get panel to put details
-		JPanel monsterPanel = getItemPanel();
-		monsterPanel.setBounds(10,40,525,140);
-		
-		// add details to the panel one by one
-		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			Monster monster = (Monster) shop.getMonstersForSell().get(indexInList);
-
-			JTextArea monsterDetail = getItemDetails();
-			monsterDetail.setText(constructMonsterDetail(monster));
-			monsterPanel.add(monsterDetail);
-		}
+		JPanel monsterPanel = getMonsterBuyPanel();
 				
-		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			JButton monsterButton = getBuyButtonsForBuyArea(indexInList);
-			monsterButtons.add(monsterButton);
-			monsterPanel.add(monsterButton);
-		}
-		
-//----------------------------------------------------------------------
+		//----------------------------------------------------------------------
 		//weapon label
 		JLabel weaponLabel = getItemLabel();
 		weaponLabel.setBounds(10, 180, 100, 40);
 		weaponLabel.setText("Weapon");
-		//refresh button for weapon
-		JButton refreshWeapons = getRefreshButton();
-		refreshWeapons.setBounds(110, 190 ,60,20);
-		//get panel to put details
-		JPanel weaponPanel = getItemPanel();
-		weaponPanel.setBounds(10,220,525,140);
 		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			Weapon weapon = (Weapon) shop.getWeaponsForSell().get(indexInList);
-			
-			JTextArea weaponDetail = getItemDetails();
-			weaponDetail.setText(constructWeaponDetail(weapon));
-			weaponPanel.add(weaponDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			JButton weaponButton = getBuyButtonsForBuyArea(indexInList);
-			weaponButtons.add(weaponButton);
-			weaponPanel.add(weaponButton);
-		}			
-		
-		
-//----------------------------------------------------------------------
+		JPanel weaponPanel = getWeaponBuyPanel();
+				
+		//----------------------------------------------------------------------
 		//shield label
 		JLabel shieldLabel = getItemLabel();
 		shieldLabel.setBounds(10, 360, 100, 40);
 		shieldLabel.setText("Shield");
-		//refresh button for shields
-		JButton refreshShields = getRefreshButton();
-		refreshShields.setBounds(110, 370 ,60,20);
-		//get panel to put details
-		JPanel shieldPanel = getItemPanel();
-		shieldPanel.setBounds(10,400,525,140);
-		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			Shield shield = (Shield) shop.getShieldsForSell().get(indexInList);
-			
-			JTextArea shieldDetail = getItemDetails();
-			shieldDetail.setText(constructShieldDetail(shield));
-			shieldPanel.add(shieldDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			JButton shieldButton = getBuyButtonsForBuyArea(indexInList);
-			shieldButtons.add(shieldButton);
-			shieldPanel.add(shieldButton);
-		}	
-//----------------------------------------------------------------------
+				
+		JPanel shieldPanel = getShieldBuyPanel();
+				
+				
+		//----------------------------------------------------------------------
 		//Potion label
 		JLabel medLabel = getItemLabel();
 		medLabel.setBounds(10, 540, 100, 40);
 		medLabel.setText("Potions");
-		//refresh button for potions
-		JButton refreshMeds = getRefreshButton();
-		refreshMeds.setBounds(110, 550 ,60,20);
-		//get panel to put details
-		JPanel medPanel = getItemPanel();
-		medPanel.setBounds(10,580,525,140);
-		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			Medicine med = (Medicine) shop.getMedsForSell().get(indexInList);
-			
-			JTextArea medDetail = getItemDetails();
-			medDetail.setText(constructMedicineDetail(med));
-			medPanel.add(medDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			JButton medButton= getBuyButtonsForBuyArea(indexInList);
-			medButtons.add(medButton);
-			medPanel.add(medButton);
-		}	
-		
-//----------------------------------------------------------------------
+				
+		JPanel medPanel = getMedBuyPanel();
+				
+		//----------------------------------------------------------------------
 
 		panel.add(monsterLabel);
 		panel.add(weaponLabel);
 		panel.add(shieldLabel);
 		panel.add(medLabel);
-		
-		panel.add(refreshMonsters);
-		panel.add(refreshWeapons);
-		panel.add(refreshShields);
-		panel.add(refreshMeds);
 
-		panel.add(weaponPanel);
 		panel.add(monsterPanel);
+		panel.add(weaponPanel);
 		panel.add(shieldPanel);
 		panel.add(medPanel);
-		
-
+				
 		JScrollPane buyScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
+				
 		buyScrollPane.setBounds(0,41,560,428);
-		
+				
 		buyPanel.add(buyScrollPane);
-		
-		
+				
+				
 		buyPanel.add(getCenterPanelTitle("Buy Area"));
 		buyPanel.add(getBackToShopBtn());
 		
@@ -582,6 +578,7 @@ public class MainScreen implements Observer {
 		newMainFrame.setLocationRelativeTo(null);
 		// return frame
 		return newMainFrame;
+		
 	}
 
 	/*JPanel*/
@@ -892,9 +889,21 @@ public class MainScreen implements Observer {
 	private JPanel getBottomBagPanel() {
 		// bottomBagPanel
 		JPanel bottomBagPanel = getNewBottomPanel();
+		
+		JButton useButton = new JButton();
+		useButton.setText("Equip");
+		useButton.setFont(new Font("Arial", Font.PLAIN, 25));
+		useButton.setBounds(305, 50, 210, 50);
+		useButton.setBackground(Color.BLACK);
+		useButton.setForeground(Color.WHITE);
+		useButton.setFocusable(false);
+		useButton.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		
+		bottomBagPanel.add(useButton);
 		// set it to not visible (Default)
 		bottomBagPanel.setVisible(false);
 		return bottomBagPanel;
+		
 	}
 
 	/**
@@ -1244,9 +1253,59 @@ public class MainScreen implements Observer {
 		
 		//Add all players item here automatically
 		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		panel.setPreferredSize(new Dimension(560,1000));
-		panel.setBackground(Color.white);
+		panel.setBackground(Color.black);
 		
+		JPopupMenu popMenu = new JPopupMenu();
+		
+		JMenuItem[] menuItem = new JMenuItem[5];
+		menuItem[0] = new JMenuItem("Use");
+		
+		
+		popMenu.add(menuItem[0]);
+		
+		for (int i = 0; i< bag.size() ;i++ ) {
+			GameItem item = bag.get(i);
+			String type = item.getClass().getSimpleName();
+			JTextArea detail = getItemDetails();
+			if (type.equals("Monster")) {
+				detail.setText(constructMonsterDetail((Monster)item));
+				
+			} else if(type.equals("Weapon")) {
+				detail.setText(constructWeaponDetail((Weapon)item));
+				
+			} else if (type.equals("Shield")) {
+				detail.setText(constructShieldDetail((Shield)item));
+				
+			} else if (type.equals("Medicine")) {
+				detail.setText(constructMedicineDetail((Medicine)item));
+				
+			}
+			
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+					
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				
+			});
+			panel.add(detail);
+			
+		}
 		
 		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		bagScrollPane.setBounds(0,41,560,240);
@@ -1990,6 +2049,7 @@ public class MainScreen implements Observer {
 	private JPanel getCenterBuyPanel() {
 		// Template
 		// This panel will be shown in the middle of the mainFrame
+		shop.refreshShop();
 		JPanel buyPanel = getPanelForShop();
 		// add component
 
@@ -1999,32 +2059,12 @@ public class MainScreen implements Observer {
 		JPanel panel = getBigCenterPanel();
 		
 //----------------------------------------------------------------------
-	
 		//monster label
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-		// refresh button for monsters
-		JButton refreshMonsters = getRefreshButton();
-		refreshMonsters.setBounds(110, 10 ,60,20);
-		//get panel to put details
-		JPanel monsterPanel = getItemPanel();
-		monsterPanel.setBounds(10,40,525,140);
 		
-		// add details to the panel one by one
-		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			GameItem monster = (Monster) shop.getMonstersForSell().get(indexInList);
-			
-			JTextArea monsterDetail = getItemDetails();
-			monsterDetail.setText(constructMonsterDetail((Monster)monster));
-			monsterPanel.add(monsterDetail);
-		}
-				
-		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			JButton monsterButton = getBuyButtonsForBuyArea(indexInList);
-			monsterButtons.add(monsterButton);
-			monsterPanel.add(monsterButton);
-		}
+		JPanel monsterPanel = getMonsterBuyPanel();
 		
 //----------------------------------------------------------------------
 		//weapon label
@@ -2032,81 +2072,27 @@ public class MainScreen implements Observer {
 		weaponLabel.setBounds(10, 180, 100, 40);
 		weaponLabel.setText("Weapon");
 		//refresh button for weapon
-		JButton refreshWeapons = getRefreshButton();
-		refreshWeapons.setBounds(110, 190 ,60,20);
-		//get panel to put details
-		JPanel weaponPanel = getItemPanel();
-		weaponPanel.setBounds(10,220,525,140);
+//		JButton refreshWeapons = getRefreshButton();
+//		refreshWeapons.setBounds(110, 190 ,60,20);
 		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			GameItem weapon = (Weapon)  shop.getWeaponsForSell().get(indexInList);
-			
-			JTextArea weaponDetail = getItemDetails();
-			weaponDetail.setText(constructWeaponDetail((Weapon)weapon));
-			weaponPanel.add(weaponDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			JButton weaponButton = getBuyButtonsForBuyArea(indexInList);
-			weaponButtons.add(weaponButton);
-			weaponPanel.add(weaponButton);
-		}			
-		
+		JPanel weaponPanel = getWeaponBuyPanel();
 		
 //----------------------------------------------------------------------
 		//shield label
 		JLabel shieldLabel = getItemLabel();
 		shieldLabel.setBounds(10, 360, 100, 40);
 		shieldLabel.setText("Shield");
-		//refresh button for shields
-		JButton refreshShields = getRefreshButton();
-		refreshShields.setBounds(110, 370 ,60,20);
-		//get panel to put details
-		JPanel shieldPanel = getItemPanel();
-		shieldPanel.setBounds(10,400,525,140);
 		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			GameItem shield = (Shield) shop.getShieldsForSell().get(indexInList);
-			
-			JTextArea shieldDetail = getItemDetails();
-			shieldDetail.setText(constructShieldDetail((Shield)shield));
-			shieldPanel.add(shieldDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			JButton shieldButton = getBuyButtonsForBuyArea(indexInList);
-			shieldButtons.add(shieldButton);
-			shieldPanel.add(shieldButton);
-		}	
+		JPanel shieldPanel = getShieldBuyPanel();
+		
+		
 //----------------------------------------------------------------------
 		//Potion label
 		JLabel medLabel = getItemLabel();
 		medLabel.setBounds(10, 540, 100, 40);
 		medLabel.setText("Potions");
-		//refresh button for potions
-		JButton refreshMeds = getRefreshButton();
-		refreshMeds.setBounds(110, 550 ,60,20);
-		//get panel to put details
-		JPanel medPanel = getItemPanel();
-		medPanel.setBounds(10,580,525,140);
 		
-		// add detaindexInListls to the panel one by one
-		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			GameItem med = (Medicine) shop.getMedsForSell().get(indexInList);
-			
-			JTextArea medDetail = getItemDetails();
-			medDetail.setText(constructMedicineDetail((Medicine)med));
-			medPanel.add(medDetail);
-		}
-						
-		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			JButton medButton= getBuyButtonsForBuyArea(indexInList);
-			medButtons.add(medButton);
-			medPanel.add(medButton);
-			
-		}	
+		JPanel medPanel = getMedBuyPanel();
 		
 //----------------------------------------------------------------------
 
@@ -2114,11 +2100,6 @@ public class MainScreen implements Observer {
 		panel.add(weaponLabel);
 		panel.add(shieldLabel);
 		panel.add(medLabel);
-		
-		panel.add(refreshMonsters);
-		panel.add(refreshWeapons);
-		panel.add(refreshShields);
-		panel.add(refreshMeds);
 
 		panel.add(weaponPanel);
 		panel.add(monsterPanel);
@@ -2271,22 +2252,22 @@ public class MainScreen implements Observer {
 	
 	
 	private String constructMonsterDetail(Monster monster) {
-		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nPrice: "+monster.getPrice(),
+		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nPrice: "+monster.getPrice()+"\n       Monster",
 				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 	
 	private String constructWeaponDetail(Weapon weapon) {
-		return String.format("%s\nRarity: %s\nDamage: %s\nPrice: "+weapon.getPrice(),
+		return String.format("%s\nRarity: %s\nDamage: %s\nPrice: "+weapon.getPrice()+"\n\n      Weapon",
 				weapon.getName(), weapon.getRarityStr(), weapon.getDmg());
 	}
 	
 	private String constructShieldDetail(Shield shield) {
-		return String.format("%s\nRarity: %s\nShield: %s\nPrice: "+shield.getPrice(),
+		return String.format("%s\nRarity: %s\nShield: %s\nPrice: "+shield.getPrice()+"\n\n        Shield",
 				shield.getName(), shield.getRarityStr(), shield.getShield());
 	}
 
 	private String constructMedicineDetail(Medicine meds) {
-		return String.format("%s\nEffect: +%s health\nPrice: "+meds.getPrice(),
+		return String.format("     %s\nEffect: +%s HP\nPrice: "+meds.getPrice()+"\n\n\n       Potion",
 				meds.getName(), meds.getEffect());
 	}
 	
@@ -2337,7 +2318,7 @@ public class MainScreen implements Observer {
 		readMe.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
 		readMe.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					JOptionPane.showMessageDialog(mainFrame, "Refresh all = 100 Gold\nRefresh = 25 Gold", "Buy Area",JOptionPane.INFORMATION_MESSAGE );
+					JOptionPane.showMessageDialog(mainFrame, "Refresh all = 50 Gold\n ", "Buy Area",JOptionPane.INFORMATION_MESSAGE );
 
 			  } 
 		} );
@@ -2355,10 +2336,15 @@ public class MainScreen implements Observer {
 
 			public void actionPerformed(ActionEvent e) {
 				  if (e.getSource() == refreshAll) {
-					  int gold = gc.getGold() - 100;
-					  gc.setGold(gold);
-					  shop.refreshShop();
-					  gc.isAbleToRefreshAll();
+					  if (gc.getGold() - 50 >= 0) {
+						  int gold = gc.getGold() - 50;
+						  gc.setGold(gold);
+						  shop.refreshShop();
+						  gc.isAbleToRefreshAll();
+					  }else {
+						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+					  }
+
 				  }
 
 			  } 
@@ -2389,17 +2375,17 @@ public class MainScreen implements Observer {
 		return itemLabel;
 	}
 	
-	private JButton getRefreshButton() {
-		JButton refreshButtons = new JButton();
-		refreshButtons.setText("Refresh");
-		refreshButtons.setFont(new Font("Serif", Font.PLAIN, 15));
-		refreshButtons.setForeground(Color.WHITE);
-		refreshButtons.setBackground(Color.BLACK);
-		refreshButtons.setFocusable(false);
-		refreshButtons.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		
-		return refreshButtons;
-	}
+//	private JButton getRefreshButton() {
+//		JButton refreshButtons = new JButton();
+//		refreshButtons.setText("Refresh");
+//		refreshButtons.setFont(new Font("Serif", Font.PLAIN, 15));
+//		refreshButtons.setForeground(Color.WHITE);
+//		refreshButtons.setBackground(Color.BLACK);
+//		refreshButtons.setFocusable(false);
+//		refreshButtons.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+//		
+//		return refreshButtons;
+//	}
 	
 	private JPanel getItemPanel() {
 
@@ -2431,6 +2417,203 @@ public class MainScreen implements Observer {
 		detail.setEditable(false);
 		return detail;
 	}
+	private JPanel getMonsterBuyPanel() {
+		
+		//get panel to put details
+		JPanel monsterPanel = getItemPanel();
+		monsterPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		monsterPanel.setBounds(10,40,525,140);
+		
+		// add details to the panel one by one
+		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
+			GameItem monster = (Monster) shop.getMonstersForSell().get(indexInList);
+			
+			JTextArea monsterDetail = getItemDetails();
+			monsterDetail.setText(constructMonsterDetail((Monster)monster));
+			monsterPanel.add(monsterDetail);
+		}
+				
+		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
+			JButton monsterButton = getBuyButtonsForBuyArea(indexInList);
+			monsterButtons.add(monsterButton);
+			monsterPanel.add(monsterButton);
+		}
+		for (int i = 0; i<shop.getMonstersForSell().size();i++) {
+			JButton button = monsterButtons.get(i);
+			
+			final Integer innerI = (i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
+							bag.add(shop.getMonstersForSell().get(innerI));
+							button.setEnabled(false);
+							button.setText("SOLD");
+							updateBagPanel();
+						}else {
+							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+						}
+
+					}
+				}
+				
+			});
+		}
+		
+		return monsterPanel;
+	}
+	
+	private JPanel getWeaponBuyPanel() {
+		//get panel to put details
+		JPanel weaponPanel = getItemPanel();
+		weaponPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		weaponPanel.setBounds(10,220,525,140);
+		// add detaindexInListls to the panel one by one
+		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
+			GameItem weapon = (Weapon)  shop.getWeaponsForSell().get(indexInList);
+			
+			JTextArea weaponDetail = getItemDetails();
+			weaponDetail.setText(constructWeaponDetail((Weapon)weapon));
+			weaponPanel.add(weaponDetail);
+		}
+						
+		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
+			JButton weaponButton = getBuyButtonsForBuyArea(indexInList);
+			weaponButtons.add(weaponButton);
+			weaponPanel.add(weaponButton);
+		}	
+		for (int i = 0; i<shop.getWeaponsForSell().size();i++) {
+			JButton button = weaponButtons.get(i);
+			
+			final Integer innerI = (i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice());
+							bag.add(shop.getWeaponsForSell().get(innerI));
+							button.setEnabled(false);
+							button.setText("SOLD");
+							updateBagPanel();
+						}else {
+							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+
+						}
+
+					}
+				}
+				
+			});
+		}
+		return weaponPanel;
+		
+	}
+	private JPanel getShieldBuyPanel() {
+		//get panel to put details
+		JPanel shieldPanel = getItemPanel();
+		shieldPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		shieldPanel.setBounds(10,400,525,140);
+		
+		// add detaindexInListls to the panel one by one
+		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
+			GameItem shield = (Shield) shop.getShieldsForSell().get(indexInList);
+			
+			JTextArea shieldDetail = getItemDetails();
+			shieldDetail.setText(constructShieldDetail((Shield)shield));
+			shieldPanel.add(shieldDetail);
+		}
+						
+		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
+			JButton shieldButton = getBuyButtonsForBuyArea(indexInList);
+			shieldButtons.add(shieldButton);
+			shieldPanel.add(shieldButton);
+		}	
+		
+		for (int i = 0; i<shop.getShieldsForSell().size();i++) {
+			JButton button = shieldButtons.get(i);
+			
+			final Integer innerI = (i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
+							bag.add(shop.getShieldsForSell().get(innerI));
+							button.setEnabled(false);
+							button.setText("SOLD");
+							updateBagPanel();
+						}else {
+							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+
+						}
+					}
+				}
+				
+			});
+		}
+		return shieldPanel;
+	}
+	
+	private JPanel getMedBuyPanel() {
+		//get panel to put details
+		JPanel medPanel = getItemPanel();
+		medPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		medPanel.setBounds(10,580,525,140);
+		
+		
+		// add detaindexInListls to the panel one by one
+		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
+			GameItem med = (Medicine) shop.getMedsForSell().get(indexInList);
+			
+			JTextArea medDetail = getItemDetails();
+			medDetail.setText(constructMedicineDetail((Medicine)med));
+			medPanel.add(medDetail);
+		}
+						
+		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
+			JButton medButton= getBuyButtonsForBuyArea(indexInList);
+			medButtons.add(medButton);
+			medPanel.add(medButton);
+			
+		}	
+		
+		
+		for (int i = 0; i<shop.getMedsForSell().size();i++) {
+			JButton button = medButtons.get(i);
+			
+			final Integer innerI = (i);
+			
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (e.getSource() == button) {
+						if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
+							gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
+							bag.add(shop.getMedsForSell().get(innerI));
+							button.setEnabled(false);
+							button.setText("SOLD");
+							updateBagPanel();
+
+						}else {
+							JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+						}
+
+					}
+				}
+				
+			});
+			
+		}
+		return medPanel;
+	}
+
+	
+
+	
+	
 	
 	
 }

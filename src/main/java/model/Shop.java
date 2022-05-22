@@ -20,7 +20,6 @@ public class Shop {
     public Shop(GameController gc) {
     	this.itemForSell = new ArrayList<>();
         this.gc = gc;
-        refreshShop();
     }
 
     /**
@@ -33,6 +32,8 @@ public class Shop {
         reloadShields();
         reloadMeds();
     }
+    
+    
 
     /**
      * Add item(GameItem) to the shop
@@ -91,7 +92,6 @@ public class Shop {
     	}
 
     	this.itemForSell.add(shields);
-    	
         
     }
     
@@ -119,27 +119,6 @@ public class Shop {
     
     public ArrayList<GameItem> getMedsForSell(){
     	return this.itemForSell.get(3);
-    	
-    }
-    
-    public void removeMonster(int i) {
-    	this.itemForSell.get(0).remove(i);
-    	
-    }
-
-    public void removeWeapon(int i) {
-
-    	this.itemForSell.get(1).remove(i);
-    	
-    }
-    
-    public void removeShield(int i) {
-    	this.itemForSell.get(2).remove(i);
-    	
-    }
-    
-    public void removeMed(int i) {
-    	this.itemForSell.get(3).remove(i);
     	
     }
     

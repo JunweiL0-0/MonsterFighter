@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class WeaponGenerator {
-	private static final String IMAGEPATH = "src/main/java/image/Weapon/";
+	private static final String IMAGEPATH = "src/main/java/image/weapon/";
 	
 	private String weaponName;
 	private String rarityStr;
