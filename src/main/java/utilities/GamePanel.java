@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -40,12 +41,14 @@ public class GamePanel extends JPanel implements Runnable {
     private final Tile[] tiles;
     private final Thread gameThread;
     private GameEntity player;
-    private Enemy[] enemies;
+    private ArrayList<GameEntity> enemies;
     private boolean encounterEnemy;
     private int encounteredEnemyIndex;
+    private int currentTotalBattle;
 
 
     public GamePanel(int x, int y, GameController gc) {
+        this.currentTotalBattle = 0;
         this.myKeyHandler = new MyKeyHandler();
         this.gc = gc;
         this.encodedWorld = new int[MAX_WORLD_ROW][MAX_WORLD_COL];
@@ -53,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
         // init the panel
         placePanel(x, y);
         initPlayer();
-        initEnemies(1);
+        initEnemies();
         initWorld();
         // listen key pressing event
         this.addKeyListener(this.myKeyHandler);
@@ -68,7 +71,10 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @see GameController::storeBattleIncex
      */
-    public void update() {
+    public void updatePanel() {
+        if (this.gc.getTotalBattle() != this.currentTotalBattle) {
+            initEnemies();
+        }
         // update world
         if (this.encounterEnemy) {
             this.gc.storeBattleIndex(this.encounteredEnemyIndex);
@@ -90,7 +96,9 @@ public class GamePanel extends JPanel implements Runnable {
         // tile should be displayed before player
         drawWorld(g2); // draw the map
         drawPlayer(g2); // draw the player
-        this.enemies[0].draw(g2);
+        for (GameEntity enemy : this.enemies) {
+            enemy.draw(g2);
+        }
         g2.dispose(); // dispose of this g2 and release system resources
     }
 
@@ -186,13 +194,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     /**
      * Generate the enemies and place them into the world.
-     *
-     * @param numberOfEnemy the amount enemy we have in the world.
      */
-    private void initEnemies(int numberOfEnemy) {
-        this.enemies = new Enemy[numberOfEnemy];
-        for (int i=0; i<this.enemies.length; i++) {
-            enemies[i] = new Enemy(PLAYER_DEFAULT_WORLD_X-300, PLAYER_DEFAULT_WORLD_Y-2, 1, UNIT_SIZE, this.player);
+    public void initEnemies() {
+        this.enemies = new ArrayList<>();
+        this.currentTotalBattle = this.gc.getTotalBattle();
+        for (int i=0; i<this.gc.getTotalBattle(); i++) {
+            this.enemies.add(new Enemy(PLAYER_DEFAULT_WORLD_X-300*i, PLAYER_DEFAULT_WORLD_Y - 2, 1, UNIT_SIZE, this.player));
         }
     }
 
@@ -243,7 +250,7 @@ public class GamePanel extends JPanel implements Runnable {
             // update the gamePanel if condition meet
             if ((currentTime - lastTime) >= DRAW_INTERVAL) {
                 // monitor the keyBoard and update the direction of entitles
-                update();
+                updatePanel();
                 // draw entitles
                 repaint();
                 // store the time into lastTime
@@ -259,13 +266,6 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void drawPlayer(Graphics2D g2) {
         this.player.draw(g2);
-    }
-
-    /**
-     *
-     */
-    public void startTheWorld() {
-        this.encounterEnemy = false;
     }
 
     /**
@@ -290,7 +290,7 @@ public class GamePanel extends JPanel implements Runnable {
         boolean isCollisionCheck2;
         switch (entity.getDirection()) {
             case 'U' -> {
-                topRow -= entity.getSize() / UNIT_SIZE - 1;
+                topRow -= (entity.getSize() / UNIT_SIZE) - 1;
                 isCollisionCheck1 = this.tiles[this.encodedWorld[leftCol][topRow]].isCollision();
                 isCollisionCheck2 = this.tiles[this.encodedWorld[rightCol][topRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -306,7 +306,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             case 'L' -> {
-                leftCol -= entity.getSize() / UNIT_SIZE - 1;
+                leftCol -= (entity.getSize() / UNIT_SIZE) - 1;
                 isCollisionCheck1 = this.tiles[this.encodedWorld[leftCol][topRow]].isCollision();
                 isCollisionCheck2 = this.tiles[this.encodedWorld[leftCol][bottomRow]].isCollision();
                 if (isCollisionCheck1 || isCollisionCheck2) {
@@ -332,50 +332,50 @@ public class GamePanel extends JPanel implements Runnable {
      * @param enemies a list of enemy
      * @return the index of the encounteredEnemy. Return -1 if we haven't encountered any.
      */
-    public int checkAndGetEncounteredEnemyIndex(GameEntity player, Enemy[] enemies) {
+    public int checkAndGetEncounteredEnemyIndex(GameEntity player, ArrayList<GameEntity> enemies) {
         int index = -1;
-        for (int i=0; i<enemies.length; i++) {
+        for (int i=0; i<enemies.size(); i++) {
             player.getSolidArea().x += player.getWorldX();
             player.getSolidArea().y += player.getWorldY();
-            enemies[i].getSolidArea().x += enemies[i].getWorldX();
-            enemies[i].getSolidArea().y += enemies[i].getWorldY();
+            enemies.get(i).getSolidArea().x += enemies.get(i).getWorldX();
+            enemies.get(i).getSolidArea().y += enemies.get(i).getWorldY();
 
             switch (player.getDirection()) {
                 case 'U' -> {
-                    player.getSolidArea().y -= enemies[i].getSpeed();
-                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                    player.getSolidArea().y -= enemies.get(i).getSpeed();
+                    if (player.getSolidArea().intersects(enemies.get(i).getSolidArea())) {
                         player.setCollisionOn(true);
-                        enemies[i].setCollisionOn(true);
+                        enemies.get(i).setCollisionOn(true);
                         index = i;
                     }
                 }
                 case 'D' -> {
-                    player.getSolidArea().y += enemies[i].getSpeed();
-                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                    player.getSolidArea().y += enemies.get(i).getSpeed();
+                    if (player.getSolidArea().intersects(enemies.get(i).getSolidArea())) {
                         player.setCollisionOn(true);
-                        enemies[i].setCollisionOn(true);
+                        enemies.get(i).setCollisionOn(true);
                         index = i;
                     }
                 }
                 case 'L' -> {
-                    player.getSolidArea().x -= enemies[i].getSpeed();
-                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                    player.getSolidArea().x -= enemies.get(i).getSpeed();
+                    if (player.getSolidArea().intersects(enemies.get(i).getSolidArea())) {
                         player.setCollisionOn(true);
-                        enemies[i].setCollisionOn(true);
+                        enemies.get(i).setCollisionOn(true);
                         index = i;
                     }
                 }
                 case 'R' -> {
-                    player.getSolidArea().x += enemies[i].getSpeed();
-                    if (player.getSolidArea().intersects(enemies[i].getSolidArea())) {
+                    player.getSolidArea().x += enemies.get(i).getSpeed();
+                    if (player.getSolidArea().intersects(enemies.get(i).getSolidArea())) {
                         player.setCollisionOn(true);
-                        enemies[i].setCollisionOn(true);
+                        enemies.get(i).setCollisionOn(true);
                         index = i;
                     }
                 }
             }
             player.resetSolidArea();
-            enemies[i].resetSolidArea();
+            enemies.get(i).resetSolidArea();
 
         }
         return index;
@@ -393,14 +393,14 @@ public class GamePanel extends JPanel implements Runnable {
             case 'R' -> this.player.setDirection('R');
         }
         // check the collision
-        checkCollisionTile(this.player);
         int enemyIndex = checkAndGetEncounteredEnemyIndex(this.player, this.enemies);
         if (enemyIndex != -1) {
             this.encounterEnemy = true;
             this.encounteredEnemyIndex = enemyIndex;
         }
+        checkCollisionTile(this.player);
         // if no collision happened
-        if (!(this.player.isCollisionOn())) {
+        if (!this.player.isCollisionOn()) {
             switch (this.myKeyHandler.direction()) {
                 case 'U' -> this.player.moveUp();
                 case 'D' -> this.player.moveDown();
@@ -416,35 +416,39 @@ public class GamePanel extends JPanel implements Runnable {
      * Randomly move the enemy up/down/left/right
      */
     public void moveEnemy() {
-        for (Enemy e: this.enemies) {
+        for (GameEntity e: this.enemies) {
             e.incrementActionCounter();
             switch (e.getDirection()) {
-                case ('U'):
+                case ('U') -> {
                     checkCollisionTile(e);
                     if (!(e.isCollisionOn())) {
                         e.incrementSpriteCounter();
                         e.moveUp();
                     }
-                case ('D'):
+                }
+                case ('D') -> {
                     checkCollisionTile(e);
                     if (!(e.isCollisionOn())) {
                         e.incrementSpriteCounter();
                         e.moveDown();
                     }
-                case ('L'):
+                }
+                case ('L') -> {
                     checkCollisionTile(e);
                     if (!(e.isCollisionOn())) {
                         e.incrementSpriteCounter();
                         e.moveLeft();
                     }
-                case ('R'):
+                }
+                case ('R') -> {
                     checkCollisionTile(e);
                     if (!(e.isCollisionOn())) {
                         e.incrementSpriteCounter();
                         e.moveRight();
                     }
+                }
             }
-            if (e.getActionCounter() == 120) {
+            if (e.getActionCounter() == 100) {
                 Random random = new Random();
                 int i = random.nextInt(100) + 1;
                 if (i <= 25) {

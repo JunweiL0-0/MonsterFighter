@@ -173,6 +173,7 @@ public class MainScreen implements Observer {
 			updateGoldLabel();
 			updatePointLabel();
 			updateDaysLeftLabel();
+			updateBattleLeftLabel();
 		}
 		if (((GameController)o).isEncounteredBattle()) {
 			updateBottomMainPanel();
