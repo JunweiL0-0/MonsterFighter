@@ -9,6 +9,10 @@ import java.util.Collections;
 public class Team {
     private final int maxTeamMember;
     private final ArrayList<Monster> teamMember;
+    private final ArrayList<Monster> monsterBag;
+    private final ArrayList<Weapon> weaponBag;
+    private final ArrayList<Shield> shieldBag;
+    private final ArrayList<Medicine> medicineBag;
 
     /**
      * Team's constructor. The default teamSize is three.
@@ -17,6 +21,40 @@ public class Team {
     public Team(int maxTeamMember) {
         this.maxTeamMember = maxTeamMember;
         this.teamMember = new ArrayList<>();
+        this.monsterBag = new ArrayList<>();
+        this.weaponBag = new ArrayList<>();
+        this.shieldBag = new ArrayList<>();
+        this.medicineBag = new ArrayList<>();
+    }
+
+    public void addItemToMonsterBag(Monster m) {
+        this.monsterBag.add(m);
+    }
+
+    public void addItemToWeaponBag(Weapon w) {
+        this.weaponBag.add(w);
+    }
+
+    public void addItemToShieldBag(Shield s) {
+        this.shieldBag.add(s);
+    }
+
+    public void addItemToMedicineBag(Medicine m) {
+        this.medicineBag.add(m);
+    }
+
+    public ArrayList<Monster> getMonsterBag() {
+        return this.monsterBag;
+    }
+
+    public ArrayList<Weapon> getWeaponBag() {
+        return this.weaponBag;
+    }
+    public ArrayList<Shield> getShieldBag() {
+        return this.shieldBag;
+    }
+    public ArrayList<Medicine> getMedicineBag() {
+        return this.medicineBag;
     }
 
     /**
@@ -143,5 +181,55 @@ public class Team {
 
     public void renameMonsterByIndex(int monsterIndex, String newName) {
         this.teamMember.get(monsterIndex).setName(newName);
+    }
+
+    public int getMaxTeamMember() {
+        return this.maxTeamMember;
+    }
+
+    public boolean removeTeamMemberByIndex(int index) {
+        if (index > 0 && index < this.teamMember.size()) {
+            this.teamMember.remove(index);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getLeastHealthMonsterIndex() {
+        int index = -1;
+        int minHealth = Integer.MAX_VALUE;
+        for (int i=0; i<this.teamMember.size(); i++) {
+            if (this.teamMember.get(i).getCurrentHealth() < minHealth) {
+                index = i;
+                minHealth = this.teamMember.get(i).getCurrentHealth();
+            }
+        }
+        return index;
+    }
+
+    public void useItemForMonster(Weapon w, int monsterIndex) {
+        this.teamMember.get(monsterIndex).increaseDamage(w.getDmg());
+    }
+    public void useItemForMonster(Medicine m, int monsterIndex) {
+        this.teamMember.get(monsterIndex).healBy(m);
+    }
+    public void useItemForMonster(Shield s, int monsterIndex) {
+        this.teamMember.get(monsterIndex).increaseMaxHealth(s.getShield());
+    }
+
+    public void addBagMonsterToTeam(int bagMonsterIndex) {
+        if (this.teamMember.size() < this.maxTeamMember) {
+            this.teamMember.add(this.monsterBag.get(bagMonsterIndex));
+            this.monsterBag.remove(bagMonsterIndex);
+        } else {
+            int teamMonsterIndex = getLeastHealthMonsterIndex();
+            Monster monster = this.teamMember.get(teamMonsterIndex);
+            Monster readyToUseMonster = this.monsterBag.get(bagMonsterIndex);
+            this.teamMember.remove(teamMonsterIndex);
+            this.teamMember.add(readyToUseMonster);
+            this.monsterBag.add(monster);
+            this.monsterBag.remove(bagMonsterIndex);
+        }
     }
 }

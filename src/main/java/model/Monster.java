@@ -154,6 +154,10 @@ public class Monster extends GameItem {
     	this.currentHealth = Math.min(this.maxHealth, this.currentHealth + med.getEffect());
     }
 
+    public void increaseMaxHealth(int health) {
+        this.maxHealth += health;
+    }
+
     /**
      * Increase the Exp.
      *
@@ -175,6 +179,10 @@ public class Monster extends GameItem {
         this.damage += 50;
         this.maxHealth += 100;
         this.currentHealth += 100;
+    }
+
+    public void increaseDamage(int damage) {
+        this.damage += damage;
     }
 
     public void recover() {

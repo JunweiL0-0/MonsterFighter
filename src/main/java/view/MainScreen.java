@@ -66,7 +66,10 @@ public class MainScreen implements Observer {
 	
 	private JButton reorderConfirmBtn;
 	private JButton renameConfirmBtn;
-	private ArrayList<GameItem> bag;
+	private ArrayList<Monster> monsterBag;
+	private ArrayList<Medicine> medicineBag;
+	private ArrayList<Weapon> weaponBag;
+	private ArrayList<Shield> shieldBag;
 
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
@@ -81,12 +84,15 @@ public class MainScreen implements Observer {
 		this.centerPanelMap = new HashMap<>();
 		this.bottomPanelMap = new HashMap<>();
 		this.gc = gc;
-		this.shop = new Shop(gc);
+		this.shop = this.gc.getShop();
 		this.monsterButtons = new ArrayList<>();
 		this.weaponButtons = new ArrayList<>();
 		this.shieldButtons = new ArrayList<>();
 		this.medButtons = new ArrayList<>();
-		this.bag = new ArrayList<>();
+		this.monsterBag = this.gc.getMonsterBag();
+		this.weaponBag = this.gc.getWeaponBag();
+		this.shieldBag = this.gc.getShieldBag();
+		this.medicineBag = this.gc.getMedicineBag();
 		initialize();
 		// subscribe the gameController
 		this.gc.addObserver(this);
@@ -168,6 +174,12 @@ public class MainScreen implements Observer {
 	// observer
 	@Override
 	public void update(Observable o, Object arg) {
+		if (((GameController)o).isUpdateGold()) {
+			updateGoldLabel();
+		}
+		if (((GameController)o).isUpdatePoint()) {
+			updatePointLabel();
+		}
 		if (((GameController)o).isNextDay()) {
 			updateBottomMainPanel();
 			updateLeftPanel();
@@ -176,6 +188,7 @@ public class MainScreen implements Observer {
 			updatePointLabel();
 			updateDaysLeftLabel();
 			updateBattleLeftLabel();
+			updateBuyPanel();
 		}
 		if (((GameController)o).isEncounteredBattle()) {
 			updateBottomMainPanel();
@@ -203,7 +216,12 @@ public class MainScreen implements Observer {
 		if(((GameController)o).isRefreshAllPressed() || ((GameController)o).isNextDay()) {
 			updateBuyPanel();
 		}
+		if (((GameController)o).isUpdateBag()) {
+			updateBagPanel();
+			updateSellPanel();
+		}
 		if (((GameController)o).isGameOver()) {
+			updateCenterGameOverPanel();
 			showCenterPanel(CenterPanel.GAME_OVER);
 			showBottomPanel(BottomPanel.GAME_OVER);
 			for (Enumeration<AbstractButton> buttons = topGroup.getElements(); buttons.hasMoreElements();) {
@@ -212,6 +230,22 @@ public class MainScreen implements Observer {
 			}
 		}
 		System.out.println("Receive new update");
+	}
+
+	private void updateCenterGameOverPanel() {
+		JPanel gameOverPanel = centerPanelMap.get(CenterPanel.GAME_OVER);
+		gameOverPanel.removeAll();
+
+		gameOverPanel.setLayout(new GridLayout(4,1));
+		gameOverPanel.setBackground(Color.BLACK);
+		gameOverPanel.setBounds(120,70,560,280);
+
+		gameOverPanel.add(getGameOverLabel());
+		gameOverPanel.add(getFinalGoldLabel());
+		gameOverPanel.add(getFinalPointLabel());
+
+		gameOverPanel.revalidate();
+		gameOverPanel.repaint();
 	}
 
 	private void updateBattleLeftLabel() {
@@ -229,14 +263,144 @@ public class MainScreen implements Observer {
 	private void updateDaysLeftLabel() {
 		this.daysLeftLabel.setText("Days left: " + this.gc.getCurrentDay() + "/" + this.gc.getTotalDay());
 	}
+
+	private void updateSellPanel() {
+		JPanel sellPanel = centerPanelMap.get(CenterPanel.SELL);
+		sellPanel.removeAll();
+		sellPanel.add(getCenterPanelTitle("Sell Area"));
+		//Add all players item here automatically
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		panel.setPreferredSize(new Dimension(560,1000));
+		panel.setBackground(Color.black);
+
+		JPopupMenu popMenu = new JPopupMenu();
+
+		JMenuItem[] menuItem = new JMenuItem[5];
+		menuItem[0] = new JMenuItem("Sell");
+
+		popMenu.add(menuItem[0]);
+		// monster
+		for (int i = 0; i< this.gc.getMedicineBag().size() ;i++ ) {
+			Medicine item = this.gc.getMedicineBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMedicineRefundDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.sellItem(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getMonsterBag().size() ;i++ ) {
+			Monster item = this.gc.getMonsterBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMonsterRefundDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.sellItem(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getWeaponBag().size() ;i++ ) {
+			Weapon item = this.gc.getWeaponBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructWeaponRefundDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.sellItem(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getShieldBag().size() ;i++ ) {
+			Shield item = this.gc.getShieldBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructShieldRefundDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.sellItem(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		bagScrollPane.setBounds(0,41,560,240);
+		sellPanel.add(bagScrollPane);
+		sellPanel.add(getBackToShopBtn());
+
+		sellPanel.revalidate();
+		sellPanel.repaint();
+	}
 	
-	public void updateBagPanel() {
+	private void updateBagPanel() {
 		JPanel bagPanel = centerPanelMap.get(CenterPanel.BAG);
 		bagPanel.removeAll();
-		
 		// add component
 		bagPanel.add(getBagTitle());
-		
 		//Add all players item here automatically
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
@@ -250,29 +414,16 @@ public class MainScreen implements Observer {
 		
 		
 		popMenu.add(menuItem[0]);
-		
-		for (int i = 0; i< bag.size() ;i++ ) {
-			GameItem item = bag.get(i);
-			String type = item.getClass().getSimpleName();
+		// monster
+		for (int i = 0; i< this.gc.getMedicineBag().size() ;i++ ) {
+			Medicine item = this.gc.getMedicineBag().get(i);
 			JTextArea detail = getItemDetails();
-			if (type.equals("Monster")) {
-				detail.setText(constructMonsterDetail((Monster)item));
-				
-			} else if(type.equals("Weapon")) {
-				detail.setText(constructWeaponDetail((Weapon)item));
-				
-			} else if (type.equals("Shield")) {
-				detail.setText(constructShieldDetail((Shield)item));
-				
-			} else if (type.equals("Medicine")) {
-				detail.setText(constructMedicineDetail((Medicine)item));
-				
-			}
-			
+			detail.setText(constructMedicineDetail(item));
+			int finalI = i;
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(detail);
+						gc.useItemForMonster(item, finalI);
 					}
 				}
 				public void mousePressed(MouseEvent e) {
@@ -290,86 +441,165 @@ public class MainScreen implements Observer {
 				
 			});
 			panel.add(detail);
-			
 		}
-		
+		for (int i = 0; i< this.gc.getMonsterBag().size() ;i++ ) {
+			Monster item = this.gc.getMonsterBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMonsterDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.addBagMonsterToTeam(finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+
+		for (int i = 0; i< this.gc.getWeaponBag().size() ;i++ ) {
+			Weapon item = this.gc.getWeaponBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructWeaponDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.useItemForMonster(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getShieldBag().size() ;i++ ) {
+			Shield item = this.gc.getShieldBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructShieldDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.useItemForMonster(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
 		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		bagScrollPane.setBounds(0,41,560,240);
-		
-		
+
 		bagPanel.add(bagScrollPane);
 		
 		bagPanel.revalidate();
 		bagPanel.repaint();
-		
-		
 	}
 	
 	public void updateBuyPanel() {
 		JPanel buyPanel = centerPanelMap.get(CenterPanel.BUY);
 		buyPanel.removeAll();
+		this.monsterButtons = new ArrayList<>();
+		this.weaponButtons = new ArrayList<>();
+		this.shieldButtons = new ArrayList<>();
+		this.medButtons = new ArrayList<>();
+		// add component
+
 		buyPanel.add(getBuyTitle());
-		
-		
+
 		//panel to add to the JScrollPane
 		JPanel panel = getBigCenterPanel();
-				
-		//---------------------------------------------------------------------
+
+//----------------------------------------------------------------------
 		//monster label
 		JLabel monsterLabel = getItemLabel();
 		monsterLabel.setBounds(10, 0, 100, 40);
 		monsterLabel.setText("Monsters");
-		
-		//get panel to put details
+
 		JPanel monsterPanel = getMonsterBuyPanel();
-				
-		//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
 		//weapon label
 		JLabel weaponLabel = getItemLabel();
 		weaponLabel.setBounds(10, 180, 100, 40);
 		weaponLabel.setText("Weapon");
-		
+		//refresh button for weapon
+
 		JPanel weaponPanel = getWeaponBuyPanel();
-				
-		//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
 		//shield label
 		JLabel shieldLabel = getItemLabel();
 		shieldLabel.setBounds(10, 360, 100, 40);
 		shieldLabel.setText("Shield");
-				
+
 		JPanel shieldPanel = getShieldBuyPanel();
-				
-				
-		//----------------------------------------------------------------------
+
+
+//----------------------------------------------------------------------
 		//Potion label
 		JLabel medLabel = getItemLabel();
 		medLabel.setBounds(10, 540, 100, 40);
 		medLabel.setText("Potions");
-				
+
 		JPanel medPanel = getMedBuyPanel();
-				
-		//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
 
 		panel.add(monsterLabel);
 		panel.add(weaponLabel);
 		panel.add(shieldLabel);
 		panel.add(medLabel);
 
-		panel.add(monsterPanel);
 		panel.add(weaponPanel);
+		panel.add(monsterPanel);
 		panel.add(shieldPanel);
 		panel.add(medPanel);
-				
+
 		JScrollPane buyScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-				
+
 		buyScrollPane.setBounds(0,41,560,428);
-				
+
 		buyPanel.add(buyScrollPane);
-				
-				
 		buyPanel.add(getCenterPanelTitle("Buy Area"));
 		buyPanel.add(getBackToShopBtn());
-		
 		buyPanel.revalidate();
 		buyPanel.repaint();
 	}
@@ -396,7 +626,7 @@ public class MainScreen implements Observer {
 
 	private void updateRightPanel() {
 		this.rightPanel.removeAll();
-		if (this.gc.getBattleIndex() != -1) {
+		if (this.gc.getBattleIndex() != -1 && this.gc.battleLeft() > 0) {
 			Team enemyTeam = this.gc.getEnemyTeam();
 			// add enemyMonsterPanel
 			for (int i=0; i < enemyTeam.size(); i++) {
@@ -639,7 +869,7 @@ public class MainScreen implements Observer {
 		// add components to the panel
 		topLeftPanel.add(getPlayerNameLabel());
 		this.goldLabel = getGoldLabel();
-		topLeftPanel.add(this.getGoldLabel());
+		topLeftPanel.add(this.goldLabel);
 		this.pointLabel = getPointLabel();
 		topLeftPanel.add(this.pointLabel);
 		// return panel
@@ -889,21 +1119,9 @@ public class MainScreen implements Observer {
 	private JPanel getBottomBagPanel() {
 		// bottomBagPanel
 		JPanel bottomBagPanel = getNewBottomPanel();
-		
-		JButton useButton = new JButton();
-		useButton.setText("Equip");
-		useButton.setFont(new Font("Arial", Font.PLAIN, 25));
-		useButton.setBounds(305, 50, 210, 50);
-		useButton.setBackground(Color.BLACK);
-		useButton.setForeground(Color.WHITE);
-		useButton.setFocusable(false);
-		useButton.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		
-		bottomBagPanel.add(useButton);
 		// set it to not visible (Default)
 		bottomBagPanel.setVisible(false);
 		return bottomBagPanel;
-		
 	}
 
 	/**
@@ -946,7 +1164,7 @@ public class MainScreen implements Observer {
 		// bottomSettingsPanel
 		JPanel bottomSettingsPanel = getNewBottomPanel();
 		// add components to panel
-		bottomSettingsPanel.add(getSaveBtn());
+//		bottomSettingsPanel.add(getSaveBtn());
 		bottomSettingsPanel.add(getRestartBtn());
 		// set it to not visible (Default)
 		bottomSettingsPanel.setVisible(false);
@@ -1009,6 +1227,20 @@ public class MainScreen implements Observer {
 	private JPanel getBottomRenamePanel() {
 		JPanel bottomRenamePanel = getNewBottomPanel();
 		this.renameConfirmBtn = getRenameConfirmBtn();
+		JLabel renameMonsterIndexLabel = new JLabel("",SwingConstants.CENTER);
+		renameMonsterIndexLabel.setBounds(0,20,100,15);
+		renameMonsterIndexLabel.setForeground(Color.white);
+		renameMonsterIndexLabel.setFont(new Font("Arial",Font.BOLD, 15));
+		renameMonsterIndexLabel.setText("MonsterIndex");
+
+		JLabel newNameLabel = new JLabel("",SwingConstants.CENTER);
+		newNameLabel.setBounds(100,20,90,15);
+		newNameLabel.setForeground(Color.white);
+		newNameLabel.setFont(new Font("Arial",Font.BOLD, 15));
+		newNameLabel.setText("NewName");
+
+		bottomRenamePanel.add(renameMonsterIndexLabel);
+		bottomRenamePanel.add(newNameLabel);
 		bottomRenamePanel.add(this.renameConfirmBtn);
 		bottomRenamePanel.add(getRenameCancelBtn());
 		bottomRenamePanel.add(getRenameMonsterIndexTextField());
@@ -1250,39 +1482,24 @@ public class MainScreen implements Observer {
 		JPanel centerBagPanel = getNewCenterPanel();
 		// add component
 		centerBagPanel.add(getBagTitle());
-		
+
 		//Add all players item here automatically
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		panel.setPreferredSize(new Dimension(560,1000));
 		panel.setBackground(Color.black);
-		
+
 		JPopupMenu popMenu = new JPopupMenu();
-		
+
 		JMenuItem[] menuItem = new JMenuItem[5];
 		menuItem[0] = new JMenuItem("Use");
-		
-		
+
 		popMenu.add(menuItem[0]);
-		
-		for (int i = 0; i< bag.size() ;i++ ) {
-			GameItem item = bag.get(i);
-			String type = item.getClass().getSimpleName();
+		// monster
+		for (int i = 0; i< this.gc.getMedicineBag().size() ;i++ ) {
+			Medicine item = this.gc.getMedicineBag().get(i);
 			JTextArea detail = getItemDetails();
-			if (type.equals("Monster")) {
-				detail.setText(constructMonsterDetail((Monster)item));
-				
-			} else if(type.equals("Weapon")) {
-				detail.setText(constructWeaponDetail((Weapon)item));
-				
-			} else if (type.equals("Shield")) {
-				detail.setText(constructShieldDetail((Shield)item));
-				
-			} else if (type.equals("Medicine")) {
-				detail.setText(constructMedicineDetail((Medicine)item));
-				
-			}
-			
+			detail.setText(constructMedicineDetail(item));
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
@@ -1290,7 +1507,7 @@ public class MainScreen implements Observer {
 					}
 				}
 				public void mousePressed(MouseEvent e) {
-					
+
 				}
 				public void mouseReleased(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -1301,20 +1518,93 @@ public class MainScreen implements Observer {
 				public void mouseExited(MouseEvent e) {
 					// TODO Auto-generated method stub
 				}
-				
+
 			});
 			panel.add(detail);
-			
 		}
-		
+		for (int i = 0; i< this.gc.getMonsterBag().size() ;i++ ) {
+			Monster item = this.gc.getMonsterBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMonsterDetail(item));
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+
+		for (int i = 0; i< this.gc.getWeaponBag().size() ;i++ ) {
+			Weapon item = this.gc.getWeaponBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructWeaponDetail(item));
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getShieldBag().size() ;i++ ) {
+			Shield item = this.gc.getShieldBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructShieldDetail(item));
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						System.out.println(detail);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
 		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		bagScrollPane.setBounds(0,41,560,240);
-		
-		
+
 		centerBagPanel.add(bagScrollPane);
-		
-		// set it to not visible (Default)
-		centerBagPanel.setVisible(false);
 		return centerBagPanel;
 	}
 
@@ -1483,22 +1773,6 @@ public class MainScreen implements Observer {
 		return monsterName;
 	}
 
-	private JLabel getRenameMonsterIndexLabel() {
-		JLabel renameMonsterIndexLabel = new JLabel("", SwingConstants.CENTER);
-		renameMonsterIndexLabel.setText("RenameMonsterIndex ");
-		renameMonsterIndexLabel.setFont(new Font("Serif", Font.PLAIN, 15));
-		renameMonsterIndexLabel.setForeground(Color.WHITE);
-		return renameMonsterIndexLabel;
-	}
-
-	private JLabel getNewNameLabel() {
-		JLabel newNameLabel = new JLabel("", SwingConstants.CENTER);
-		newNameLabel.setText("New Name");
-		newNameLabel.setFont(new Font("Serif", Font.PLAIN, 15));
-		newNameLabel.setForeground(Color.WHITE);
-		return newNameLabel;
-	}
-
 	/**
 	 * Create and return a playerNameLabel.
 	 *
@@ -1560,7 +1834,6 @@ public class MainScreen implements Observer {
 		// return label
 		return daysLeftLabel;
 	}
-
 
 	private JLabel getGameOverLabel() {
 		// daysLeftLabel (TopPanel component)
@@ -1770,6 +2043,14 @@ public class MainScreen implements Observer {
 		restartBtn.setForeground(Color.WHITE);
 		restartBtn.setFocusable(false);
 		restartBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		// listener
+		restartBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				closeAndDestroyCurrentScreen();
+				gc.launchLandingScreen();
+			}
+		});
 		// return
 		return restartBtn;
 	}
@@ -2052,9 +2333,7 @@ public class MainScreen implements Observer {
 		shop.refreshShop();
 		JPanel buyPanel = getPanelForShop();
 		// add component
-
 		buyPanel.add(getBuyTitle());
-		
 		//panel to add to the JScrollPane
 		JPanel panel = getBigCenterPanel();
 		
@@ -2112,15 +2391,12 @@ public class MainScreen implements Observer {
 		buyScrollPane.setBounds(0,41,560,428);
 		
 		buyPanel.add(buyScrollPane);
-		
-		
 		buyPanel.add(getCenterPanelTitle("Buy Area"));
 		buyPanel.add(getBackToShopBtn());
 		
 		// set it to not visible (Default)
 		buyPanel.setVisible(false);
-		return buyPanel;	
-		
+		return buyPanel;
 	}
 
 	private void addFightBtnListener(JButton b) {
@@ -2181,6 +2457,130 @@ public class MainScreen implements Observer {
 		JPanel sellPanel = getPanelForShop();
 		// add component
 		sellPanel.add(getCenterPanelTitle("Sell Area"));
+		//Add all players item here automatically
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
+		panel.setPreferredSize(new Dimension(560,1000));
+		panel.setBackground(Color.black);
+
+		JPopupMenu popMenu = new JPopupMenu();
+
+		JMenuItem[] menuItem = new JMenuItem[5];
+		menuItem[0] = new JMenuItem("Sell");
+
+		popMenu.add(menuItem[0]);
+		// monster
+		for (int i = 0; i< this.gc.getMedicineBag().size() ;i++ ) {
+			Medicine item = this.gc.getMedicineBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMedicineDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.useItemForMonster(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getMonsterBag().size() ;i++ ) {
+			Monster item = this.gc.getMonsterBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructMonsterDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.addBagMonsterToTeam(finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getWeaponBag().size() ;i++ ) {
+			Weapon item = this.gc.getWeaponBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructWeaponDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.useItemForMonster(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		for (int i = 0; i< this.gc.getShieldBag().size() ;i++ ) {
+			Shield item = this.gc.getShieldBag().get(i);
+			JTextArea detail = getItemDetails();
+			detail.setText(constructShieldDetail(item));
+			int finalI = i;
+			detail.addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					if(SwingUtilities.isLeftMouseButton(e)) {
+						gc.useItemForMonster(item, finalI);
+					}
+				}
+				public void mousePressed(MouseEvent e) {
+
+				}
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+			});
+			panel.add(detail);
+		}
+		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		bagScrollPane.setBounds(0,41,560,240);
+
+		sellPanel.add(bagScrollPane);
+
 		sellPanel.add(getBackToShopBtn());
 		// set it to not visible (Default)
 		sellPanel.setVisible(false);
@@ -2270,6 +2670,26 @@ public class MainScreen implements Observer {
 		return String.format("     %s\nEffect: +%s HP\nPrice: "+meds.getPrice()+"\n\n\n       Potion",
 				meds.getName(), meds.getEffect());
 	}
+
+	private String constructMonsterRefundDetail(Monster monster) {
+		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nRefundPrice: "+monster.getRefundPrice()+"\n       Monster",
+				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
+	}
+
+	private String constructWeaponRefundDetail(Weapon weapon) {
+		return String.format("%s\nRarity: %s\nDamage: %s\nRefundPrice: "+weapon.getRefundPrice()+"\n\n      Weapon",
+				weapon.getName(), weapon.getRarityStr(), weapon.getDmg());
+	}
+
+	private String constructShieldRefundDetail(Shield shield) {
+		return String.format("%s\nRarity: %s\nShield: %s\nRefundPrice: "+shield.getRefundPrice()+"\n\n        Shield",
+				shield.getName(), shield.getRarityStr(), shield.getShield());
+	}
+
+	private String constructMedicineRefundDetail(Medicine meds) {
+		return String.format("     %s\nEffect: +%s HP\nRefundPrice: "+meds.getRefundPrice()+"\n\n\n       Potion",
+				meds.getName(), meds.getEffect());
+	}
 	
 //-------------------------------//-------------------------------//-------------------------------//-------------------------------
 //-------------------------------//-------------------------------//-------------------------------//-------------------------------
@@ -2332,7 +2752,7 @@ public class MainScreen implements Observer {
 		refreshAll.setBackground(Color.BLACK);
 		refreshAll.setFocusable(false);
 		refreshAll.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		refreshAll.addActionListener(new ActionListener() { 
+		refreshAll.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				  if (e.getSource() == refreshAll) {
@@ -2341,13 +2761,13 @@ public class MainScreen implements Observer {
 						  gc.setGold(gold);
 						  shop.refreshShop();
 						  gc.isAbleToRefreshAll();
-					  }else {
+					  } else {
 						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 					  }
 
 				  }
 
-			  } 
+			  }
 		} );
 		
 		buyTitle.add(refreshAll);
@@ -2404,6 +2824,15 @@ public class MainScreen implements Observer {
 		button.setFocusable(false);
 		return button;
 	}
+
+	private JButton getSellButtons() {
+		JButton button = new JButton();
+		button.setText("SELL");
+		button.setFont(new Font("Arial", Font.PLAIN, 10));
+		button.setPreferredSize(new Dimension(100,20));
+		button.setFocusable(false);
+		return button;
+	}
 	
 	private JTextArea getItemDetails() {
 		
@@ -2426,10 +2855,10 @@ public class MainScreen implements Observer {
 		
 		// add details to the panel one by one
 		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			GameItem monster = (Monster) shop.getMonstersForSell().get(indexInList);
+			Monster monster = (Monster) shop.getMonstersForSell().get(indexInList);
 			
 			JTextArea monsterDetail = getItemDetails();
-			monsterDetail.setText(constructMonsterDetail((Monster)monster));
+			monsterDetail.setText(constructMonsterDetail(monster));
 			monsterPanel.add(monsterDetail);
 		}
 				
@@ -2448,7 +2877,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
-							bag.add(shop.getMonstersForSell().get(innerI));
+							gc.addItemToBag((Monster) shop.getMonstersForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
@@ -2494,7 +2923,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice());
-							bag.add(shop.getWeaponsForSell().get(innerI));
+							gc.addItemToBag((Weapon) shop.getWeaponsForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
@@ -2542,7 +2971,7 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
-							bag.add(shop.getShieldsForSell().get(innerI));
+							gc.addItemToBag((Shield) shop.getShieldsForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
@@ -2592,11 +3021,10 @@ public class MainScreen implements Observer {
 					if (e.getSource() == button) {
 						if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
 							gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
-							bag.add(shop.getMedsForSell().get(innerI));
+							gc.addItemToBag((Medicine)shop.getMedsForSell().get(innerI));
 							button.setEnabled(false);
 							button.setText("SOLD");
 							updateBagPanel();
-
 						}else {
 							JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 						}

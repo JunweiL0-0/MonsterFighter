@@ -5,10 +5,12 @@ import main.java.utilities.Observable;
 import main.java.view.ChooseMonsterScreen;
 import main.java.view.LandingScreen;
 import main.java.view.MainScreen;
+import sun.misc.SignalHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * A java controller handling the game logic.
@@ -43,6 +45,9 @@ public class GameController extends Observable {
     private boolean isRefreshAllPressed;
     private boolean isNextDay;
     private boolean isGameOver;
+    private boolean isUpdateBag;
+    private boolean isUpdatePoint;
+    private boolean isUpdateGold;
 
 
     /**
@@ -67,6 +72,9 @@ public class GameController extends Observable {
         this.isRefreshAllPressed = false;
         this.isNextDay = false;
         this.isGameOver = false;
+        this.isUpdateBag = false;
+        this.isUpdatePoint = false;
+        this.isUpdateGold = false;
     }
 
     /**
@@ -112,9 +120,9 @@ public class GameController extends Observable {
 
     private void initGold() {
         if (isEasyMode()) {
-            this.gold = 100;
+            this.gold = 500;
         } else if (isHardMode()) {
-            this.gold = 200;
+            this.gold = 1000;
         }
     }
 
@@ -128,6 +136,10 @@ public class GameController extends Observable {
 
     public Team getEnemyTeam() {
         return this.battles.get(this.battleIndex);
+    }
+
+    public int battleLeft() {
+        return this.battles.size();
     }
 
     private void initBattles() {
@@ -238,9 +250,22 @@ public class GameController extends Observable {
         int prev_val = this.gold;
         this.gold = gold;
         if (prev_val != this.gold) {
+            this.isUpdateGold = true;
             setChanged();
             notifyObservers();
         }
+    }
+
+    public boolean isUpdateGold() {
+        boolean prevVal = this.isUpdateGold;
+        this.isUpdateGold = false;
+        return prevVal;
+    }
+
+    public boolean isUpdatePoint() {
+        boolean prevVal = this.isUpdatePoint;
+        this.isUpdatePoint = false;
+        return prevVal;
     }
 
     /**
@@ -252,9 +277,14 @@ public class GameController extends Observable {
         int prev_val = this.point;
         this.point = point;
         if (prev_val != this.point) {
+            this.isUpdatePoint = true;
             setChanged();
             notifyObservers();
         }
+    }
+
+    public Shop getShop() {
+        return this.shop;
     }
 
     /**
@@ -270,7 +300,7 @@ public class GameController extends Observable {
     }
 
     public void renameTeamMonsterByIndex(int monsterIndex, String newName) {
-        this.playerTeam.renameMonsterByIndex(monsterIndex-1, newName);
+        this.playerTeam.renameMonsterByIndex(monsterIndex, newName);
         this.isUpdateTeam = true;
         setChanged();
         notifyObservers();
@@ -351,6 +381,98 @@ public class GameController extends Observable {
         }
     }
 
+    public void addItemToBag(Monster m) {
+        this.playerTeam.addItemToMonsterBag(m);
+        this.isUpdateBag = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void addItemToBag(Weapon w) {
+        this.playerTeam.addItemToWeaponBag(w);
+        this.isUpdateBag = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void addItemToBag(Shield s) {
+        this.playerTeam.addItemToShieldBag(s);
+        this.isUpdateBag = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void addItemToBag(Medicine m) {
+        this.playerTeam.addItemToMedicineBag(m);
+        this.isUpdateBag = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void addBagMonsterToTeam(int bagMonsterIndex) {
+        this.playerTeam.addBagMonsterToTeam(bagMonsterIndex);
+        this.isUpdateTeam = true;
+        this.isUpdateBag = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public ArrayList<Monster> getMonsterBag() {
+        return this.playerTeam.getMonsterBag();
+    }
+
+    public ArrayList<Weapon> getWeaponBag() {
+        return this.playerTeam.getWeaponBag();
+    }
+    public ArrayList<Shield> getShieldBag() {
+        return this.playerTeam.getShieldBag();
+    }
+    public ArrayList<Medicine> getMedicineBag() {
+        return this.playerTeam.getMedicineBag();
+    }
+
+    public void sellItem(Monster m, int monsterIndex) {
+        this.gold += m.getRefundPrice();
+        this.playerTeam.getMonsterBag().remove(monsterIndex);
+        this.isUpdateBag = true;
+        this.isUpdateGold = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void sellItem(Medicine m, int medicineIndex) {
+        this.gold += m.getRefundPrice();
+        this.playerTeam.getMedicineBag().remove(medicineIndex);
+        this.isUpdateBag = true;
+        this.isUpdateGold = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void sellItem(Weapon w, int weaponIndex) {
+        this.gold += w.getRefundPrice();
+        this.playerTeam.getWeaponBag().remove(weaponIndex);
+        this.isUpdateBag = true;
+        this.isUpdateGold = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void sellItem(Shield s, int shieldIndex) {
+        this.gold += s.getRefundPrice();
+        this.playerTeam.getShieldBag().remove(shieldIndex);
+        this.isUpdateBag = true;
+        this.isUpdateGold = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public boolean isUpdateBag() {
+        boolean prevVal = this.isUpdateBag;
+        this.isUpdateBag = false;
+        return prevVal;
+    }
+
     public void existBattle() {
         this.battleField.endBattle();
         this.isUpdateTeam = true;
@@ -360,6 +482,7 @@ public class GameController extends Observable {
 
     public void nextDay() {
         if (this.currentDay < this.totalDay) {
+            randomEvent();
             this.battles.clear();
             initBattles();
             this.battleIndex = -1;
@@ -372,6 +495,24 @@ public class GameController extends Observable {
         }
         setChanged();
         notifyObservers();
+    }
+
+    private void randomEvent() {
+        Random rand = new Random();
+        if (rand.nextBoolean()) {
+            int eventId = rand.nextInt(3);
+            if (eventId == 0 && this.playerTeam.size() < this.playerTeam.getMaxTeamMember()) {
+                // new monster added
+                this.playerTeam.addMonsterToTeam(this.generateMonster());
+            } else if (eventId == 1 && this.playerTeam.size() > 0) {
+                // level up
+                this.playerTeam.getMonsterByIndex(rand.nextInt(this.playerTeam.size())).levelUp();
+            } else if (eventId == 2 && this.playerTeam.size() > 0) {
+                // monster leave
+                int monsterIndex = this.playerTeam.getLeastHealthMonsterIndex();
+                this.playerTeam.removeTeamMemberByIndex(monsterIndex);
+            }
+        }
     }
 
     public void battle() {
@@ -463,7 +604,37 @@ public class GameController extends Observable {
         this.isEnemyWon = false;
         return prevVal;
     }
-    
+
+    public void useItemForMonster(Weapon w, int itemIndex) {
+        Random rand = new Random();
+        this.playerTeam.useItemForMonster(w, rand.nextInt(this.playerTeam.size()));
+        this.playerTeam.getWeaponBag().remove(itemIndex);
+        this.isUpdateBag = true;
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+    public void useItemForMonster(Medicine m, int itemIndex) {
+        Random rand = new Random();
+        int monsterIndex = this.playerTeam.getLeastHealthMonsterIndex();
+        this.playerTeam.useItemForMonster(m, rand.nextInt(this.playerTeam.size()));
+        this.playerTeam.getMedicineBag().remove(itemIndex);
+        this.isUpdateBag = true;
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+    public void useItemForMonster(Shield s, int itemIndex) {
+        Random rand = new Random();
+        int monsterIndex = this.playerTeam.getFirstHealthMonsterIndex();
+        this.playerTeam.useItemForMonster(s, rand.nextInt(this.playerTeam.size()));
+        this.playerTeam.getShieldBag().remove(itemIndex);
+        this.isUpdateBag = true;
+        this.isUpdateTeam = true;
+        setChanged();
+        notifyObservers();
+    }
+
     public void isAbleToRefreshAll() {
     	this.isRefreshAllPressed = true;
     	setChanged();

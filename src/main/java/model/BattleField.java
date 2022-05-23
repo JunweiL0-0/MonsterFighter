@@ -52,6 +52,9 @@ public class BattleField {
         Monster attackMonster;
         Monster defenceMonster;
         boolean playerTurn = (this.round % 2) != 0;
+        if (enemyTeam.size() == 0 || playerTeam.size() == 0) {
+            return 0;
+        }
         if (playerTurn) {
             // if this is player's turn.
             defenceMonsterIndex = enemyTeam.getFirstHealthMonsterIndex();
@@ -78,10 +81,9 @@ public class BattleField {
         return this.battleResult;
     }
 
-    public int getBattleResult() {
-        return this.battleResult;
-    }
-
+    /**
+     * Reset the actionCounter in the teams. And set round/battleResult/playerTeam/enemyTeam
+     */
     public void endBattle() {
         for (Monster m: this.playerTeam.getTeamMember()) {
             m.resetActionCounter();
