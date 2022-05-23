@@ -199,7 +199,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.enemies = new ArrayList<>();
         this.currentTotalBattle = this.gc.getTotalBattle();
         for (int i=0; i<this.gc.getTotalBattle(); i++) {
-            this.enemies.add(new Enemy(PLAYER_DEFAULT_WORLD_X-(300*(i+1)), PLAYER_DEFAULT_WORLD_Y - 2, 1, UNIT_SIZE, this.player));
+            this.enemies.add(new Enemy(PLAYER_DEFAULT_WORLD_X-(150*(i+1)), PLAYER_DEFAULT_WORLD_Y - 2, 1, UNIT_SIZE, this.player));
         }
     }
 
