@@ -1,16 +1,11 @@
 package main.java.model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class WeaponGenerator {
-	private static final String IMAGEPATH = "src/main/java/image/weapon/";
-	
 	private String weaponName;
 	private String rarityStr;
 	

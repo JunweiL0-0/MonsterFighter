@@ -2,14 +2,12 @@ package main.java.utilities;
 
 import main.java.controller.GameController;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,9 +15,9 @@ import java.util.Random;
 public class GamePanel extends JPanel implements Runnable {
     // constant value
     // file paths
-    private static final String PLAYER_IMAGE_PATH = "src/main/java/image/player/";
-    private static final String TILE_IMAGE_PATH = "src/main/java/image/tile/";
-    private static final String WORLD_FILE_PATH = "src/main/java/utilities/map/world.txt";
+//    private static final String PLAYER_IMAGE_PATH = "src/main/java/image/player/";
+//    private static final String TILE_IMAGE_PATH = "src/main/java/image/tile/";
+    private static final String WORLD_FILE_PATH = "world.txt";
     private static final int MAX_WORLD_COL = 50;
     private static final int MAX_WORLD_ROW = 50;
     public static final int ORIGINAL_UNIT_SIZE = 16; // 16x16
@@ -113,9 +111,9 @@ public class GamePanel extends JPanel implements Runnable {
     private void loadEncodedWorld() {
         try {
             // load the map
-            File mapFile = new File(WORLD_FILE_PATH);
             // create a bufferedReader
-            BufferedReader br = new BufferedReader(new FileReader(mapFile));
+        	InputStream in = getClass().getResourceAsStream(WORLD_FILE_PATH);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             int col = 0;
             int row = 0;
             // while there is still some cols or rows left in the panel, we put the encoded integer into the 2D array
@@ -154,17 +152,37 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private void loadTile() {
 //        try {
+        BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+    	Graphics2D g2 = image.createGraphics();
+    	g2.setColor(new Color(85, 107, 47));
+    	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
         tiles[0] = new Tile(UNIT_SIZE);
-        tiles[0].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[0].setImage(image);
         tiles[1] = new Tile(UNIT_SIZE);
-        tiles[1].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
+        g2.setColor(new Color(0, 107, 47));
+    	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[1].setImage(image);
         tiles[2] = new Tile(UNIT_SIZE);
-        tiles[2].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
+        g2.setColor(new Color(153, 76, 0));
+    	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[2].setImage(image);
         tiles[3] = new Tile(UNIT_SIZE);
         tiles[3].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
         tiles[4] = new Tile(UNIT_SIZE);
-        tiles[4].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
+        g2.setColor(new Color(51, 153, 255));
+    	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[4].setImage(image);
         tiles[5] = new Tile(UNIT_SIZE);
+        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
+        g2.setColor(new Color(255, 153,255));
+    	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
         tiles[5].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
 //        } catch (IOException e) {
 //            System.out.println("Loading image error");
@@ -209,13 +227,17 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void getPlayerImage() {
 //        try {
-        this.player.setImageUp1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+    	Graphics2D g2 = image.createGraphics();
+    	g2.setColor(new Color(255, 255, 255));
+    	g2.fillRect(0, 0, PLAYER_SIZE*5, PLAYER_SIZE*5);
+        this.player.setImageUp1(image);
         this.player.setImageUp2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-        this.player.setImageDown1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageDown1(image);
         this.player.setImageDown2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-        this.player.setImageLeft1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageLeft1(image);
         this.player.setImageLeft2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-        this.player.setImageRight1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageRight1(image);
         this.player.setImageRight2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
 //        } catch(IOException e) {
 //            e.printStackTrace();

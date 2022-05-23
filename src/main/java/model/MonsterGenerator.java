@@ -1,9 +1,10 @@
 package main.java.model;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.util.*;
 
 
@@ -18,7 +19,6 @@ import java.util.*;
  * monster's will be the file(image) name.
  */
 public class MonsterGenerator {
-    private static final String IMAGEPATH = "src/main/java/image/monster/";
     // temporary variable for storing the image's name and assign it to the monster
     private String monsterName;
 
@@ -27,7 +27,7 @@ public class MonsterGenerator {
      * MonsterGenerator's constructor. Set monster's rarity and name.
      */
     public MonsterGenerator() {
-        this.monsterName = "DefaultMonsterName";
+        this.monsterName = "DefaultName";
     }
 
     public ArrayList<Monster> generateMonster(int numOfMonster) {
@@ -64,7 +64,6 @@ public class MonsterGenerator {
      *
      * @return a list of initMonster
      */
-    // TODO: ASSIGN NAME WITH THE IMAGE
     public ArrayList<Monster> generateInitialMonsters() {
         ArrayList<Monster> initMonsters = new ArrayList<>();
         Monster monster1 = new MonsterBuilderImpl()
@@ -189,7 +188,7 @@ public class MonsterGenerator {
     }
 
     private ImageIcon getImageIconForRarityRand(int rarity) {
-        Random r = new Random();
+//        Random r = new Random();
         // folder which contains monster's image
 //        InputStream in = getClass().getResourceAsStream(IMAGEPATH);
 //        assert in != null;
@@ -215,6 +214,9 @@ public class MonsterGenerator {
 //        }
         // create a blank image if we can't find any image
         BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+    	Graphics2D g2 = img.createGraphics();
+    	g2.setColor(new Color(255, 204, 255));
+    	g2.fillRect(0, 0, 48*5, 48*5);
         return new ImageIcon(img);
     }
 }

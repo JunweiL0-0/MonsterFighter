@@ -1,12 +1,10 @@
 package main.java.utilities;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 
 public class Enemy extends GameEntity {
-    private static final String ENEMY_IMAGE_PATH = "src/main/java/image/enemy/";
+//    private static final String ENEMY_IMAGE_PATH = "src/main/java/image/enemy/";
     private final GameEntity player;
 
     public Enemy(int worldX, int worldY, int speed, int size, GameEntity player) {
