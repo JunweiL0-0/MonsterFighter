@@ -152,22 +152,22 @@ public class GamePanel extends JPanel implements Runnable {
      * Load tile image from files and create Tile instances and store them into a list.
      */
     private void loadTile() {
-        try {
-            tiles[0] = new Tile(UNIT_SIZE);
-            tiles[0].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "grass.png")));
-            tiles[1] = new Tile(UNIT_SIZE);
-            tiles[1].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "earth.png")));
-            tiles[2] = new Tile(UNIT_SIZE);
-            tiles[2].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "water.png")));
-            tiles[3] = new Tile(UNIT_SIZE);
-            tiles[3].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "sand.png")));
-            tiles[4] = new Tile(UNIT_SIZE);
-            tiles[4].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "tree.png")));
-            tiles[5] = new Tile(UNIT_SIZE);
-            tiles[5].setImage(ImageIO.read(new File(TILE_IMAGE_PATH + "wall.png")));
-        } catch (IOException e) {
-            System.out.println("Loading image error");
-        }
+//        try {
+        tiles[0] = new Tile(UNIT_SIZE);
+        tiles[0].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[1] = new Tile(UNIT_SIZE);
+        tiles[1].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[2] = new Tile(UNIT_SIZE);
+        tiles[2].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[3] = new Tile(UNIT_SIZE);
+        tiles[3].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[4] = new Tile(UNIT_SIZE);
+        tiles[4].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        tiles[5] = new Tile(UNIT_SIZE);
+        tiles[5].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+//        } catch (IOException e) {
+//            System.out.println("Loading image error");
+//        }
     }
 
     /**
@@ -207,18 +207,18 @@ public class GamePanel extends JPanel implements Runnable {
      * Get and set the player's images. We can use these images to animate the running of player.
      */
     public void getPlayerImage() {
-        try {
-            this.player.setImageUp1(ImageIO.read(new File(PLAYER_IMAGE_PATH + "up1.png")));
-            this.player.setImageUp2(ImageIO.read(new File(PLAYER_IMAGE_PATH + "up2.png")));
-            this.player.setImageDown1(ImageIO.read(new File(PLAYER_IMAGE_PATH + "down1.png")));
-            this.player.setImageDown2(ImageIO.read(new File(PLAYER_IMAGE_PATH + "down2.png")));
-            this.player.setImageLeft1(ImageIO.read(new File(PLAYER_IMAGE_PATH + "left1.png")));
-            this.player.setImageLeft2(ImageIO.read(new File(PLAYER_IMAGE_PATH + "left2.png")));
-            this.player.setImageRight1(ImageIO.read(new File(PLAYER_IMAGE_PATH + "right1.png")));
-            this.player.setImageRight2(ImageIO.read(new File(PLAYER_IMAGE_PATH + "right2.png")));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+        this.player.setImageUp1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageUp2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageDown1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageDown2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageLeft1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageLeft2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageRight1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        this.player.setImageRight2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**

@@ -19,18 +19,18 @@ public class Enemy extends GameEntity {
     }
 
     public void getEnemyImage() {
-        try {
-            setImageUp1(ImageIO.read(new File(ENEMY_IMAGE_PATH + "up1.png")));
-            setImageUp2(ImageIO.read(new File(ENEMY_IMAGE_PATH + "up2.png")));
-            setImageDown1(ImageIO.read(new File(ENEMY_IMAGE_PATH + "down1.png")));
-            setImageDown2(ImageIO.read(new File(ENEMY_IMAGE_PATH + "down2.png")));
-            setImageLeft1(ImageIO.read(new File(ENEMY_IMAGE_PATH + "left1.png")));
-            setImageLeft2(ImageIO.read(new File(ENEMY_IMAGE_PATH + "left2.png")));
-            setImageRight1(ImageIO.read(new File(ENEMY_IMAGE_PATH + "right1.png")));
-            setImageRight2(ImageIO.read(new File(ENEMY_IMAGE_PATH + "right2.png")));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+        setImageUp1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageUp2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageDown1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageDown2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageLeft1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageLeft2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageRight1(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+        setImageRight2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void draw(Graphics2D g2) {

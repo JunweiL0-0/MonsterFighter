@@ -108,28 +108,28 @@ public class WeaponGenerator {
     }
 	
 	private ImageIcon getImageIconForRarityRand(int rarity) {
-        Random r = new Random();
-        // folder which contains monster's image
-        File imageFolder = new File(IMAGEPATH+rarity);
-        // extract all files in that folder and store them into a list.
-        File[] images = imageFolder.listFiles();
-        if (images != null) {
-            try {
-                // randomly get a imageFile
-                File imageFile = images[r.nextInt(images.length)];
-                // get imageFile's name
-                String imageFileName = imageFile.getName();
-                // remove extension and add it save it
-                // add an if statement to handle the error(File does not contain any extension)
-                if(imageFileName.contains(".")) {
-                    this.weaponName = imageFileName.substring(0, imageFileName.lastIndexOf('.'));
-                }
-                return new ImageIcon(ImageIO.read(imageFile));
-            } catch (IOException e) {
-                // this exception will occur if the IO stream can not be established.
-                e.printStackTrace();
-            }
-        }
+//        Random r = new Random();
+//        // folder which contains monster's image
+//        File imageFolder = new File(IMAGEPATH+rarity);
+//        // extract all files in that folder and store them into a list.
+//        File[] images = imageFolder.listFiles();
+//        if (images != null) {
+//            try {
+//                // randomly get a imageFile
+//                File imageFile = images[r.nextInt(images.length)];
+//                // get imageFile's name
+//                String imageFileName = imageFile.getName();
+//                // remove extension and add it save it
+//                // add an if statement to handle the error(File does not contain any extension)
+//                if(imageFileName.contains(".")) {
+//                    this.weaponName = imageFileName.substring(0, imageFileName.lastIndexOf('.'));
+//                }
+//                return new ImageIcon(ImageIO.read(imageFile));
+//            } catch (IOException e) {
+//                // this exception will occur if the IO stream can not be established.
+//                e.printStackTrace();
+//            }
+//        }
         // create a blank image if we can't find any image
         BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
         return new ImageIcon(img);
