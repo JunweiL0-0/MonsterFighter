@@ -524,8 +524,10 @@ public class GameController extends Observable {
             this.point += 100;
             this.battles.remove(this.battleIndex);
             this.battleIndex = -1;
+            existBattle();
         } else if (result == (-1)) {
             this.isEnemyWon = true;
+            enterBattle();
         } else {
             this.isBattleOccur = true;
         }
