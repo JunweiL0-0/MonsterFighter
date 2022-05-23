@@ -232,4 +232,10 @@ public class Team {
             this.monsterBag.remove(bagMonsterIndex);
         }
     }
+    public void emptybag() {
+    	this.monsterBag.clear();
+    	this.medicineBag.clear();
+    	this.monsterBag.clear();
+    	this.weaponBag.clear();
+    }
 }

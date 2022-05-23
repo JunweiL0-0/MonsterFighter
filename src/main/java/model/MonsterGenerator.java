@@ -128,7 +128,26 @@ public class MonsterGenerator {
      * @return an integer which representing monster's price
      */
     private int getPriceRand(int rarity) {
-        return (int)(Math.random() * rarity * 300 + 1);
+    	double price = -1;
+		if (rarity == 1) {
+			price = ((new Random()).nextInt(10, 30))*0.01 * rarity * 200;
+			
+		}else if (rarity == 2){
+			price = ((new Random()).nextInt(31, 50))*0.01* rarity * 200;
+
+		}else if (rarity ==3) {
+			price = ((new Random()).nextInt(51, 70))* 0.01 * rarity * 200;
+			
+		}else if (rarity == 4) {
+			price = ((new Random()).nextInt(71, 80)) * 0.01 * rarity * 200;
+			
+		}else if (rarity == 5) {
+			price = ((new Random()).nextInt(81,90))*0.01 * rarity * 200;
+		}else if (rarity == 6) {
+			price = ((new Random()).nextInt(91,100))*0.01 * rarity * 200;
+		}
+		
+		return (int)price;
     }
 
     /**
@@ -148,7 +167,26 @@ public class MonsterGenerator {
      * @return an integer which representing monster's Damage
      */
     private int getDamageRand(int rarity) {
-        return (int)(Math.random() * rarity * 300 + 1);
+    	double dmg = -1;
+		if (rarity == 1) {
+			dmg = ((new Random()).nextInt(10, 30))*0.01 * rarity * 100;
+			
+		}else if (rarity == 2){
+			dmg = ((new Random()).nextInt(31, 50))*0.01* rarity * 100;
+
+		}else if (rarity ==3) {
+			dmg = ((new Random()).nextInt(51, 70))* 0.01 * rarity * 100;
+			
+		}else if (rarity == 4) {
+			dmg = ((new Random()).nextInt(71, 80)) * 0.01 * rarity * 100;
+			
+		}else if (rarity == 5) {
+			dmg = ((new Random()).nextInt(81,90))*0.01 * rarity * 100;
+		}
+		else if(rarity == 6) {
+			dmg = ((new Random()).nextInt(91,100))*0.01 * rarity * 100;
+		}
+		return (int)dmg;
     }
 
     private ImageIcon getImageIconForRarityRand(int rarity) {

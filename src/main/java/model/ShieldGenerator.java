@@ -85,25 +85,25 @@ private static final String IMAGEPATH = "src/main/java/image/shieds/";
     }
 	
 	private int getShield(int rarity) {
-		double dmg = -1;
+		double shd = -1;
 		if (rarity == 1) {
-			dmg = ((new Random()).nextInt(10, 30))*0.01 * rarity * 100;
+			shd = ((new Random()).nextInt(10, 30))*0.01 * rarity * 100;
 			
 		}else if (rarity == 2){
-			dmg = ((new Random()).nextInt(31, 50))*0.01* rarity * 100;
+			shd = ((new Random()).nextInt(31, 50))*0.01* rarity * 100;
 
 		}else if (rarity ==3) {
-			dmg = ((new Random()).nextInt(51, 70))* 0.01 * rarity * 100;
+			shd = ((new Random()).nextInt(51, 70))* 0.01 * rarity * 100;
 			
 		}else if (rarity == 4) {
-			dmg = ((new Random()).nextInt(71, 80)) * 0.01 * rarity * 100;
+			shd = ((new Random()).nextInt(71, 80)) * 0.01 * rarity * 100;
 			
 		}else if (rarity == 5) {
-			dmg = ((new Random()).nextInt(81,100))*0.01 * rarity * 100;
+			shd = ((new Random()).nextInt(81,100))*0.01 * rarity * 100;
 			
 		}
 		
-		return (int)dmg;
+		return (int)shd;
         
     }
 	

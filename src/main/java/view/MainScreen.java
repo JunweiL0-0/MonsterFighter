@@ -979,7 +979,7 @@ public class MainScreen implements Observer {
 	}
 
 	private JLabel getMonsterDamageAndShieldLabel(Monster monster) {
-		JLabel damageAndShield = new JLabel("DMG: " + monster.getDamage() + "    SHD: N");
+		JLabel damageAndShield = new JLabel("DMG: " + monster.getDamage());
 		damageAndShield.setBounds(2, 85, 128, 10);
 		damageAndShield.setForeground(Color.white);
 		return damageAndShield;
@@ -1119,6 +1119,27 @@ public class MainScreen implements Observer {
 	private JPanel getBottomBagPanel() {
 		// bottomBagPanel
 		JPanel bottomBagPanel = getNewBottomPanel();
+		
+		JButton bagInfo = new JButton();
+		bagInfo.setText("Bag Info");
+		bagInfo.setFont(new Font("Serif", Font.PLAIN, 30));
+		bagInfo.setForeground(Color.WHITE);
+		bagInfo.setBounds(200,47,150,50);
+		bagInfo.setBackground(Color.BLACK);
+		bagInfo.setFocusable(false);
+		bagInfo.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		bagInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == bagInfo) {
+					JOptionPane.showMessageDialog(mainFrame, "Click Monster to randomly insert on the main team.\n"
+							+ "Shield will increase the Max Health of a Monster randomly.\n"
+							+ "Weapon will increase the damage of a random monster.\n"
+							+ "Potion will recover the health of a Monster in your team.","Bag Info", JOptionPane.INFORMATION_MESSAGE );
+				}
+			}
+			
+		});
+		bottomBagPanel.add(bagInfo);
 		// set it to not visible (Default)
 		bottomBagPanel.setVisible(false);
 		return bottomBagPanel;
@@ -1138,7 +1159,7 @@ public class MainScreen implements Observer {
 		text.setForeground(Color.white);
 		text.setBackground(Color.black);
 		text.setFont(new Font("Serif",Font.PLAIN,20));
-		text.setBounds(20,15,400,40);
+		text.setBounds(20,15,450,40);
 		text.setEditable(false);
 		
 		JToggleButton buyButton = getBuyBtn();
@@ -1228,13 +1249,13 @@ public class MainScreen implements Observer {
 		JPanel bottomRenamePanel = getNewBottomPanel();
 		this.renameConfirmBtn = getRenameConfirmBtn();
 		JLabel renameMonsterIndexLabel = new JLabel("",SwingConstants.CENTER);
-		renameMonsterIndexLabel.setBounds(0,20,100,15);
+		renameMonsterIndexLabel.setBounds(0,20,130,15);
 		renameMonsterIndexLabel.setForeground(Color.white);
 		renameMonsterIndexLabel.setFont(new Font("Arial",Font.BOLD, 15));
-		renameMonsterIndexLabel.setText("MonsterIndex");
+		renameMonsterIndexLabel.setText("MonsterOrder#");
 
 		JLabel newNameLabel = new JLabel("",SwingConstants.CENTER);
-		newNameLabel.setBounds(100,20,90,15);
+		newNameLabel.setBounds(130,20,120,15);
 		newNameLabel.setForeground(Color.white);
 		newNameLabel.setFont(new Font("Arial",Font.BOLD, 15));
 		newNameLabel.setText("NewName");
@@ -1255,7 +1276,7 @@ public class MainScreen implements Observer {
 		symbol.setFont(new Font("Serif",Font.PLAIN,20));
 		symbol.setForeground(Color.white);
 		symbol.setBackground(Color.black);
-		symbol.setBounds(70, 60, 50, 75);
+		symbol.setBounds(80, 48, 50, 75);
 		symbol.setEditable(false);
 		return symbol;
 	}
@@ -1280,7 +1301,7 @@ public class MainScreen implements Observer {
 		JTextField textField = new JTextField();
 		// remove border
 		textField.setBorder(BorderFactory.createEmptyBorder());
-		textField.setBounds(120, 50, 50, 50);
+		textField.setBounds(140, 50, 100, 50);
 		textField.setHorizontalAlignment(JTextField.CENTER);
 		textField.setColumns(1);
 		textField.setBorder(null);
@@ -1294,7 +1315,7 @@ public class MainScreen implements Observer {
 		JTextField textField = new JTextField();
 		// remove border
 		textField.setBorder(BorderFactory.createEmptyBorder());
-		textField.setBounds(20, 50, 50, 50);
+		textField.setBounds(30, 50, 50, 50);
 		textField.setHorizontalAlignment(JTextField.CENTER);
 		textField.setColumns(1);
 		textField.setBorder(null);
@@ -1620,7 +1641,7 @@ public class MainScreen implements Observer {
 		title.setFont(new Font("Serif",Font.PLAIN,30));
 		title.setForeground(Color.white);
 		title.setBackground(Color.black);
-		title.setBounds(175, 75, 210, 75);
+		title.setBounds(150, 75, 300, 100);
 		title.setEditable(false);
 		
 		centerShopPanel.add(title);
@@ -2038,7 +2059,7 @@ public class MainScreen implements Observer {
 		JButton restartBtn = new JButton();
 		restartBtn.setText("Restart");
 		restartBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		restartBtn.setBounds(305, 50, 210, 50);
+		restartBtn.setBounds(165, 50, 210, 50);
 		restartBtn.setBackground(Color.BLACK);
 		restartBtn.setForeground(Color.WHITE);
 		restartBtn.setFocusable(false);
@@ -2173,7 +2194,7 @@ public class MainScreen implements Observer {
 
 	private JButton getExistBattleBtn() {
 		JButton existBattleBtn = new JButton();
-		existBattleBtn.setText("Exist");
+		existBattleBtn.setText("Exit");
 		existBattleBtn.setFont(new Font("Arial", Font.PLAIN, 25));
 		existBattleBtn.setBounds(45, 50, 210, 50);
 		existBattleBtn.setBackground(Color.BLACK);
@@ -2672,22 +2693,22 @@ public class MainScreen implements Observer {
 	}
 
 	private String constructMonsterRefundDetail(Monster monster) {
-		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nRefundPrice: "+monster.getRefundPrice()+"\n       Monster",
+		return String.format("%s\nHealth: %d\nDamage: %d\nLevel: %d\nSell: "+monster.getRefundPrice()+" G\n       Monster",
 				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 
 	private String constructWeaponRefundDetail(Weapon weapon) {
-		return String.format("%s\nRarity: %s\nDamage: %s\nRefundPrice: "+weapon.getRefundPrice()+"\n\n      Weapon",
+		return String.format("%s\nRarity: %s\nDamage: %s\nSell: "+weapon.getRefundPrice()+" G\n\n      Weapon",
 				weapon.getName(), weapon.getRarityStr(), weapon.getDmg());
 	}
 
 	private String constructShieldRefundDetail(Shield shield) {
-		return String.format("%s\nRarity: %s\nShield: %s\nRefundPrice: "+shield.getRefundPrice()+"\n\n        Shield",
+		return String.format("%s\nRarity: %s\nShield: %s\nSell: "+shield.getRefundPrice()+" G\n\n        Shield",
 				shield.getName(), shield.getRarityStr(), shield.getShield());
 	}
 
 	private String constructMedicineRefundDetail(Medicine meds) {
-		return String.format("     %s\nEffect: +%s HP\nRefundPrice: "+meds.getRefundPrice()+"\n\n\n       Potion",
+		return String.format("     %s\nEffect: +%s HP\nSell: "+meds.getRefundPrice()+" G\n\n\n       Potion",
 				meds.getName(), meds.getEffect());
 	}
 	
@@ -2707,7 +2728,7 @@ public class MainScreen implements Observer {
 		
 		
 		JButton backButton = getBackButton();
-		backButton.setText("Close Bag");
+		backButton.setText("Close");
 		backButton.setBounds(10,10,80,20);
 		
 		buyTitle.add(backButton);

@@ -95,6 +95,10 @@ public class GameController extends Observable {
      * Launch a new chooseMonsterScreen
      */
     public void launchChooseMonsterScreen() {
+    	this.playerTeam.getTeamMember().clear();
+    	this.playerTeam.emptybag();
+    	this.battles.clear();
+    	this.battleIndex = -1;
         new ChooseMonsterScreen(this);
     }
 
@@ -122,7 +126,7 @@ public class GameController extends Observable {
         if (isEasyMode()) {
             this.gold = 500;
         } else if (isHardMode()) {
-            this.gold = 1000;
+            this.gold = 200;
         }
     }
 
@@ -519,8 +523,11 @@ public class GameController extends Observable {
         // 1: player won, -1: enemy Won, 0: nobody won yet
         int result = this.battleField.battle();
         if (result == 1) {
+        	for (Monster monster :playerTeam.getTeamMember()) {
+        		monster.incrementExpBy(50);
+        	}
             this.isPlayerWon = true;
-            this.gold += 50;
+            this.gold += 100;
             this.point += 100;
             this.battles.remove(this.battleIndex);
             this.battleIndex = -1;
