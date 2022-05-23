@@ -1,12 +1,9 @@
 package main.java.utilities;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 public class Enemy extends GameEntity {
     private static final String ENEMY_IMAGE_PATH = "src/main/java/image/enemy/";
@@ -34,7 +31,6 @@ public class Enemy extends GameEntity {
     }
 
     public void draw(Graphics2D g2) {
-        BufferedImage image = null;
         int screenX = getWorldX() - this.player.getWorldX() + this.player.getScreenX();
         int screenY = getWorldY() - this.player.getWorldY() + this.player.getScreenY();
         setScreenX(screenX);

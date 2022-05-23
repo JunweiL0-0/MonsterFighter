@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+@SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable {
     // constant value
     // file paths
@@ -240,7 +241,6 @@ public class GamePanel extends JPanel implements Runnable {
      */
     @Override
     public void run() {
-        double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
         // run this game as long as the gameThread exist
