@@ -5,10 +5,7 @@ import main.java.utilities.Observable;
 import main.java.view.ChooseMonsterScreen;
 import main.java.view.LandingScreen;
 import main.java.view.MainScreen;
-import sun.misc.SignalHandler;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -36,8 +33,6 @@ public class GameController extends Observable {
     // used for observers
     private boolean isEncounteredBattle;
     private boolean isUpdateTeam;
-    private boolean isAbleToStartFight;
-    private boolean isAbleToReorderTeam;
     private boolean isUpdateEnemyTeam;
     private boolean isBattleOccur;
     private boolean isPlayerWon;
@@ -65,8 +60,6 @@ public class GameController extends Observable {
         this.battleIndex = -1;
         this.isEncounteredBattle = false;
         this.isUpdateTeam = false;
-        this.isAbleToStartFight = false;
-        this.isAbleToReorderTeam = false;
         this.isUpdateEnemyTeam = false;
         this.isBattleOccur = false;
         this.isRefreshAllPressed = false;
@@ -625,7 +618,6 @@ public class GameController extends Observable {
     }
     public void useItemForMonster(Medicine m, int itemIndex) {
         Random rand = new Random();
-        int monsterIndex = this.playerTeam.getLeastHealthMonsterIndex();
         this.playerTeam.useItemForMonster(m, rand.nextInt(this.playerTeam.size()));
         this.playerTeam.getMedicineBag().remove(itemIndex);
         this.isUpdateBag = true;
@@ -635,7 +627,6 @@ public class GameController extends Observable {
     }
     public void useItemForMonster(Shield s, int itemIndex) {
         Random rand = new Random();
-        int monsterIndex = this.playerTeam.getFirstHealthMonsterIndex();
         this.playerTeam.useItemForMonster(s, rand.nextInt(this.playerTeam.size()));
         this.playerTeam.getShieldBag().remove(itemIndex);
         this.isUpdateBag = true;

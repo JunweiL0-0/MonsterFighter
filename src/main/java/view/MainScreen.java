@@ -66,11 +66,6 @@ public class MainScreen implements Observer {
 	
 	private JButton reorderConfirmBtn;
 	private JButton renameConfirmBtn;
-	private ArrayList<Monster> monsterBag;
-	private ArrayList<Medicine> medicineBag;
-	private ArrayList<Weapon> weaponBag;
-	private ArrayList<Shield> shieldBag;
-
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
 	 *
@@ -89,10 +84,10 @@ public class MainScreen implements Observer {
 		this.weaponButtons = new ArrayList<>();
 		this.shieldButtons = new ArrayList<>();
 		this.medButtons = new ArrayList<>();
-		this.monsterBag = this.gc.getMonsterBag();
-		this.weaponBag = this.gc.getWeaponBag();
-		this.shieldBag = this.gc.getShieldBag();
-		this.medicineBag = this.gc.getMedicineBag();
+		this.gc.getMonsterBag();
+		this.gc.getWeaponBag();
+		this.gc.getShieldBag();
+		this.gc.getMedicineBag();
 		initialize();
 		// subscribe the gameController
 		this.gc.addObserver(this);
@@ -1192,16 +1187,6 @@ public class MainScreen implements Observer {
 		return bottomSettingsPanel;
 	}
 
-	private JPanel getBottomFightConfirmPanel() {
-		// bottomFightConfirmPanel
-		JPanel bottomFightConfirmPanel = getNewBottomPanel();
-		// add components to panel
-		bottomFightConfirmPanel.add(getFightBtn());
-		// set it to not visible (Default)
-		bottomFightConfirmPanel.setVisible(false);
-		return bottomFightConfirmPanel;
-	}
-
 	private JPanel getBottomBattlePanel() {
 		// bottom
 		JPanel bottomBattlePanel = getNewBottomPanel();
@@ -1678,27 +1663,6 @@ public class MainScreen implements Observer {
 		return centerBattlePanel;
 	}
 
-	/* JTextPane */
-	/**
-	 * This function will create and return a textPane so that we can display information on the bottomMainPanel.
-	 *
-	 * @return a textPane(JTextPane)
-	 */
-	private JTextPane getBottomMainTextPane() {
-		// textPane (bottomMainPanel component)
-		// textPane for displaying text
-		JTextPane textPane = new JTextPane();
-		textPane.setText("Welcome Player!");
-		textPane.setForeground(Color.WHITE);
-		textPane.setBackground(Color.BLACK);
-		textPane.setFont(new Font("Serif", Font.PLAIN, 25));
-		// as bottomPanel has border. We increase x and y by 3. Decrease Width and height accordingly.
-		textPane.setBounds(3,3,554,112);
-		textPane.setEditable(false);
-		// return statement
-		return textPane;
-	}
-
 	/* JLabel */
 	/**
 	 * Create and return the name label for player monster.
@@ -1919,27 +1883,6 @@ public class MainScreen implements Observer {
 		return titleLabel;
 	}
 
-	/* JButton */
-	/**
-	 * Create and return a ContinueBtn for bottomMainPanel
-	 *
-	 * @return a continueBtn(JButton)
-	 */
-	private JButton getContinueButton() {
-		// **************
-		// *  Continue  *
-		// **************
-		// continue button (bottomMainPanel component)
-		JButton continueButton = new JButton();
-		continueButton.setText("Continue");
-		continueButton.setBounds(420, 115, 120, 25);
-		continueButton.setBackground(Color.WHITE);
-		continueButton.setForeground(Color.BLACK);
-		continueButton.setFocusable(false);
-		// return continueBtn
-		return continueButton;
-	}
-
 	/**
 	 * Create and return a backBtn. MainPanel/BottomMainPanel will be shown once this btn in being clicked.
 	 *
@@ -2001,25 +1944,6 @@ public class MainScreen implements Observer {
 		bindToggleButtonToShopPanel(sellBtn, CenterPanel.SELL);
 		// return
 		return sellBtn;
-	}
-
-	/**
-	 * Create and return a saveBtn for BottomSettingsPanel.
-	 *
-	 * @return a saveBtn(JButton)
-	 */
-	private JButton getSaveBtn() {
-		// create a saveBtn (BottomSettingsPanel component)
-		JButton saveBtn = new JButton();
-		saveBtn.setText("Save");
-		saveBtn.setFont(new Font("Arial", Font.PLAIN, 25));
-		saveBtn.setBounds(45, 50, 210, 50);
-		saveBtn.setBackground(Color.BLACK);
-		saveBtn.setForeground(Color.WHITE);
-		saveBtn.setFocusable(false);
-		saveBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		// return
-		return saveBtn;
 	}
 
 	private JButton getNextDayBtn() {
@@ -2846,15 +2770,6 @@ public class MainScreen implements Observer {
 		return button;
 	}
 
-	private JButton getSellButtons() {
-		JButton button = new JButton();
-		button.setText("SELL");
-		button.setFont(new Font("Arial", Font.PLAIN, 10));
-		button.setPreferredSize(new Dimension(100,20));
-		button.setFocusable(false);
-		return button;
-	}
-	
 	private JTextArea getItemDetails() {
 		
 		JTextArea detail = new JTextArea();
