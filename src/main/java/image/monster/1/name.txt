@@ -1,0 +1,12 @@
+anubis.png
+bottled-shadow.png
+brain-tentacle.png
+brute.png
+bullet-bill.png
+bully-minion.png
+daemon-pull.png
+devil-mask.png
+djinn.png
+fairy.png
+slime.png
+unicorn.png

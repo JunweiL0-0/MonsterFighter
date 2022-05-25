@@ -1,10 +1,15 @@
 package main.java.model;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 
@@ -13,7 +18,7 @@ import java.util.*;
  * <br>
  * Note: When constructing a monster, we have to fetch the image first! Otherwise, the monster's name will be random.
  * <br>
- * Note: The rarity level should be consistence with the amount of folder we have in image/monster.
+ * Note: The rarity level should be consistency with the amount of folder we have in image/monster.
  * <br>
  * Note: If you want to add a new monster into the game. Place its image in the image/monster, the new constructed
  * monster's will be the file(image) name.
@@ -30,6 +35,13 @@ public class MonsterGenerator {
         this.monsterName = "DefaultName";
     }
 
+    /**
+     * This is an overloaded method for generateMonster. 
+     * If an integer is being passed in while calling this method. It will generate monster(s) and return an arrayList.
+     * 
+     * @param numOfMonster the amount of monster
+     * @return an arrayList which contains the generated(randomly) monsters.
+     */
     public ArrayList<Monster> generateMonster(int numOfMonster) {
         ArrayList<Monster> monsters = new ArrayList<>();
         for (int i=0; i<numOfMonster; i++) {
@@ -60,7 +72,7 @@ public class MonsterGenerator {
     }
 
     /**
-     * This function is aim to generate the initMonsters to be selected by player at the very first of the game.
+     * This function is aim to generate the initMonsters to be selected by player at the very begining of the game.
      *
      * @return a list of initMonster
      */
@@ -188,35 +200,51 @@ public class MonsterGenerator {
     }
 
     private ImageIcon getImageIconForRarityRand(int rarity) {
-//        Random r = new Random();
-        // folder which contains monster's image
-//        InputStream in = getClass().getResourceAsStream(IMAGEPATH);
-//        assert in != null;
-//        InputStream in = getClass().getResourceAsStream(IMAGEPATH);
-//        BufferedReader reader = new BufferedImage(new InputStreamReader(in));
+    	Random r = new Random();
+    	// create an arrayList for adding the monsterNameFile
+    	ArrayList<String> monsterNameFiles = new ArrayList<>();
+		try {
+			// name.txt contains all the monster's image file name. We read it line by line and store the name into the arrayList
+			InputStream in = getClass().getResourceAsStream("/main/java/image/monster/" + rarity + "/name.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String nameFile = reader.readLine();
+			while (nameFile != null) {
+				monsterNameFiles.add(nameFile);
+				// read next line
+				nameFile = reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// if we have any monster image files
+		if (monsterNameFiles.size() > 0) {
+			String selectedNameFile = monsterNameFiles.get(r.nextInt(0, monsterNameFiles.size()));
+			try {
+				BufferedImage monsterImage = ImageIO.read(getClass().getResourceAsStream("/main/java/image/monster/" + rarity + "/" + selectedNameFile));
+				// remove file extension and assign the file name to the monster
+				this.monsterName = selectedNameFile.substring(0, selectedNameFile.lastIndexOf("."));
+				return new ImageIcon(monsterImage);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Monster image file" + selectedNameFile + " not found");
+				// create a blank image if we can't find any image
+		        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+		    	Graphics2D g2 = img.createGraphics();
+		    	g2.setColor(new Color(255, 204, 255));
+		    	g2.fillRect(0, 0, 48*5, 48*5);
+		    	this.monsterName = "DefaultName";
+		        return new ImageIcon(img);
 
-//        if (images != null) {
-//            try {
-//                // randomly get a imageFile
-//                File imageFile = images[r.nextInt(images.length)];
-//                // get imageFile's name
-//                String imageFileName = imageFile.getName();
-//                // remove extension and add it save it
-//                // add an if statement to handle the error(File does not contain any extension)
-//                if(imageFileName.contains(".")) {
-//                    this.monsterName = imageFileName.substring(0, imageFileName.lastIndexOf('.'));
-//                }
-//                return new ImageIcon(ImageIO.read(imageFile));
-//            } catch (IOException e) {
-//                // this exception will occur if the IO stream can not be established.
-//                e.printStackTrace();
-//            }
-//        }
-        // create a blank image if we can't find any image
-        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-    	Graphics2D g2 = img.createGraphics();
-    	g2.setColor(new Color(255, 204, 255));
-    	g2.fillRect(0, 0, 48*5, 48*5);
-        return new ImageIcon(img);
+			} 
+		} else {
+	        // create a blank image if we can't find any image
+	        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+	    	Graphics2D g2 = img.createGraphics();
+	    	g2.setColor(new Color(255, 204, 255));
+	    	g2.fillRect(0, 0, 48*5, 48*5);
+	    	this.monsterName = "DefaultName";
+	        return new ImageIcon(img);
+		}
     }
 }

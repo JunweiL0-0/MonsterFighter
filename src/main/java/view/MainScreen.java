@@ -224,7 +224,6 @@ public class MainScreen implements Observer {
 				button.setEnabled(false);
 			}
 		}
-		System.out.println("Receive new update");
 	}
 
 	private void updateCenterGameOverPanel() {
@@ -1722,11 +1721,12 @@ public class MainScreen implements Observer {
 	private JProgressBar getMonsterExpBar(Monster monster) {
 		JProgressBar expBar = new JProgressBar(0,100);
 		expBar.setBounds(20,65,90,10);
+		expBar.setValue(monster.getExp());
 		expBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
 		expBar.setForeground(Color.white);
 		expBar.setBackground(Color.black);
-		expBar.setString(Integer.toString(monster.getCurrentHealth()));
-		
+		expBar.setString(monster.getExp() + "/" + monster.getMaxExp());
+		expBar.setStringPainted(true);
 		return expBar;
 	}
 	

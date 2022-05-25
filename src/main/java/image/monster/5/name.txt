@@ -1,0 +1,4 @@
+beast-eye.png
+behold.png
+diablo-skull.png
+dinosaur-bones.png

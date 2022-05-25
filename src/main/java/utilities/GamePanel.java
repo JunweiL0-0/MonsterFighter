@@ -11,13 +11,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
+
+/**
+ * This is the gamePanel which is designed for animate enemies and player's movement on the screen.
+ * This gamePanel will result another thread and the panel will be repaint on 80 Hz frequency.
+ * The height and weight of this panel is being fixed but you can change the location of the panel. (X-axis, Y-axis)
+ * Functions which are being driven by thread should be set to public.
+ * PanelFeature: Notify the gameController when player encounter enemy. Check collision. Custom the amount of enemies on the screen.
+ */
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable {
-    // constant value
     // file paths
-//    private static final String PLAYER_IMAGE_PATH = "src/main/java/image/player/";
-//    private static final String TILE_IMAGE_PATH = "src/main/java/image/tile/";
     private static final String WORLD_FILE_PATH = "world.txt";
+    // constant value
     private static final int MAX_WORLD_COL = 50;
     private static final int MAX_WORLD_ROW = 50;
     public static final int ORIGINAL_UNIT_SIZE = 16; // 16x16
@@ -148,45 +154,52 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Load tile image from files and create Tile instances and store them into a list.
+     * Assign colors to tiles and add them to the tiles list
      */
     private void loadTile() {
-//        try {
+    	// create an empty image
         BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        // create a "pencil" to draw on the image
     	Graphics2D g2 = image.createGraphics();
+    	// set and fill the image with rgb color value
     	g2.setColor(new Color(85, 107, 47));
     	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+    	// color for tile 0
         tiles[0] = new Tile(UNIT_SIZE);
         tiles[0].setImage(image);
-        tiles[1] = new Tile(UNIT_SIZE);
+        // color for tile 1
         image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-        g2 = image.createGraphics();
+    	g2 = image.createGraphics();
         g2.setColor(new Color(0, 107, 47));
     	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[1] = new Tile(UNIT_SIZE);
         tiles[1].setImage(image);
-        tiles[2] = new Tile(UNIT_SIZE);
+        // color for tile 2
         image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-        g2 = image.createGraphics();
+    	g2 = image.createGraphics();
         g2.setColor(new Color(153, 76, 0));
     	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[2] = new Tile(UNIT_SIZE);
         tiles[2].setImage(image);
+        // color for tile 3
+        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+    	g2 = image.createGraphics();
         tiles[3] = new Tile(UNIT_SIZE);
         tiles[3].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-        tiles[4] = new Tile(UNIT_SIZE);
+        // color for tile 4
         image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-        g2 = image.createGraphics();
+    	g2 = image.createGraphics();
         g2.setColor(new Color(51, 153, 255));
     	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[4] = new Tile(UNIT_SIZE);
         tiles[4].setImage(image);
-        tiles[5] = new Tile(UNIT_SIZE);
+        // color for tile 5
         image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-        g2 = image.createGraphics();
+    	g2 = image.createGraphics();
         g2.setColor(new Color(255, 153,255));
     	g2.fillRect(0, 0, UNIT_SIZE*4, UNIT_SIZE*4);
+        tiles[5] = new Tile(UNIT_SIZE);
         tiles[5].setImage(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-//        } catch (IOException e) {
-//            System.out.println("Loading image error");
-//        }
     }
 
     /**
@@ -200,7 +213,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Load world/tileImage/ from file and set the collision for tiles.
+     * Load world/tileImage/ and set the collision for tiles.
      */
     private void initWorld() {
         // load world from file
@@ -226,11 +239,12 @@ public class GamePanel extends JPanel implements Runnable {
      * Get and set the player's images. We can use these images to animate the running of player.
      */
     public void getPlayerImage() {
-//        try {
+    	// create a white image
         BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
     	Graphics2D g2 = image.createGraphics();
     	g2.setColor(new Color(255, 255, 255));
     	g2.fillRect(0, 0, PLAYER_SIZE*5, PLAYER_SIZE*5);
+    	// set player's images with black and white images and this will result a blinking object on the screen)
         this.player.setImageUp1(image);
         this.player.setImageUp2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
         this.player.setImageDown1(image);
@@ -239,9 +253,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.player.setImageLeft2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
         this.player.setImageRight1(image);
         this.player.setImageRight2(new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB));
-//        } catch(IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     /**

@@ -10,6 +10,7 @@ public class Monster extends GameItem {
     private int currentHealth;
     private int damage;
     private int level;
+    private int maxExp;
     private int exp;
     private int actionCounter;
     private ImageIcon imageIcon;
@@ -34,6 +35,7 @@ public class Monster extends GameItem {
         this.level = level;
         this.imageIcon = icon;
         this.actionCounter = 0;
+        this.maxExp = 100;
         this.exp = 0;
     }
 
@@ -169,6 +171,14 @@ public class Monster extends GameItem {
             this.exp = 0;
             levelUp();
         }
+    }
+    
+    public int getExp() {
+    	return this.exp;
+    }
+    
+    public int getMaxExp() {
+    	return this.maxExp;
     }
 
     /**

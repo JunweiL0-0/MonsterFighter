@@ -1,0 +1,6 @@
+bad-gnome.png
+fomorian.png
+medusa-head.png
+transparent-slime.png
+tree-face.png
+witch-face.png

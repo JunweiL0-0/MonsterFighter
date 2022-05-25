@@ -1,0 +1,10 @@
+griffin-symbol.png
+hydra.png
+ice-golem.png
+kenku-head.png
+mermaid.png
+shambling-mound.png
+sharp-smile.png
+spiked-dragon-head.png
+unfriendly-fire.png
+werewolf.png

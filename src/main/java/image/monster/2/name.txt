@@ -1,0 +1,3 @@
+centaur.png
+rock-golem.png
+sasquatch.png

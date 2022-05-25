@@ -1,0 +1,8 @@
+bestial-fangs.png
+cracked-alien-skull.png
+cyclops.png
+daemon-skull.png
+dinosaur-egg.png
+dinosaur-rex.png
+double-dragon.png
+dragon-head.png
