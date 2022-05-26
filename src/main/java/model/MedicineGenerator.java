@@ -78,10 +78,4 @@ public class MedicineGenerator {
         }
 		return rarity;
 	}
-//	private String getMedName() {
-//		return this.medicineName;
-//	}
-//	private int getMedEffect() {
-//		return this.effect;
-//	}
 }

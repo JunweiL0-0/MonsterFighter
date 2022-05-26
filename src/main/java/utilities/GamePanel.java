@@ -19,7 +19,6 @@ import java.util.Random;
  * Functions which are being driven by thread should be set to public.
  * PanelFeature: Notify the gameController when player encounter enemy. Check collision. Custom the amount of enemies on the screen.
  */
-@SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable {
     // file paths
     private static final String WORLD_FILE_PATH = "world.txt";
@@ -52,6 +51,13 @@ public class GamePanel extends JPanel implements Runnable {
     private int currentTotalBattle;
 
 
+    /**
+     * The constructor of the gamePanel
+     *
+     * @param x the x-axis of the gamePanel
+     * @param y the y-axis of the gamePanel
+     * @param gc the gameController
+     */
     public GamePanel(int x, int y, GameController gc) {
         this.currentTotalBattle = 0;
         this.myKeyHandler = new MyKeyHandler();
@@ -90,9 +96,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
+     * Pint the component on the screen so that the player can interact with our system
      *
-     *
-     * @param g
+     * @param g you can think this like a pencil
      */
     public void paintComponent(Graphics g) {
         // this will be called by the rePaint()
@@ -107,6 +113,9 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose(); // dispose of this g2 and release system resources
     }
 
+    /**
+     * Place the player into the screen and init his position and load image.
+     */
     private void initPlayer() {
         this.player = new GameEntity(PLAYER_DEFAULT_WORLD_X, PLAYER_DEFAULT_WORLD_Y,  PLAYER_SPEED, PLAYER_SIZE);
         this.player.setScreenX(GamePanel.PLAYER_SCREEN_X);
@@ -114,6 +123,9 @@ public class GamePanel extends JPanel implements Runnable {
         getPlayerImage();
     }
 
+    /**
+     * Load the world.txt and put the encodedWorld into a list.
+     */
     private void loadEncodedWorld() {
         try {
             // load the map
@@ -555,9 +567,5 @@ public class GamePanel extends JPanel implements Runnable {
                 row++;
             }
         }
-    }
-
-    public void playerWon() {
-        this.enemies.remove(this.encounteredEnemyIndex);
     }
 }

@@ -121,6 +121,11 @@ public class GameController extends Observable {
         return this.currentDay;
     }
 
+    /**
+     * Return the shop instance the gameController has.
+     *
+     * @return a shop instance.
+     */
     public Shop getShop() {
         return this.shop;
     }
@@ -847,7 +852,7 @@ public class GameController extends Observable {
      */
     public void launchChooseMonsterScreen() {
         this.playerTeam.getTeamMember().clear();
-        this.playerTeam.emptybag();
+        this.playerTeam.emptyBag();
         this.battles.clear();
         this.battleIndex = -1;
         new ChooseMonsterScreen(this);

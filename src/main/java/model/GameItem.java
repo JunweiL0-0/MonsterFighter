@@ -18,6 +18,7 @@ public class GameItem {
      * The constructor for GameItems.
      * @param name Item's name
      * @param price Item's price
+     * @param rarity Item's rarity
      */
     public GameItem(String name, int price, int rarity) {
         this.name = name;
