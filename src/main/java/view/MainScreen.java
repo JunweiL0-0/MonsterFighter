@@ -569,7 +569,7 @@ public class MainScreen implements Observer {
 //----------------------------------------------------------------------
 		//monster label
 		JLabel monsterLabel = getItemLabel();
-		monsterLabel.setBounds(10, 0, 100, 40);
+		monsterLabel.setBounds(10, 0, 110, 40);
 		monsterLabel.setText("Monsters");
 
 		JPanel monsterPanel = getMonsterBuyPanel();
@@ -613,9 +613,13 @@ public class MainScreen implements Observer {
 		panel.add(medPanel);
 
 		JScrollPane buyScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			   public void run() { 
+			       buyScrollPane.getVerticalScrollBar().setValue(0);
+			   }
+			});
 		buyScrollPane.setBounds(0,41,560,428);
-
+		
 		buyPanel.add(buyScrollPane);
 		buyPanel.add(getCenterPanelTitle("Buy Area"));
 		buyPanel.add(getBackToShopBtn());
@@ -684,6 +688,7 @@ public class MainScreen implements Observer {
 				panel.add(getMonsterLevelLabel(monster));
 				panel.add(getLabelWithMonsterImage(monster));
 				panel.add(autoResizeFont(getMonsterHealthLabel()));
+				panel.add(getCurrentExpBarDetails(monster));
 				panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
 				panel.add(autoResizeFont(getExpLabel()));
 				panel.add(getMonsterHealthBar(monster));
@@ -945,6 +950,7 @@ public class MainScreen implements Observer {
 				panel.add(getLabelWithMonsterImage(monster));
 				panel.add(autoResizeFont(getMonsterHealthLabel()));
 				panel.add(getCurrentHealthBarDetails(monster));
+				panel.add(getCurrentExpBarDetails(monster));
 				panel.add(autoResizeFont(getMonsterDamageAndShieldLabel(monster)));
 				panel.add(autoResizeFont(getExpLabel()));
 				panel.add(getMonsterHealthBar(monster));
@@ -958,10 +964,11 @@ public class MainScreen implements Observer {
 		}
 		return leftPanel;
 	}
+	
 	public JButton getRemoveButton(int index) {
 		JButton button = new JButton();
 		button.setText("remove");
-		button.setFont(new Font("Serif", Font.PLAIN, 15));
+		button.setFont(new Font("Serif", Font.PLAIN, 10));
 		button.setForeground(Color.WHITE);
 		button.setBounds(60,80,50,17);
 		button.setBackground(Color.BLACK);
@@ -1173,7 +1180,7 @@ public class MainScreen implements Observer {
 		bagInfo.addActionListener(e -> {
 			if (e.getSource() == bagInfo) {
 				JOptionPane.showMessageDialog(mainFrame, """
-						Click Monster to randomly insert on the main team.
+						Ensure that Slots are not full before adding to the main slots.
 						Shield will increase the Max Health of a Monster randomly.
 						Weapon will increase the damage of a random monster.
 						Potion will recover the health of a Monster in your team.""","Bag Info", JOptionPane.INFORMATION_MESSAGE );
@@ -1645,10 +1652,20 @@ public class MainScreen implements Observer {
 		JLabel currentHealth = new JLabel("",SwingConstants.CENTER);
 		currentHealth.setBounds(20,46,90,9);
 		currentHealth.setForeground(Color.white);
-		currentHealth.setFont(new Font("Arial",Font.BOLD, 9));
+		currentHealth.setFont(new Font("Arial",Font.PLAIN, 9));
 		currentHealth.setText(monster.getCurrentHealth()+"/"+monster.getMaxHealth());
 		
 		return currentHealth;
+	}
+	
+	private JLabel getCurrentExpBarDetails(Monster monster) {
+		JLabel currentExp = new JLabel("",SwingConstants.CENTER);
+		currentExp.setBounds(20,66,90,9);
+		currentExp.setForeground(Color.white);
+		currentExp.setFont(new Font("Arial",Font.PLAIN, 9));
+		currentExp.setText(monster.getExp() + "/" + monster.getMaxExp());
+		
+		return currentExp;
 	}
 	
 	/*JProgressBar */
@@ -1663,10 +1680,9 @@ public class MainScreen implements Observer {
 		expBar.setBounds(20,65,90,10);
 		expBar.setValue(monster.getExp());
 		expBar.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.white));
-		expBar.setForeground(Color.white);
+		expBar.setForeground(Color.gray);
 		expBar.setBackground(Color.black);
-		expBar.setString(monster.getExp() + "/" + monster.getMaxExp());
-		expBar.setStringPainted(true);
+		
 		return expBar;
 	}
 	
@@ -2219,7 +2235,7 @@ public class MainScreen implements Observer {
 //----------------------------------------------------------------------
 		//monster label
 		JLabel monsterLabel = getItemLabel();
-		monsterLabel.setBounds(10, 0, 100, 40);
+		monsterLabel.setBounds(10, 0, 110, 40);
 		monsterLabel.setText("Monsters");
 		
 		JPanel monsterPanel = getMonsterBuyPanel();
@@ -2266,7 +2282,11 @@ public class MainScreen implements Observer {
 		
 
 		JScrollPane buyScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			   public void run() { 
+			       buyScrollPane.getVerticalScrollBar().setValue(0);
+			   }
+			});
 		buyScrollPane.setBounds(0,41,560,428);
 		
 		buyPanel.add(buyScrollPane);

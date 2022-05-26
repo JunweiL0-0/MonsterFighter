@@ -361,6 +361,9 @@ public class ChooseMonsterScreen {
 				monster.getName(), monster.getMaxHealth(), monster.getDamage(), monster.getLevel());
 	}
 
+	/**
+	 * Store the selected monsters to the gameController.
+	 */
 	private void storeSelectedMonsters() {
 		for (int i=0; i<this.monsterButtons.size(); i++) {
 			if (this.monsterButtons.get(i).isSelected()) {
