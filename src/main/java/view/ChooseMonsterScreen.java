@@ -15,7 +15,7 @@ public class ChooseMonsterScreen {
 	private final GameController gc;
 	private ArrayList<Monster> availableMonsters;
 	public ArrayList<Monster> selectedMonsters;
-	private ArrayList<JToggleButton> monsterButtons;
+	private final ArrayList<JToggleButton> monsterButtons;
 	// swing components
 	private JFrame chooseFrame;
 	private JButton confirmButton;
@@ -170,6 +170,8 @@ public class ChooseMonsterScreen {
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
 		button.setPreferredSize(new Dimension(144,100));
 		button.setFocusable(false);
+		button.setBackground(Color.BLACK);
+		button.setForeground(Color.BLACK);
 		// Listeners
 		button.addActionListener(actionEvent -> validateSelection());
 		return button;

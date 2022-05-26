@@ -3,6 +3,9 @@ package main.java.utilities;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * The entity on the gamePanel.
+ */
 public class GameEntity {
     private final int speed;
     private final int size;
@@ -56,6 +59,9 @@ public class GameEntity {
         this.actionCounter = 0;
     }
 
+    /**
+     * Reset the solid area to default
+     */
     public void resetSolidArea() {
         this.solidArea.x = SOLID_AREA_DEFAULT_X;
         this.solidArea.y = SOLID_AREA_DEFAULT_Y;
@@ -63,92 +69,231 @@ public class GameEntity {
         this.solidArea.height = SOLID_AREA_DEFAULT_HEIGHT;
     }
 
+    /**
+     * Return the entity's y-axis in the world
+     *
+     * @return an integer represent the y-axis of the entity
+     */
     public int getWorldY() {
         return this.worldY;
     }
 
+    /**
+     * Return the entity's x-axis in the world
+     *
+     * @return an integer represent the x-axis of the entity
+     */
     public int getWorldX() {
         return this.worldX;
     }
 
+    /**
+     * Return the entity's speed
+     *
+     * @return an integer represent the speed of the entity
+     */
     public int getSpeed() {
         return this.speed;
     }
 
+    /**
+     * Return the size of the entity
+     *
+     * @return an integer represent the entity's size
+     */
     public int getSize() {
         return this.size;
     }
 
+    /**
+     * Return the direction of the entity
+     *
+     * @return a char represent the entity's direction
+     */
     public char getDirection() {
         return this.direction;
     }
 
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageUp1(BufferedImage image) {
         this.up1 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageUp2(BufferedImage image) {
         this.up2 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageDown1(BufferedImage image) {
         this.down1 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageDown2(BufferedImage image) {
         this.down2 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageLeft1(BufferedImage image) {
         this.left1= image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageLeft2(BufferedImage image) {
         this.left2 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageRight1(BufferedImage image) {
         this.right1 = image;
     }
+
+    /**
+     * Set the image of the entity.
+     *
+     * @param image an image which will be used to animate the movement of the entity
+     */
     public void setImageRight2(BufferedImage image) {
         this.right2 = image;
     }
-    public void setWorldX(int x) {
-        this.worldX = x;
-    }
-    public void setWorldY(int y) {
-        this.worldY = y;
-    }
+
+    /**
+     * Set the collision to true if the collision is being detected. Otherwise, false.
+     *
+     * @param val a boolean represent whether there is a collision happens.
+     */
     public void setCollisionOn(boolean val) {
         this.collisionOn = val;
     }
+
+    /**
+     * Set the direction of the entity.
+     *
+     * @param direction a char value represent the direction of the entity
+     */
     public void setDirection(char direction) {
         this.direction = direction;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageUp1() {
         return this.up1;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageUp2() {
         return this.up2;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageDown1() {
         return this.down1;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageDown2() {
         return this.down2;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageLeft1() {
         return this.left1;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageLeft2() {
         return this.left2;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageRight1() {
         return this.right1;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public BufferedImage getImageRight2() {
         return this.right2;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public Rectangle getSolidArea() {
         return this.solidArea;
     }
+
+    /**
+     * Return the image of the entity. The image will be used to animate the movement of the entity.
+     *
+     * @return an image
+     */
     public int getSpriteNum() {
         return spriteNum;
     }
+
     public int getSpriteCounter() {
         return this.spriteCounter;
     }
