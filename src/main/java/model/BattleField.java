@@ -55,20 +55,26 @@ public class BattleField {
         if (enemyTeam.size() == 0 || playerTeam.size() == 0) {
             return 0;
         }
-        if (playerTurn) {
-            // if this is player's turn.
-            defenceMonsterIndex = enemyTeam.getFirstHealthMonsterIndex();
-            attackMonsterIndex = playerTeam.getLeastActionCounterMonsterIndex();
-            defenceMonster = enemyTeam.getMonsterByIndex(defenceMonsterIndex);
-            attackMonster = playerTeam.getMonsterByIndex(attackMonsterIndex);
-            defenceMonster.harmBy(attackMonster.getDamage());
+        if (this.playerTeam.isAllFainted()) {
+            return -1;
+        } else if (this.enemyTeam.isAllFainted()) {
+            return 1;
         } else {
-            // if this is enemy's turn
-            defenceMonsterIndex = playerTeam.getFirstHealthMonsterIndex();
-            attackMonsterIndex = enemyTeam.getLeastActionCounterMonsterIndex();
-            defenceMonster = playerTeam.getMonsterByIndex(defenceMonsterIndex);
-            attackMonster = enemyTeam.getMonsterByIndex(attackMonsterIndex);
-            defenceMonster.harmBy(attackMonster.getDamage());
+	        if (playerTurn) {
+	            // if this is player's turn.
+	            defenceMonsterIndex = enemyTeam.getFirstHealthMonsterIndex();
+	            attackMonsterIndex = playerTeam.getLeastActionCounterMonsterIndex();
+	            defenceMonster = enemyTeam.getMonsterByIndex(defenceMonsterIndex);
+	            attackMonster = playerTeam.getMonsterByIndex(attackMonsterIndex);
+	            defenceMonster.harmBy(attackMonster.getDamage());
+	        } else {
+	            // if this is enemy's turn
+	            defenceMonsterIndex = playerTeam.getFirstHealthMonsterIndex();
+	            attackMonsterIndex = enemyTeam.getLeastActionCounterMonsterIndex();
+	            defenceMonster = playerTeam.getMonsterByIndex(defenceMonsterIndex);
+	            attackMonster = enemyTeam.getMonsterByIndex(attackMonsterIndex);
+	            defenceMonster.harmBy(attackMonster.getDamage());
+	        }
         }
         this.round++;
         if (this.playerTeam.isAllFainted()) {
