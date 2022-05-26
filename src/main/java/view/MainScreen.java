@@ -22,11 +22,15 @@ import main.java.utilities.Observer;
 import main.java.utilities.GamePanel;
 
 /**
- * MainScreen. This is where we play the game.
+ * MainScreen. This is where we play the game. MainScreen is observing the gameController.
+ * Everytime when an update happens, MainScreen will be noticed and will be show the update on the screen.
+ * MainScreen does not introduce a new thread.
+ * Note: MainScreen used gamePanel(introduce new thread) as one of its component. Be careful when you are editing code.
  */
 public class MainScreen implements Observer {
 	// game controller
 	private final GameController gc;
+	private final Shop shop;
 	// components
 	private final JPanel[] playerTeamPanel = new JPanel[4];
 	private final JPanel[] enemyMonsterPanel = new JPanel[4];
@@ -37,7 +41,14 @@ public class MainScreen implements Observer {
 	private JFrame mainFrame;
 	private ButtonGroup topGroup;
 	private ButtonGroup shopButtonGroup;
-	private Shop shop;
+	// values (Will be used for validation)
+	private String newMonsterName;
+	private int renameMonsterIndex;
+	private int reorderingMonsterIndex1;
+	private int reorderingMonsterIndex2;
+	// validate input before button being activated
+	private JButton reorderConfirmBtn;
+	private JButton renameConfirmBtn;
 	// PanelMap (Toggle visibility)
 	// centerPanel, bottomPanel
 	private final Map<CenterPanel, JPanel> centerPanelMap;
@@ -58,14 +69,8 @@ public class MainScreen implements Observer {
 	private ArrayList<JButton> weaponButtons;
 	private ArrayList<JButton> shieldButtons;
 	private ArrayList<JButton> medButtons;
-	// values
-	private String newMonsterName;
-	private int renameMonsterIndex;
-	private int reorderingMonsterIndex1;
-	private int reorderingMonsterIndex2;
-	
-	private JButton reorderConfirmBtn;
-	private JButton renameConfirmBtn;
+
+
 	/**
 	 * MainScreen's constructor. Initialize and show the mainScreen.
 	 *
@@ -166,6 +171,7 @@ public class MainScreen implements Observer {
 		show(false);
 		this.mainFrame.dispose();
 	}
+
 	// observer
 	@Override
 	public void update(Observable o, Object arg) {
@@ -933,7 +939,7 @@ public class MainScreen implements Observer {
 	}
 
 	private JLabel getMonsterOrderLabel(int orderNum) {
-		JLabel order = new JLabel(""+Integer.toString(orderNum+1));
+		JLabel order = new JLabel(""+ (orderNum + 1));
 		order.setForeground(Color.white);
 		order.setBounds(105, 2, 10, 10);
 		return order;
@@ -1122,16 +1128,14 @@ public class MainScreen implements Observer {
 		bagInfo.setBackground(Color.BLACK);
 		bagInfo.setFocusable(false);
 		bagInfo.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		bagInfo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == bagInfo) {
-					JOptionPane.showMessageDialog(mainFrame, "Click Monster to randomly insert on the main team.\n"
-							+ "Shield will increase the Max Health of a Monster randomly.\n"
-							+ "Weapon will increase the damage of a random monster.\n"
-							+ "Potion will recover the health of a Monster in your team.","Bag Info", JOptionPane.INFORMATION_MESSAGE );
-				}
+		bagInfo.addActionListener(e -> {
+			if (e.getSource() == bagInfo) {
+				JOptionPane.showMessageDialog(mainFrame, """
+						Click Monster to randomly insert on the main team.
+						Shield will increase the Max Health of a Monster randomly.
+						Weapon will increase the damage of a random monster.
+						Potion will recover the health of a Monster in your team.""","Bag Info", JOptionPane.INFORMATION_MESSAGE );
 			}
-			
 		});
 		bottomBagPanel.add(bagInfo);
 		// set it to not visible (Default)
@@ -1989,12 +1993,9 @@ public class MainScreen implements Observer {
 		restartBtn.setFocusable(false);
 		restartBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
 		// listener
-		restartBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				closeAndDestroyCurrentScreen();
-				gc.launchLandingScreen();
-			}
+		restartBtn.addActionListener(e -> {
+			closeAndDestroyCurrentScreen();
+			gc.launchLandingScreen();
 		});
 		// return
 		return restartBtn;
@@ -2012,12 +2013,9 @@ public class MainScreen implements Observer {
 		renameConfirmBtn.setFocusable(false);
 		renameConfirmBtn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
 		// listener
-		renameConfirmBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// -1 as the ui starts display the monster from one
-				gc.renameTeamMonsterByIndex(renameMonsterIndex-1, newMonsterName);
-			}
+		renameConfirmBtn.addActionListener(e -> {
+			// -1 as the ui starts display the monster from one
+			gc.renameTeamMonsterByIndex(renameMonsterIndex-1, newMonsterName);
 		});
 		// return
 		return renameConfirmBtn;
@@ -2228,7 +2226,7 @@ public class MainScreen implements Observer {
 	private void addBackBtnListener(JButton b) {
 		b.addActionListener(e -> {
 			// unSelected all buttons
-			this.topGroup.clearSelection();;
+			this.topGroup.clearSelection();
 		});
 	}
 
@@ -2360,21 +2358,15 @@ public class MainScreen implements Observer {
 	}
 
 	private void addCloseBtnListener(JButton b) {
-		b.addActionListener(e -> {
-			closeAndDestroyCurrentScreen();
-		});
+		b.addActionListener(e -> closeAndDestroyCurrentScreen());
 	}
 
 	private void addNextDayBtnListener(JButton b) {
-		b.addActionListener(e -> {
-			this.gc.nextDay();
-		});
+		b.addActionListener(e -> this.gc.nextDay());
 	}
 
 	private void addRenameMonsterBtnListener(JButton b) {
-		b.addActionListener(e -> {
-			showBottomPanel(BottomPanel.RENAME);
-		});
+		b.addActionListener(e -> showBottomPanel(BottomPanel.RENAME));
 	}
 
 	private void addAttackBtnListener(JButton b) {
@@ -2582,7 +2574,7 @@ public class MainScreen implements Observer {
 	private void addBackBtnListenerForShop(JButton b) {
 		b.addActionListener(e -> {
 			// unSelected all buttons
-			this.shopButtonGroup.clearSelection();;
+			this.shopButtonGroup.clearSelection();
 		});
 	}
 
@@ -2590,9 +2582,7 @@ public class MainScreen implements Observer {
 	 *
 	 */
 	private void addReorderBtnListener(JButton b) {
-		b.addActionListener(e -> {
-			showBottomPanel(BottomPanel.REORDER);
-		});
+		b.addActionListener(e -> showBottomPanel(BottomPanel.REORDER));
 	}
 	
 	
@@ -2681,12 +2671,7 @@ public class MainScreen implements Observer {
 		readMe.setBackground(Color.BLACK);
 		readMe.setFocusable(false);
 		readMe.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		readMe.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-					JOptionPane.showMessageDialog(mainFrame, "Refresh all = 50 Gold\n ", "Buy Area",JOptionPane.INFORMATION_MESSAGE );
-
-			  } 
-		} );
+		readMe.addActionListener(e -> JOptionPane.showMessageDialog(mainFrame, "Refresh all = 50 Gold\n ", "Buy Area",JOptionPane.INFORMATION_MESSAGE ));
 		
 		
 		//button to refresh the whole shop. cost 100gold
@@ -2697,23 +2682,20 @@ public class MainScreen implements Observer {
 		refreshAll.setBackground(Color.BLACK);
 		refreshAll.setFocusable(false);
 		refreshAll.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
-		refreshAll.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				  if (e.getSource() == refreshAll) {
-					  if (gc.getGold() - 50 >= 0) {
-						  int gold = gc.getGold() - 50;
-						  gc.setGold(gold);
-						  shop.refreshShop();
-						  gc.isAbleToRefreshAll();
-					  } else {
-						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
-					  }
-
+		refreshAll.addActionListener(e -> {
+			  if (e.getSource() == refreshAll) {
+				  if (gc.getGold() - 50 >= 0) {
+					  int gold = gc.getGold() - 50;
+					  gc.setGold(gold);
+					  shop.refreshShop();
+					  gc.isAbleToRefreshAll();
+				  } else {
+					  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 				  }
 
 			  }
-		} );
+
+		  });
 		
 		buyTitle.add(refreshAll);
 		buyTitle.add(readMe);
@@ -2761,7 +2743,7 @@ public class MainScreen implements Observer {
 		return itemPanel;
 	}
 
-	private JButton getBuyButtonsForBuyArea(int indexInList) {
+	private JButton getBuyButtonsForBuyArea() {
 		JButton button = new JButton();
 		button.setText("BUY");
 		button.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -2799,31 +2781,28 @@ public class MainScreen implements Observer {
 		}
 				
 		for (int indexInList=0; indexInList<shop.getMonstersForSell().size(); indexInList++) {
-			JButton monsterButton = getBuyButtonsForBuyArea(indexInList);
+			JButton monsterButton = getBuyButtonsForBuyArea();
 			monsterButtons.add(monsterButton);
 			monsterPanel.add(monsterButton);
 		}
 		for (int i = 0; i<shop.getMonstersForSell().size();i++) {
 			JButton button = monsterButtons.get(i);
 			
-			final Integer innerI = (i);
+			final int innerI = (i);
 			
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (e.getSource() == button) {
-						if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
-							gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
-							gc.addItemToBag((Monster) shop.getMonstersForSell().get(innerI));
-							button.setEnabled(false);
-							button.setText("SOLD");
-							updateBagPanel();
-						}else {
-							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
-						}
-
+			button.addActionListener(e -> {
+				if (e.getSource() == button) {
+					if (gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice() >= 0) {
+						gc.setGold(gc.getGold()-shop.getMonstersForSell().get(innerI).getPrice());
+						gc.addItemToBag((Monster) shop.getMonstersForSell().get(innerI));
+						button.setEnabled(false);
+						button.setText("SOLD");
+						updateBagPanel();
+					}else {
+						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 					}
+
 				}
-				
 			});
 		}
 		
@@ -2837,7 +2816,7 @@ public class MainScreen implements Observer {
 		weaponPanel.setBounds(10,220,525,140);
 		// add detaindexInListls to the panel one by one
 		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			GameItem weapon = (Weapon)  shop.getWeaponsForSell().get(indexInList);
+			GameItem weapon = shop.getWeaponsForSell().get(indexInList);
 			
 			JTextArea weaponDetail = getItemDetails();
 			weaponDetail.setText(constructWeaponDetail((Weapon)weapon));
@@ -2845,32 +2824,29 @@ public class MainScreen implements Observer {
 		}
 						
 		for (int indexInList=0; indexInList<shop.getWeaponsForSell().size(); indexInList++) {
-			JButton weaponButton = getBuyButtonsForBuyArea(indexInList);
+			JButton weaponButton = getBuyButtonsForBuyArea();
 			weaponButtons.add(weaponButton);
 			weaponPanel.add(weaponButton);
 		}	
 		for (int i = 0; i<shop.getWeaponsForSell().size();i++) {
 			JButton button = weaponButtons.get(i);
 			
-			final Integer innerI = (i);
+			final int innerI = (i);
 			
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (e.getSource() == button) {
-						if (gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice() >= 0) {
-							gc.setGold(gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice());
-							gc.addItemToBag((Weapon) shop.getWeaponsForSell().get(innerI));
-							button.setEnabled(false);
-							button.setText("SOLD");
-							updateBagPanel();
-						}else {
-							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
-
-						}
+			button.addActionListener(e -> {
+				if (e.getSource() == button) {
+					if (gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice() >= 0) {
+						gc.setGold(gc.getGold()-shop.getWeaponsForSell().get(innerI).getPrice());
+						gc.addItemToBag((Weapon) shop.getWeaponsForSell().get(innerI));
+						button.setEnabled(false);
+						button.setText("SOLD");
+						updateBagPanel();
+					}else {
+						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 
 					}
+
 				}
-				
 			});
 		}
 		return weaponPanel;
@@ -2884,7 +2860,7 @@ public class MainScreen implements Observer {
 		
 		// add detaindexInListls to the panel one by one
 		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			GameItem shield = (Shield) shop.getShieldsForSell().get(indexInList);
+			GameItem shield = shop.getShieldsForSell().get(indexInList);
 			
 			JTextArea shieldDetail = getItemDetails();
 			shieldDetail.setText(constructShieldDetail((Shield)shield));
@@ -2892,7 +2868,7 @@ public class MainScreen implements Observer {
 		}
 						
 		for (int indexInList=0; indexInList<shop.getShieldsForSell().size(); indexInList++) {
-			JButton shieldButton = getBuyButtonsForBuyArea(indexInList);
+			JButton shieldButton = getBuyButtonsForBuyArea();
 			shieldButtons.add(shieldButton);
 			shieldPanel.add(shieldButton);
 		}	
@@ -2902,22 +2878,19 @@ public class MainScreen implements Observer {
 			
 			final Integer innerI = (i);
 			
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (e.getSource() == button) {
-						if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
-							gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
-							gc.addItemToBag((Shield) shop.getShieldsForSell().get(innerI));
-							button.setEnabled(false);
-							button.setText("SOLD");
-							updateBagPanel();
-						}else {
-							  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
+			button.addActionListener(e -> {
+				if (e.getSource() == button) {
+					if (gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice() >= 0) {
+						gc.setGold(gc.getGold()-shop.getShieldsForSell().get(innerI).getPrice());
+						gc.addItemToBag((Shield) shop.getShieldsForSell().get(innerI));
+						button.setEnabled(false);
+						button.setText("SOLD");
+						updateBagPanel();
+					}else {
+						  JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 
-						}
 					}
 				}
-				
 			});
 		}
 		return shieldPanel;
@@ -2932,15 +2905,15 @@ public class MainScreen implements Observer {
 		
 		// add detaindexInListls to the panel one by one
 		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			GameItem med = (Medicine) shop.getMedsForSell().get(indexInList);
+			Medicine med = (Medicine) shop.getMedsForSell().get(indexInList);
 			
 			JTextArea medDetail = getItemDetails();
-			medDetail.setText(constructMedicineDetail((Medicine)med));
+			medDetail.setText(constructMedicineDetail(med));
 			medPanel.add(medDetail);
 		}
 						
 		for (int indexInList=0; indexInList<shop.getMedsForSell().size(); indexInList++) {
-			JButton medButton= getBuyButtonsForBuyArea(indexInList);
+			JButton medButton= getBuyButtonsForBuyArea();
 			medButtons.add(medButton);
 			medPanel.add(medButton);
 			
@@ -2950,24 +2923,21 @@ public class MainScreen implements Observer {
 		for (int i = 0; i<shop.getMedsForSell().size();i++) {
 			JButton button = medButtons.get(i);
 			
-			final Integer innerI = (i);
+			final int innerI = (i);
 			
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (e.getSource() == button) {
-						if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
-							gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
-							gc.addItemToBag((Medicine)shop.getMedsForSell().get(innerI));
-							button.setEnabled(false);
-							button.setText("SOLD");
-							updateBagPanel();
-						}else {
-							JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
-						}
-
+			button.addActionListener(e -> {
+				if (e.getSource() == button) {
+					if (gc.getGold()-shop.getMedsForSell().get(innerI).getPrice() >= 0) {
+						gc.setGold(gc.getGold()-shop.getMedsForSell().get(innerI).getPrice());
+						gc.addItemToBag((Medicine)shop.getMedsForSell().get(innerI));
+						button.setEnabled(false);
+						button.setText("SOLD");
+						updateBagPanel();
+					}else {
+						JOptionPane.showMessageDialog(mainFrame, "You currently do not have enough gold :(","Not Enough Gold!", JOptionPane.INFORMATION_MESSAGE );
 					}
+
 				}
-				
 			});
 			
 		}
