@@ -417,7 +417,11 @@ public class MainScreen implements Observer {
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
-						gc.useItemForMonster(item, finalI);
+						if (gc.getPlayerTeamSize() <= 0) {
+							JOptionPane.showMessageDialog(mainFrame, "Add a Monster first before clicking a Potion!","No Monster", JOptionPane.INFORMATION_MESSAGE );
+						}else {
+							gc.useItemForMonster(item, finalI);
+						}
 					}
 				}
 				public void mousePressed(MouseEvent e) {
@@ -444,7 +448,13 @@ public class MainScreen implements Observer {
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
-						gc.addBagMonsterToTeam(finalI);
+						if (gc.getPlayerTeamSize() == 4) {
+							JOptionPane.showMessageDialog(mainFrame, "Remove a Monster first before adding a new one!","Slots are Full", JOptionPane.INFORMATION_MESSAGE );
+						}else {
+							gc.addBagMonsterToTeam(finalI);
+						}
+						
+						
 					}
 				}
 				public void mousePressed(MouseEvent e) {
@@ -472,7 +482,12 @@ public class MainScreen implements Observer {
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
-						gc.useItemForMonster(item, finalI);
+						if (gc.getPlayerTeamSize() <= 0) {
+							JOptionPane.showMessageDialog(mainFrame, "Add a Monster first before clicking a weapon!","No Monster", JOptionPane.INFORMATION_MESSAGE );
+						}else {
+							gc.useItemForMonster(item, finalI);
+						}
+						
 					}
 				}
 				public void mousePressed(MouseEvent e) {
@@ -499,7 +514,11 @@ public class MainScreen implements Observer {
 			detail.addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if(SwingUtilities.isLeftMouseButton(e)) {
-						gc.useItemForMonster(item, finalI);
+						if (gc.getPlayerTeamSize() <= 0) {
+							JOptionPane.showMessageDialog(mainFrame, "Add a Monster first before clicking a Shield!","No Monster", JOptionPane.INFORMATION_MESSAGE );
+						}else {
+							gc.useItemForMonster(item, finalI);
+						}
 					}
 				}
 				public void mousePressed(MouseEvent e) {
@@ -663,6 +682,7 @@ public class MainScreen implements Observer {
 				panel.add(autoResizeFont(getExpLabel()));
 				panel.add(getMonsterHealthBar(monster));
 				panel.add(getMonsterExpBar(monster));
+				panel.add(getRemoveButton(i));
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -923,6 +943,7 @@ public class MainScreen implements Observer {
 				panel.add(autoResizeFont(getExpLabel()));
 				panel.add(getMonsterHealthBar(monster));
 				panel.add(getMonsterExpBar(monster));
+				panel.add(getRemoveButton(i));
 			}
 			// store the reference of the panel into a list.
 			this.playerTeamPanel[i] = panel;
@@ -930,6 +951,27 @@ public class MainScreen implements Observer {
 			leftPanel.add(this.playerTeamPanel[i]);
 		}
 		return leftPanel;
+	}
+	public JButton getRemoveButton(int index) {
+		JButton button = new JButton();
+		button.setText("remove");
+		button.setFont(new Font("Serif", Font.PLAIN, 15));
+		button.setForeground(Color.WHITE);
+		button.setBounds(60,80,50,17);
+		button.setBackground(Color.BLACK);
+		button.setFocusable(false);
+		button.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == button) {
+					gc.removeMonsterFromLeftPanel(index);
+
+				}
+			}
+			
+		});
+		
+		return button;
 	}
 
 	private JLabel getMonsterOrderLabel(int orderNum) {
@@ -1500,112 +1542,6 @@ public class MainScreen implements Observer {
 		menuItem[0] = new JMenuItem("Use");
 
 		popMenu.add(menuItem[0]);
-		// monster
-		for (int i = 0; i< this.gc.getMedicineBag().size() ;i++ ) {
-			Medicine item = this.gc.getMedicineBag().get(i);
-			JTextArea detail = getItemDetails();
-			detail.setText(constructMedicineDetail(item));
-			detail.addMouseListener(new MouseListener() {
-				public void mouseClicked(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(detail);
-					}
-				}
-				public void mousePressed(MouseEvent e) {
-
-				}
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-
-			});
-			panel.add(detail);
-		}
-		for (int i = 0; i< this.gc.getMonsterBag().size() ;i++ ) {
-			Monster item = this.gc.getMonsterBag().get(i);
-			JTextArea detail = getItemDetails();
-			detail.setText(constructMonsterDetail(item));
-			detail.addMouseListener(new MouseListener() {
-				public void mouseClicked(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(detail);
-					}
-				}
-				public void mousePressed(MouseEvent e) {
-
-				}
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-
-			});
-			panel.add(detail);
-		}
-
-		for (int i = 0; i< this.gc.getWeaponBag().size() ;i++ ) {
-			Weapon item = this.gc.getWeaponBag().get(i);
-			JTextArea detail = getItemDetails();
-			detail.setText(constructWeaponDetail(item));
-			detail.addMouseListener(new MouseListener() {
-				public void mouseClicked(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(detail);
-					}
-				}
-				public void mousePressed(MouseEvent e) {
-
-				}
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-
-			});
-			panel.add(detail);
-		}
-		for (int i = 0; i< this.gc.getShieldBag().size() ;i++ ) {
-			Shield item = this.gc.getShieldBag().get(i);
-			JTextArea detail = getItemDetails();
-			detail.setText(constructShieldDetail(item));
-			detail.addMouseListener(new MouseListener() {
-				public void mouseClicked(MouseEvent e) {
-					if(SwingUtilities.isLeftMouseButton(e)) {
-						System.out.println(detail);
-					}
-				}
-				public void mousePressed(MouseEvent e) {
-
-				}
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-				}
-
-			});
-			panel.add(detail);
-		}
 		JScrollPane bagScrollPane = new JScrollPane(panel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		bagScrollPane.setBounds(0,41,560,240);
 

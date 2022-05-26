@@ -216,6 +216,10 @@ public class GameController extends Observable {
     public int getTotalDay() {
         return this.totalDay;
     }
+    
+    public int getPlayerTeamSize() {
+    	return this.playerTeam.size();
+    }
 
     /*
     setters go here
@@ -301,6 +305,14 @@ public class GameController extends Observable {
         this.isUpdateTeam = true;
         setChanged();
         notifyObservers();
+    }
+    
+    public void removeMonsterFromLeftPanel(int index) {
+    	this.playerTeam.removeMonsterFromTeam(index);
+    	this.isUpdateTeam = true;
+    	this.isUpdateBag = true;
+    	setChanged();
+    	notifyObservers();
     }
 
     public ArrayList<Monster> getMonsterTeamMember() {
@@ -652,4 +664,6 @@ public class GameController extends Observable {
         this.isGameOver = false;
         return prevVal;
     }
+    
+    
 }

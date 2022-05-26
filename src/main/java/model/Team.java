@@ -238,4 +238,11 @@ public class Team {
     	this.monsterBag.clear();
     	this.weaponBag.clear();
     }
+    
+    public void removeMonsterFromTeam(int index) {
+    	Monster monster = teamMember.get(index);
+    	teamMember.remove(index);
+    	monsterBag.add(monster);
+    	
+    }
 }
