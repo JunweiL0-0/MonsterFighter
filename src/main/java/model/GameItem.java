@@ -82,6 +82,11 @@ public class GameItem {
         this.price = price;
     }
 
+    /**
+     * Set the new rarity for a monster.
+     *
+     * @param rarity a new rarity for a monster.
+     */
     public void setRarity(int rarity) {
         this.rarity = rarity;
     }

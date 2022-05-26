@@ -26,6 +26,7 @@ public class Monster extends GameItem {
      * @param damage an integer representing the monster's damage
      * @param level an integer representing the monster's level
      * @param rarity an integer representing the monster's rarity
+     * @param icon an ImageIcon representing the image icon of a monster.
      */
     public Monster(String name, int price, int maxHealth, int damage, int level, int rarity, ImageIcon icon) {
         super(name, price, rarity);
@@ -156,6 +157,11 @@ public class Monster extends GameItem {
     	this.currentHealth = Math.min(this.maxHealth, this.currentHealth + med.getEffect());
     }
 
+    /**
+     * increase the max Health of a monster.
+     *
+     * @param health a int instance which will increase the max health of a monster.
+     */
     public void increaseMaxHealth(int health) {
         this.maxHealth += health;
     }

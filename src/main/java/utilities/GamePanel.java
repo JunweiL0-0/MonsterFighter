@@ -79,8 +79,6 @@ public class GamePanel extends JPanel implements Runnable {
     /**
      * Update the gamePanel. Move Enemies/Player and check if a collision happened between the player and the enemy.
      * If a player encounter an enemy, the gamePanel will store the index of the enemy back to the gameController.
-     *
-     * @see GameController::storeBattleIncex
      */
     public void updatePanel() {
         if (this.gc.getTotalBattle() != this.currentTotalBattle) {

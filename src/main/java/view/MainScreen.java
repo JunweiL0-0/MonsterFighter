@@ -255,15 +255,23 @@ public class MainScreen implements Observer {
 	private void updateGoldLabel() {
 		this.goldLabel.setText("Gold: " + this.gc.getGold());
 	}
-
+	/**
+	 * Updates the number of points on the top left panel.
+	 */
 	private void updatePointLabel() {
 		this.pointLabel.setText("Point: " + this.gc.getPoint());
 	}
 
+	/**
+	 * Updates the number of days left on the top right panel.
+	 */
 	private void updateDaysLeftLabel() {
 		this.daysLeftLabel.setText("Days left: " + this.gc.getCurrentDay() + "/" + this.gc.getTotalDay());
 	}
 
+	/**
+	 * Updates the sell panel when the observer is notified of a change.
+	 */
 	private void updateSellPanel() {
 		JPanel sellPanel = centerPanelMap.get(CenterPanel.SELL);
 		sellPanel.removeAll();
@@ -395,7 +403,9 @@ public class MainScreen implements Observer {
 		sellPanel.revalidate();
 		sellPanel.repaint();
 	}
-	
+	/**
+	 * Updates the bag panel when the observer is notified of a change.
+	 */
 	private void updateBagPanel() {
 		JPanel bagPanel = centerPanelMap.get(CenterPanel.BAG);
 		bagPanel.removeAll();
@@ -551,7 +561,10 @@ public class MainScreen implements Observer {
 		bagPanel.revalidate();
 		bagPanel.repaint();
 	}
-	
+
+	/**
+	 * Updates the buy panel when the observer is notified of a change.
+	 */
 	public void updateBuyPanel() {
 		JPanel buyPanel = centerPanelMap.get(CenterPanel.BUY);
 		buyPanel.removeAll();

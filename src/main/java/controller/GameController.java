@@ -239,7 +239,12 @@ public class GameController extends Observable {
     public int getBattleIndex() {
         return this.battleIndex;
     }
-    
+
+    /**
+     * Return the number of monsters in the left panel.
+     *
+     * @return an integer representing the number of monsters in the left panel.
+     */
     public int getPlayerTeamSize() {
     	return this.playerTeam.size();
     }
