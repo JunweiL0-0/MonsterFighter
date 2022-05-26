@@ -2,53 +2,86 @@ package main.java.model;
 
 import javax.swing.ImageIcon;
 
-public class WeaponBuilderImpl implements WeaponBuilder{
+/**
+ * This class implement the weaponBuilder interface.
+ * By using the builder pattern, we will be build our complex object in an easy and tidy way.
+ */
+public class WeaponBuilderImpl implements WeaponBuilder {
 	private String name;
     private int price;
     private int damage;
     private int rarity;
     private String rarityStr;
     private ImageIcon imageIcon;
-    
-    
+
+
+	/**
+	 * Store the name of the weapon.
+	 *
+	 * @param name a string represent the name of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder name(String name) {
-		// TODO Auto-generated method stub
 		this.name = name;
 		return this;
 	}
-	
+
+	/**
+	 * Store the price of the weapon.
+	 *
+	 * @param price an integer represent the price of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder price(int price) {
-		// TODO Auto-generated method stub
 		this.price = price;
 		return this;
 	}
-	
+
+	/**
+	 * Store the "damage" of the weapon.
+	 *
+	 * @param damage an integer represent the "damage" of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder damage(int damage) {
-		// TODO Auto-generated method stub
 		this.damage = damage;
 		return this;
 	}
-	
+
+	/**
+	 * Store the "rarity" of the weapon.
+	 *
+	 * @param rarity an integer represent the "rarity" of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder rarity(int rarity) {
-		// TODO Auto-generated method stub
 		this.rarity = rarity;
 		return this;
 	}
-	
+
+	/**
+	 * Store the "rarityStr" of the weapon.
+	 *
+	 * @param rarityStr a string represent the "rarity" of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder rarityStr(String rarityStr) {
-		// TODO Auto-generated method stub
 		this.rarityStr = rarityStr;
 		return this;
 	}
-	
+
+	/**
+	 * Store the "imageIcon" of the weapon.
+	 *
+	 * @param imageIcon an image of the weapon
+	 * @return the weaponBuilder itself
+	 */
 	public WeaponBuilder imageIcon(ImageIcon imageIcon) {
-		// TODO Auto-generated method stub
 		this.imageIcon = imageIcon;
 		return this;
 	}
 	
 	public Weapon build() {
-		// TODO Auto-generated method stub
 		return new Weapon(this.name, this.price, this.rarity, this.damage, this.rarityStr, this.imageIcon);
 	}
 	

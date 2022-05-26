@@ -27,32 +27,74 @@ public class Team {
         this.medicineBag = new ArrayList<>();
     }
 
+    /**
+     * Add the monster to the monsterBag. This is an overloading method
+     *
+     * @param m a monster instance
+     */
     public void addItemToMonsterBag(Monster m) {
         this.monsterBag.add(m);
     }
 
+    /**
+     * Add the weapon to the weaponBag. This is an overloading method
+     *
+     * @param w a weapon instance
+     */
     public void addItemToWeaponBag(Weapon w) {
         this.weaponBag.add(w);
     }
 
+    /**
+     * Add shield to the shieldBag. This is an overloading method.
+     *
+     * @param s a shield instance
+     */
     public void addItemToShieldBag(Shield s) {
         this.shieldBag.add(s);
     }
 
+    /**
+     * Add medicine to the medicineBag. This is an overloading method.
+     *
+     * @param m a medicine instance
+     */
     public void addItemToMedicineBag(Medicine m) {
         this.medicineBag.add(m);
     }
 
+    /**
+     * Return the player's monsterBag.
+     *
+     * @return an arrayList represent the monsterBag of the player.
+     */
     public ArrayList<Monster> getMonsterBag() {
         return this.monsterBag;
     }
 
+    /**
+     * Return the player's weaponBag
+     *
+     * @return an arrayList represent the weaponBag of the player
+     */
     public ArrayList<Weapon> getWeaponBag() {
         return this.weaponBag;
     }
+
+    /**
+     * Return the shieldBag of the player.
+     *
+     * @return an arrayList represent the shieldBag of the player
+     */
     public ArrayList<Shield> getShieldBag() {
         return this.shieldBag;
     }
+
+    /**
+     * Return the medicineBag of the player.
+     *
+     * @return an arrayList represent the medicineBag of the player.
+     */
     public ArrayList<Medicine> getMedicineBag() {
         return this.medicineBag;
     }
@@ -173,20 +215,40 @@ public class Team {
         return index;
     }
 
+    /**
+     * Heal all monster. All monster's health will be healed to its full health.
+     */
     public void healAllMonster() {
         for (Monster m: this.teamMember) {
             m.recover();
         }
     }
 
+    /**
+     * Rename the monster base on the given index.
+     *
+     * @param monsterIndex the index of the monster in the team
+     * @param newName the new name of the monster.
+     */
     public void renameMonsterByIndex(int monsterIndex, String newName) {
         this.teamMember.get(monsterIndex).setName(newName);
     }
 
+    /**
+     * Return the maximum teamMember of the team
+     *
+     * @return an integer represent the maximum number of monsters we can have in the team
+     */
     public int getMaxTeamMember() {
         return this.maxTeamMember;
     }
 
+    /**
+     * Remove the teamMonster in the team by index.
+     *
+     * @param index the index of the monster in the team
+     * @return true if we change its name successfully. Otherwise, return false.
+     */
     public boolean removeTeamMemberByIndex(int index) {
         if (index > 0 && index < this.teamMember.size()) {
             this.teamMember.remove(index);
@@ -196,6 +258,11 @@ public class Team {
         }
     }
 
+    /**
+     * Return the monster which has the lease health in the team
+     *
+     * @return the least monsterIndex in the team
+     */
     public int getLeastHealthMonsterIndex() {
         int index = -1;
         int minHealth = Integer.MAX_VALUE;
@@ -208,16 +275,41 @@ public class Team {
         return index;
     }
 
+    /**
+     * Apply the effect of the item to the monster. This is an overloading method.
+     *
+     * @param w a weapon instance
+     * @param monsterIndex the index of the monster in the team
+     */
     public void useItemForMonster(Weapon w, int monsterIndex) {
         this.teamMember.get(monsterIndex).increaseDamage(w.getDmg());
     }
+
+    /**
+     * Apply the effect of the item to the monster. This is an overloading method.
+     *
+     * @param m a medicine instance
+     * @param monsterIndex the index of the monster in the team
+     */
     public void useItemForMonster(Medicine m, int monsterIndex) {
         this.teamMember.get(monsterIndex).healBy(m);
     }
+
+    /**
+     * Apply the effect of the item to the monster. This is an overloading method.
+     *
+     * @param s a shield instance
+     * @param monsterIndex the index of the monster in the team
+     */
     public void useItemForMonster(Shield s, int monsterIndex) {
         this.teamMember.get(monsterIndex).increaseMaxHealth(s.getShield());
     }
 
+    /**
+     * Take the monster from the bag and put it into to the team.
+     *
+     * @param bagMonsterIndex a weapon instance
+     */
     public void addBagMonsterToTeam(int bagMonsterIndex) {
         if (this.teamMember.size() < this.maxTeamMember) {
             this.teamMember.add(this.monsterBag.get(bagMonsterIndex));
@@ -232,13 +324,22 @@ public class Team {
             this.monsterBag.remove(bagMonsterIndex);
         }
     }
-    public void emptybag() {
+
+    /**
+     * Empty the bag. Remove everything in the bag.
+     */
+    public void emptyBag() {
     	this.monsterBag.clear();
     	this.medicineBag.clear();
     	this.monsterBag.clear();
     	this.weaponBag.clear();
     }
-    
+
+    /**
+     * Remove the monster from the team base on the given index
+     *
+     * @param index an integer represent the index of the monster in the team
+     */
     public void removeMonsterFromTeam(int index) {
     	Monster monster = teamMember.get(index);
     	teamMember.remove(index);

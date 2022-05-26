@@ -294,10 +294,10 @@ public class GameEntity {
         return spriteNum;
     }
 
-    public int getSpriteCounter() {
-        return this.spriteCounter;
-    }
-
+    /**
+     * Increase the spriteCounter by one.
+     * If the spriteCounter is larger 20. It will be reset to zero and the spriteNum will be toggled.
+     */
     public void incrementSpriteCounter() {
         this.spriteCounter++;
         if (this.spriteCounter >= 20) {
@@ -305,49 +305,99 @@ public class GameEntity {
             resetSpriteCounter();
         }
     }
+
+    /**
+     * Reset the spriteCounter to zero
+     */
     public void resetSpriteCounter() {
         this.spriteCounter = 0;
     }
+
+    /**
+     * Toggle the spriteNum. The spriteNum will be either 0 or 1
+     */
     public void toggleSpriteNum() {
         this.spriteNum = (this.spriteNum + 1) % 2;
     }
 
+    /**
+     * Return true if a collision is being detected. Otherwise, return false.
+     *
+     * @return a boolean tells us whether a collision happens or not.
+     */
     public boolean isCollisionOn() {
         return this.collisionOn;
     }
 
+    /**
+     * Decrease the world-Y of the entity by its speed.
+     */
     public void moveUp() {
         this.worldY -= this.speed;
     }
 
+    /**
+     * Increase the world-Y of the entity by its speed.
+     */
     public void moveDown() {
         this.worldY += this.speed;
     }
 
+    /**
+     * Decrease the world-X of the entity by its speed.
+     */
     public void moveLeft() {
         this.worldX -= this.speed;
     }
 
+    /**
+     * Increase the world-X of the entity by its speed.
+     */
     public void moveRight() {
         this.worldX += this.speed;
     }
 
+    /**
+     * Return the screen-X of the entity.
+     *
+     * @return the screen-X of the entity
+     */
     public int getScreenX() {
         return this.screenX;
     }
 
+    /**
+     * Return the screen-Y of the entity
+     *
+     * @return the screen-Y of the entity
+     */
     public int getScreenY() {
         return this.screenY;
     }
 
+    /**
+     * Set the screen-X for the entity
+     *
+     * @param val an integer represent the screen-X of the entity
+     */
     public void setScreenX(int val) {
         this.screenX = val;
     }
 
+    /**
+     * Set the screen-Y for the entity
+     *
+     * @param val an integer represent the screen-Y of the entity
+     */
     public void setScreenY(int val) {
         this.screenY = val;
     }
 
+    /**
+     * Draw the entity on the screen.
+     *
+     * @param g2 you can trade this like a pencil
+     */
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         switch (getDirection()) {
@@ -384,12 +434,25 @@ public class GameEntity {
         g2.drawImage(image, this.screenX, this.screenY, getSize(), getSize(), null);
     }
 
+    /**
+     * Increase the actionCounter by one. This is used to monitor the movement of the enemies.
+     */
     public void incrementActionCounter() {
         this.actionCounter++;
     }
+
+    /**
+     * Return the actionCounter of the entity
+     *
+     * @return the actionCounter of the entity
+     */
     public int getActionCounter() {
         return this.actionCounter;
     }
+
+    /**
+     * Reset the actionCounter to zero.
+     */
     public void resetActionCounter() {
         this.actionCounter = 0;
     }

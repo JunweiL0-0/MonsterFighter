@@ -172,11 +172,21 @@ public class Monster extends GameItem {
             levelUp();
         }
     }
-    
+
+    /**
+     * Return an integer represent the exp of the monster
+     *
+     * @return an integer represent the exp of the monster
+     */
     public int getExp() {
     	return this.exp;
     }
-    
+
+    /**
+     * Return the maximum exp the monster can have
+     *
+     * @return an integer represent the maximum exp the monster can have
+     */
     public int getMaxExp() {
     	return this.maxExp;
     }
@@ -191,10 +201,18 @@ public class Monster extends GameItem {
         this.currentHealth += 100;
     }
 
+    /**
+     * Increase the "damage" of the monster base on the give integer.
+     *
+     * @param damage the amount of damage will be increased for monster.
+     */
     public void increaseDamage(int damage) {
         this.damage += damage;
     }
 
+    /**
+     * Recover the monster and set the currentHealth to its full health
+     */
     public void recover() {
         this.currentHealth = this.maxHealth;
     }
