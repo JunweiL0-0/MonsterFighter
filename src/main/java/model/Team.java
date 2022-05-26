@@ -17,6 +17,8 @@ public class Team {
     /**
      * Team's constructor. The default teamSize is three.
      * This constructor will initial a hashMap for storing the teamMember.
+     *
+     * @param maxTeamMember the maximum number of monsters the team can have
      */
     public Team(int maxTeamMember) {
         this.maxTeamMember = maxTeamMember;
@@ -103,6 +105,7 @@ public class Team {
      * Add a new monster to the team. Return true if added successfully, return false otherwise.
      *
      * @param newMonster a monster instance
+     * @return a boolean value
      */
     public boolean addMonsterToTeam(Monster newMonster) {
         if (this.teamMember.size() <= this.maxTeamMember) {
